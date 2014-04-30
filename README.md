@@ -32,9 +32,9 @@ be expected from a mass spectrometry experiment with 0, 1,
 ... miscleavages. This should probably also include a filtering step
 for peptide *flyability*.
 
-### Selection of obtimal heavy peptides for absolute quantitation
+### Selection of optimal heavy peptides for absolute quantitation
 
-See Pavel's idea.
+See Pavel's [idea](https://github.com/sgibb/cleaver/issues/5).
 
 ### Creating a link between arbitrary protein sequences and a genomic reference
 
