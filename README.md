@@ -3,7 +3,36 @@ Pbase
 
 Manipulating and exploring protein and proteomics data.
 
-Not sure if `Proteins` or `Pbase`; the latter fits well with `Pviz`.
+Uses `Pviz` for visualisation.
+
+## Classes
+
+```r
+setClass("Protein",
+         slots = list(
+             fileName = "character", ## optional
+             seq = "AAString",
+             pfeatures = "IRanges",
+             created = "character"
+             UnitProtVersion = "character"),
+         contains = "Versioned") ## also record Uniprot.WS and IRanges classes
+
+setClass("Proteins",
+         slots = list(
+             fileName = "character", ## can be multiple files, optional
+             seq = "AAStringSet",
+             pfeatures = "IRanges",
+             created = "character"
+             UnitProtVersion = "character"),
+         contains = "Versioned") ## also record Uniprot.WS and IRanges classes
+```
+
+## Constructor
+
+`Protein("fastafile")` returns a `Protein` or `Proteins` instance, depending on the number of sequences.
+
+`Protein("ids")` returns a `Protein` or `Proteins` instance, depending on the number of identifers.
+
 
 ## Ideas
 
@@ -18,12 +47,14 @@ point). The return value would have its own `plot` method using
 
 ```r
 setGeneric("proteinCoverage", function(x, y, ...), standardGeneric("proteinCoverage"))
-setMethod("proteinCoverage", c("AAString", "MSnSet"), function(x, y, fcol = "pepseq") { ... } )
-setMethod("proteinCoverage", c("AAString", "MSnExp"), function(x, y, fcol = "pepseq") { ... } )
-setMethod("proteinCoverage", c("AAString", "mzID"), function(x, y) { ... } )
-setMethod("proteinCoverage", c("AAString", "GRanges"), function(x, y) { ... } )
+## uses internal IRanges or, if absent, first cleaves the protein 
+setMethod("proteinCoverage", c("Protein", "missing"), function(x, y) { ... } ) 
+setMethod("proteinCoverage", c("Protein", "MSnSet"), function(x, y, fcol = "pepseq") { ... } )
+setMethod("proteinCoverage", c("Protein", "MSnExp"), function(x, y, fcol = "pepseq") { ... } )
+setMethod("proteinCoverage", c("Protein", "mzID"), function(x, y) { ... } )
 ```
-The above could also be vectorised to work with and `AAStringSet`.
+
+And the same pf `Proteins`.
 
 ### Assessing the redundancy of a protein fasta database
 
