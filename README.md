@@ -54,6 +54,7 @@ Maybe support for the annotation of detection of protein domains.
 #### ACT3_DROME
 
 Manual example for two UniProt - Identifiers:
+
 1. [ACT3_DROME](http://www.uniprot.org/uniprot/P53501).
 2. Follow the [UniParc link](http://www.uniprot.org/uniparc/UPI0000000EDE) in section *Sequences*.
 3. Choose one EMBL entry, e.g. [ACV91653](http://www.ebi.ac.uk/ena/data/view/ACV91653).
