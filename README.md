@@ -31,7 +31,7 @@ setClass("Proteins",
 
 `Protein("fastafile")` returns a `Protein` or `Proteins` instance, depending on the number of sequences.
 
-`Protein("ids")` returns a `Protein` or `Proteins` instance, depending on the number of identifers.
+`Protein("ids")` returns a `Protein` or `Proteins` instance, depending on the number of identifiers.
 
 
 ## Ideas
