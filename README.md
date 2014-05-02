@@ -10,7 +10,7 @@ Uses `Pviz` for visualisation.
 ```s
 setClass("Proteins",
          slots = list(
-             aa = "AAStringSet", ## accessor aa 
+             aa = "AAStringSet", ## accessor aa
              pfeatures = "CompressedIRangesList", ## accessor pfeatures
              metadata = "list"), ## global metadata
          contains = "Versioned") ## class version, also record IRanges classes
@@ -35,6 +35,9 @@ setClass("Proteins",
 ## Constructor
 
 `Proteins("fastafile")` returns a `Proteins` instance.
+
+- Definition of the UniProt fasta comment format:
+    http://www.uniprot.org/help/fasta-headers
 
 `Proteins("ids")` returns a `Proteins` instance, depending on the number of identifiers.
 
