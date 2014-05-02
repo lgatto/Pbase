@@ -6,6 +6,8 @@ import(IRanges)
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
 
+importFrom(cleaver, cleave)
+
 exportClasses(Proteins)
 
 exportMethods(Proteins,
