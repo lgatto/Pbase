@@ -10,8 +10,10 @@ exportClasses(Proteins)
 
 exportMethods(Proteins,
               "[", "[[",
+              aa,
+              ametadata,
               length,
               metadata,
-              mcols,
+              pmetadata,
               show)
 

@@ -4,10 +4,9 @@
 setClass("Proteins",
          contains = "Versioned",
          slots = list(
-          metadata = "list",   # global metadata
-          mcols = "DataFrame",  # element-wise (AAString) metadata
-          pfeatures = "IRanges",
-          seq = "AAStringSet"),
+          metadata = "list",
+          aa = "AAStringSet",
+          pfeatures = "CompressedIRangesList"),
          prototype = prototype(
           new("Versioned",
               versions = c(Proteins = "0.1"))))
@@ -17,13 +16,22 @@ setClass("Proteins",
 ################################################################################
 
 .validProteins <- function(object) {
+  ## TODO:
   msg <- validMsg(NULL, isCurrent(object))
 
-  if (nrow(object@mcols) != length(object@seq)) {
-    msg <- validMsg(msg, paste0("Number of rows in the metadata and ",
-                                "the length of the sequences do not match!"))
-  }
+  #n <- length(object@seq)
 
+  #if (nrow(object@mcols) != n) {
+  #  msg <- validMsg(msg, paste0("Number of rows in the metadata and ",
+  #                              "the number of sequences do not match!"))
+  #}
+
+  #npfeatures <- length(object@pfeatures)
+
+  #if (npfeatures && npfeatures != n) {
+  #  msg <- validMsg(msg, paste0("Number of IRanges in pfeatures and ",
+  #                              "the number of sequences do not match!"))
+  #}
   if (is.null(msg)) {
     return(TRUE)
   }

@@ -12,27 +12,34 @@ setMethod("Proteins",
 
 setMethod("[", "Proteins",
           function(x, i, j, ..., drop = FALSE) {
-            x@mcols <- x@mcols[i, , drop = drop ]
-            x@seq <- x@seq[i, ]
+            x@aa <- x@aa[i, ]
             return(x)
           })
 
 setMethod("[[", "Proteins",
           function(x, i, j, ..., drop = TRUE) {
-            return(x@seq[[i]])
+            return(x@aa[[i]])
           })
+
+setMethod("aa",
+          "Proteins",
+          function(x)x@aa)
+
+setMethod("ametadata",
+          "Proteins",
+          function(x)mcols(x@aa))
 
 setMethod("length",
           "Proteins",
-          function(x)length(x@seq))
-
-setMethod("mcols",
-          "Proteins",
-          function(x)x@mcols)
+          function(x)length(x@aa))
 
 setMethod("metadata",
           "Proteins",
           function(x)x@metadata)
+
+setMethod("pmetadata",
+          "Proteins",
+          function(x)mcols(x@pfeatures))
 
 setMethod("show",
           "Proteins",
@@ -54,6 +61,6 @@ setMethod("show",
 
   cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
 
-  cat("Sequences:", tail(capture.output(object@seq), -1), sep = "\n")
+  cat("Sequences:", tail(capture.output(object@aa), -1), sep = "\n")
 })
 

@@ -9,14 +9,22 @@
   }
 
   seqs <- lapply(filenames, readAAStringSet, ...)
-  seq <- do.call(c, seqs)
+  aa <- do.call(c, seqs)
 
   filenames <- Rle(factor(filenames), lengths = sapply(seqs, length))
+  seqnames <- names(seqs)
 
-  mcols <- DataFrame(filenames = filenames)
+  nz <- nzchar(seqnames)
+
+  if (!any(nz)) {
+    seqnames[!nz] <- as.character(seq(sum(nz)))
+  }
+
+  ametadata <- DataFrame(filenames = filenames)
+  aa@elementMetadata <- ametadata
 
   metadata <- list(created = date())
 
-  new("Proteins", metadata = metadata, mcols = mcols, seq = seq)
+  new("Proteins", aa = aa, metadata = metadata)
 }
 

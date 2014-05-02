@@ -1,11 +1,5 @@
 context("Proteins-class")
 
-test_that("validity", {
-  expect_error(new("Proteins", seq=AAStringSet("ABC")),
-               paste0("Number of rows in the metadata and ",
-                      "the length of the sequences do not match!"))
-})
-
 test_that("fasta constructor", {
   expect_error(Proteins("foobar.txt"),
                "The file.s. .*foobar.txt.* do.es. not exist!")
@@ -19,20 +13,22 @@ test_that("fasta constructor", {
                       "sp|P3|protein 3, length 15"="JKKLMKNKDOPQRST"))
   p <- Proteins(f)
   p2 <- p
-  p2@seq <- p@seq[1:2]
-  p2@mcols <- p@mcols[1:2,, drop=FALSE]
+  p2@aa <- p@aa[1:2]
+  p2@aa@elementMetadata <- p@aa@elementMetadata[1:2,, drop=FALSE]
 
   expect_identical(length(p), 3L)
-  expect_identical(nrow(mcols(p)), 3L)
-  expect_identical(as.integer(mcols(p)[1L, ]), 1L)
-  expect_identical(basename(levels(mcols(p)[1L, ])), "01_test_database.fasta")
+  expect_identical(nrow(ametadata(p)), 3L)
+  expect_identical(as.integer(ametadata(p)[1L, ]), 1L)
+  expect_identical(basename(levels(ametadata(p)[1L, ])),
+                   "01_test_database.fasta")
 
   ## could not be compare directly because testthat throws an error:
   ##  "cannot unclass an external pointer"
-  expect_identical(as.character(p@seq), as.character(aa))
+  expect_identical(as.character(p@aa), as.character(aa))
   expect_identical(as.character(p[[1]]), as.character(aa[[1]]))
-  expect_identical(as.character(p[1:2]@seq), as.character(p2@seq))
-  expect_identical(p[1:2]@mcols, p2@mcols)
+  expect_identical(as.character(p[1:2]@aa), as.character(p2@aa))
+
+  expect_identical(ametadata(p[1:2]), ametadata(p2))
 
   expect_true(is.character(metadata(p)$created))
   expect_identical(nchar(metadata(p)$created,), 24L)
