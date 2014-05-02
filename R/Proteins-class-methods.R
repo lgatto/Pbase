@@ -1,4 +1,10 @@
 setMethod("Proteins",
+          signature(file = "character", uniprotIds = "missing"),
+          function(file, uniprotIds, ...) {
+            .ProteinsFromFasta(filenames = file, ...)
+          })
+
+setMethod("Proteins",
           signature(file = "missing", uniprotIds = "character"),
           function(file, uniprotIds, ...) {
             .toBeImplemented()
@@ -23,12 +29,6 @@ setMethod("ametadata",
           "Proteins",
           function(x)mcols(x@aa))
 
-setMethod("cleave", "Proteins",
-          function(x, ...) {
-              x@pfeatures <- cleave(aa(x), ...)
-              x
-          })
-
 setMethod("length",
           "Proteins",
           function(x)length(x@aa))
@@ -36,10 +36,6 @@ setMethod("length",
 setMethod("metadata",
           "Proteins",
           function(x)x@metadata)
-
-setMethod("plot",
-          "Proteins",
-          function(x, ...).plotProteins(x, ...))
 
 setMethod("pmetadata",
           "Proteins",
