@@ -8,30 +8,26 @@ Uses `Pviz` for visualisation.
 ## Classes
 
 ```r
-setClass("Protein",
-         slots = list(
-             fileName = "character", ## optional
-             seq = "AAString",
-             pfeatures = "IRanges",
-             created = "character"
-             UnitProtVersion = "character"),
-         contains = "Versioned") ## also record Uniprot.WS and IRanges classes
-
 setClass("Proteins",
          slots = list(
-             fileName = "character", ## can be multiple files, optional
              seq = "AAStringSet",
              pfeatures = "IRanges",
-             created = "character"
-             UnitProtVersion = "character"),
-         contains = "Versioned") ## also record Uniprot.WS and IRanges classes
+             mcols = "DataFrame", ## accessor mcols, contains as filenames as Rle factor
+             metadata = "list"), ## global metadata
+         contains = "Versioned") ## class version, also record IRanges classes
 ```
+
+In the `metadata`, we would have
+
+- `created` character
+- `UniProtVersion` character
+- `Uniprot.WS`, optional, only if constructed via ids.
 
 ## Constructor
 
-`Protein("fastafile")` returns a `Protein` or `Proteins` instance, depending on the number of sequences.
+`Proteins("fastafile")` returns a `Proteins` instance.
 
-`Protein("ids")` returns a `Protein` or `Proteins` instance, depending on the number of identifiers.
+`Proteins("ids")` returns a `Proteins` instance, depending on the number of identifiers.
 
 
 ## Ideas
