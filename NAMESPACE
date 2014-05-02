@@ -1,1 +1,17 @@
-exportPattern("^[[:alpha:]]+")
+import(methods)
+import(BiocGenerics)
+import(Biostrings)
+import(IRanges)
+
+importClassesFrom(Biobase, Versioned)
+importFrom(Biobase, classVersion, isCurrent, validMsg)
+
+exportClasses(Proteins)
+
+exportMethods(Proteins,
+              "[", "[[",
+              length,
+              metadata,
+              mcols,
+              show)
+
