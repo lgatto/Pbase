@@ -10,18 +10,27 @@ Uses `Pviz` for visualisation.
 ```r
 setClass("Proteins",
          slots = list(
-             seq = "AAStringSet",
-             pfeatures = "IRanges",
-             mcols = "DataFrame", ## accessor mcols, contains as filenames as Rle factor
+             aa = "AAStringSet", ## accessor aa 
+             pfeatures = "CompressedIRangesList", ## accessor pfeatures
              metadata = "list"), ## global metadata
          contains = "Versioned") ## class version, also record IRanges classes
 ```
 
-In the `metadata`, we would have
+## metadata
 
-- `created` character
-- `UniProtVersion` character
-- `Uniprot.WS`, optional, only if constructed via ids.
+- global: slot `metadata`, accessor `metadata`
+  - `created` character
+  - `UniProtVersion` character
+  - `Uniprot.WS`, optional, only if constructed via ids.
+
+
+- `aa` metadata:
+  - `mcols(.@seq)` with accessor `acols` and `ametadata`
+  - `metadata(.@seq)` - ignore
+
+- `pfeatures` metadata:
+  - `mcols(.@pfeatures)` with accessor `pcols` `pmetadata`
+  - `metadata(.@pfeatures)` - ignore
 
 ## Constructor
 
