@@ -28,3 +28,15 @@
   new("Proteins", aa = aa, metadata = metadata)
 }
 
+.plotProteins <- function(object, ...) {
+
+  tracks <- unlist(mapply(function(aas, aan) {
+    paTrack <- ProteinAxisTrack(addNC = TRUE)
+    psTrack <- ProteinSequenceTrack(sequence = aas, name = aan, ...)
+    list(paTrack, psTrack)
+  }, aas = object@aa, aan = names(object@aa),
+  SIMPLIFY = FALSE, USE.NAMES = FALSE), recursive = TRUE)
+
+  plotTracks(tracks, ...)
+}
+

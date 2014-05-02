@@ -9,8 +9,8 @@
 
 \alias{Proteins,character,missing-method}
 \alias{Proteins,missing,character-method}
-\alias{[,Proteins-method}
-\alias{[[,Proteins-method}
+\alias{[,Proteins,ANY,ANY-method}
+\alias{[[,Proteins,ANY,ANY-method}
 \alias{aa}
 \alias{aa,Proteins-method}
 \alias{acols}
@@ -21,6 +21,7 @@
 \alias{metadata,Proteins-method}
 \alias{pcols}
 \alias{pcols,Proteins-method}
+\alias{plot,Proteins,ANY-method}
 \alias{pmetadata}
 \alias{pmetadata,Proteins-method}
 \alias{show,Proteins-method}
@@ -88,6 +89,9 @@
     \item{pcols}{\code{signature(x = "Proteins")}:
       See \code{\link{ametadata}}.}
 
+    \item{plot}{\code{signature(x = "Proteins", \dots)}:
+      Plots all protein sequences.}
+
     \item{pmetadata}{\code{signature(x = "Proteins")}:
       Returns a \code{\linkS4class{DataFrame}} of peptide metadata.}
 
@@ -105,6 +109,8 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
+
+plot(p[1:5], from = 1, to = 30)
 }
 
 \keyword{classes}

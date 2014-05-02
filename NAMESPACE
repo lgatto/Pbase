@@ -2,6 +2,7 @@ import(methods)
 import(BiocGenerics)
 import(Biostrings)
 import(IRanges)
+import(Pviz)
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
@@ -16,6 +17,7 @@ exportMethods(Proteins,
               length,
               metadata,
               pcols,
+              plot,
               pmetadata,
               show)
 

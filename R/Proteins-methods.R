@@ -37,6 +37,10 @@ setMethod("metadata",
           "Proteins",
           function(x)x@metadata)
 
+setMethod("plot",
+          "Proteins",
+          function(x, ...).plotProteins(x, ...))
+
 setMethod("pmetadata",
           "Proteins",
           function(x)mcols(x@pfeatures))
