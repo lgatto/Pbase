@@ -6,8 +6,8 @@ Authors@R: c(person("Laurent", "Gatto", role = c("aut"),
                     email = "lg390@cam.ac.uk"),
              person("Sebastian", "Gibb", role = c("aut", "cre"),
                     email = "mail@sebastiangibb.de"))
-Depends: methods, BiocGenerics, Biobase, Biostrings, IRanges
-Imports: cleaver
+Depends: methods, BiocGenerics
+Imports: cleaver, Biobase, Biostrings, IRanges
 Suggests: testthat (>= 0.8)
 Description: A set of classes and functions to investigate and understand
   protein sequence data in the context of a proteomics experiment.

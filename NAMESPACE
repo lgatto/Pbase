@@ -10,12 +10,16 @@ importFrom(cleaver, cleave)
 
 exportClasses(Proteins)
 
-exportMethods(Proteins,
-              "[", "[[",
-              aa,
-              ametadata,
-              length,
-              metadata,
-              pmetadata,
-              show)
+exportMethods(
+    ## class methods
+    Proteins,
+    "[", "[[",
+    aa,
+    ametadata,
+    length,
+    metadata,
+    pmetadata,
+    show,
+    ## action methods
+    cleave)
 
