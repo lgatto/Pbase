@@ -7,14 +7,7 @@ Uses `Pviz` for visualisation.
 
 ## Classes
 
-```s
-setClass("Proteins",
-         slots = list(
-             aa = "AAStringSet", ## accessor aa
-             pfeatures = "CompressedIRangesList", ## accessor pfeatures
-             metadata = "list"), ## global metadata
-         contains = "Versioned") ## class version, also record IRanges classes
-```
+See `AllClasses.R`
 
 ## metadata
 
@@ -31,6 +24,7 @@ setClass("Proteins",
 - `pfeatures` metadata:
   - `mcols(.@pfeatures)` with accessor `pcols` `pmetadata`
   - `metadata(.@pfeatures)` - ignore
+  - We need access to `mcols(pfeatures(.)[[i]])`
 
 ## Constructor
 
@@ -39,8 +33,8 @@ setClass("Proteins",
 - Definition of the UniProt fasta comment format:
     http://www.uniprot.org/help/fasta-headers
 
-`Proteins("ids")` returns a `Proteins` instance, depending on the number of identifiers.
-
+`Proteins("ids")` returns a `Proteins` instance, depending on the
+number of identifiers.
 
 ## Ideas
 
