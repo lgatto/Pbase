@@ -6,7 +6,8 @@ setClass("Proteins",
          slots = list(
           metadata = "list",
           aa = "AAStringSet",
-          pfeatures = "CompressedIRangesList"),
+          pfeatures = "AAStringSetList"),
+         ## pfeatures = "CompressedIRangesList"),
          prototype = prototype(
           new("Versioned",
               versions = c(Proteins = "0.1"))))
