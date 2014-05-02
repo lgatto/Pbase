@@ -16,6 +16,7 @@ exportMethods(
     Proteins,
     "[", "[[",
     aa,
+    pfeatures,
     acols,
     ametadata,
     length,

@@ -23,19 +23,23 @@ setMethod("[[", "Proteins",
 
 setMethod("aa",
           "Proteins",
-          function(x)x@aa)
+          function(x) x@aa)
+
+setMethod("pfeatures",
+          "Proteins",
+          function(x) x@pfeatures)
 
 setMethod("ametadata",
           "Proteins",
-          function(x)mcols(x@aa))
+          function(x) mcols(x@aa))
 
 setMethod("length",
           "Proteins",
-          function(x)length(x@aa))
+          function(x) length(x@aa))
 
 setMethod("metadata",
           "Proteins",
-          function(x)x@metadata)
+          function(x) x@metadata)
 
 setMethod("pmetadata",
           "Proteins",
