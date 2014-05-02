@@ -74,7 +74,7 @@ See Pavel's [idea](https://github.com/sgibb/cleaver/issues/5).
 
 ### Creating a link between arbitrary protein sequences and a genomic reference
 
-If we want t o migrate towards a `GRanges` infrastructure, it is
+If we want to migrate towards a `GRanges` infrastructure, it is
 important to be able to link proteins and full proteomics back to
 genomic coordinates. I don't know if this mapping is provided for the
 UniProt reference proteomes.
@@ -150,3 +150,6 @@ possibly biomaRt) using protein identifiers, protein identification
 results (`mzID` package and, later `mzR`) and possibly also `MSnExp`
 and `MSnSet` instances.
 
+## Data
+- Availble on prot-main.
+- Copy locally in `Pbase/sandbox` and use local path to enable reproducibility.
