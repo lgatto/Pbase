@@ -7,7 +7,7 @@ Uses `Pviz` for visualisation.
 
 ## Classes
 
-```r
+```s
 setClass("Proteins",
          slots = list(
              seq = "AAStringSet",
@@ -41,10 +41,10 @@ theoretical set of peptides after in silico digestion (see also next
 point). The return value would have its own `plot` method using
 `Pviz`.
 
-```r
+```s
 setGeneric("proteinCoverage", function(x, y, ...), standardGeneric("proteinCoverage"))
-## uses internal IRanges or, if absent, first cleaves the protein 
-setMethod("proteinCoverage", c("Protein", "missing"), function(x, y) { ... } ) 
+## uses internal IRanges or, if absent, first cleaves the protein
+setMethod("proteinCoverage", c("Protein", "missing"), function(x, y) { ... } )
 setMethod("proteinCoverage", c("Protein", "MSnSet"), function(x, y, fcol = "pepseq") { ... } )
 setMethod("proteinCoverage", c("Protein", "MSnExp"), function(x, y, fcol = "pepseq") { ... } )
 setMethod("proteinCoverage", c("Protein", "mzID"), function(x, y) { ... } )
