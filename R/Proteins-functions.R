@@ -14,7 +14,7 @@
   filenames <- Rle(factor(filenames), lengths = sapply(seqs, length))
   seqnames <- names(aa)
 
-  fastaMetaData <- .fastaCommentParser(seqnames)
+  fastaMetaData <- .fastaComments2DataFrame(seqnames)
   fastaMetaData$filenames <- filenames
 
   ametadata <- fastaMetaData
