@@ -28,15 +28,27 @@
   new("Proteins", aa = aa, metadata = metadata)
 }
 
-.plotProteins <- function(object, ...) {
+.plotProteins <- function(object, from = 1L,
+                          to = max(elementLengths(object@aa)), ...) {
 
-  tracks <- unlist(mapply(function(aas, aan) {
-    paTrack <- ProteinAxisTrack(addNC = TRUE)
-    psTrack <- ProteinSequenceTrack(sequence = aas, name = aan, ...)
-    list(paTrack, psTrack)
-  }, aas = object@aa, aan = names(object@aa),
-  SIMPLIFY = FALSE, USE.NAMES = FALSE), recursive = TRUE)
+  nTracks <- 3L
+  tracks <- vector(mode="list", length=length(object) * nTracks)
 
-  plotTracks(tracks, ...)
+  for (i in seq(along = object@aa)) {
+    idx <- (i - 1L) * nTracks
+    tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE)
+    tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
+                                               name = names(object@aa)[i])
+    if (length(object@pfeatures)) {
+      ## TODO: adding an ATrack results in an error if "[" is set:
+      ## Error in callNextMethod(x, i) :
+      ##    bad object found as method (class “function”)
+      tracks[[idx + 3L]] <- ATrack(start = start(object@pfeatures[[i]]),
+                                   end = end(object@pfeatures[[i]]),
+                                   name = "cleavage products")
+    }
+  }
+
+  plotTracks(tracks, from = from, to = to)
 }
 

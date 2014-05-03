@@ -15,3 +15,10 @@ if (is.null(getGeneric("pcols")))
   setGeneric("pcols", function(x, ...) pmetadata(x, ...))
 if (is.null(getGeneric("pfeatures")))
   setGeneric("pfeatures", function(x, ...) standardGeneric("pfeatures"))
+
+## methods
+if (is.null(getGeneric("cleave")))
+  setGeneric("cleave", function(x, ...) standardGeneric("cleave"))
+if (is.null(getGeneric("plot")))
+  setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
+

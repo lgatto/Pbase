@@ -1,49 +1,88 @@
 setMethod("Proteins",
+          signature(file = "character", uniprotIds = "missing"),
+          function(file, uniprotIds, ...) {
+            .ProteinsFromFasta(filenames = file, ...)
+          })
+
+setMethod("Proteins",
           signature(file = "missing", uniprotIds = "character"),
           function(file, uniprotIds, ...) {
             .toBeImplemented()
           })
 
-setMethod("[", "Proteins",
-          function(x, i, j, ..., drop = FALSE) {
-            x@aa <- x@aa[i, ]
-            return(x)
-          })
+## BUG: commented because Gviz crashes with callNextMethod error
+#setMethod("[", "Proteins",
+#          function(x, i, j, ..., drop)
+#          {
+#            if (!missing(j) || length(list(...)) > 0L) {
+#              stop("invalid subsetting")
+#            }
+#            if (missing(i) || (is.logical(i) && all(i))) {
+#              return(x)
+#            }
+#            if (is.logical(i)) {
+#              i <- which(i)
+#            }
+#            if (!is.numeric(i) || any(is.na(i))) {
+#              stop("invalid subsetting")
+#            }
+#            if (any(i < 1) || any(i > length(x))) {
+#              stop("subscript out of bounds")
+#            }
+#
+#            if (length(pfeatures)) {
+#              pfeatures <- x@pfeatures[i]
+#            } else {
+#              pfeatures <- IRangesList
+#            }
+#
+#            new(class(x),
+#                aa = x@aa[i],
+#                pfeatures = pfeatures,
+#                metadata = x@metadata)
+#          })
 
-setMethod("[[", "Proteins",
+setMethod("[[",
+          "Proteins",
           function(x, i, j, ..., drop = TRUE) {
             return(x@aa[[i]])
           })
 
 setMethod("aa",
           "Proteins",
-          function(x)x@aa)
+          function(x) x@aa)
+
+setMethod("cleave",
+          "Proteins",
+          function(x, enzym = "trypsin", missedCleavages = 0) {
+            x@pfeatures <- cleavageRanges(x = x@aa, enzym = enzym,
+                                          missedCleavages = missedCleavages)
+            return(x)
+          })
+
+setMethod("pfeatures",
+          "Proteins",
+          function(x) x@pfeatures)
 
 setMethod("ametadata",
           "Proteins",
-          function(x)mcols(x@aa))
-
-setMethod("cleave", "Proteins",
-          function(x, ...) {
-              x@pfeatures <- cleave(aa(x), ...)
-              x
-          })
+          function(x) mcols(x@aa))
 
 setMethod("length",
           "Proteins",
-          function(x)length(x@aa))
+          function(x) length(x@aa))
 
 setMethod("metadata",
           "Proteins",
-          function(x)x@metadata)
+          function(x) x@metadata)
 
 setMethod("plot",
-          "Proteins",
-          function(x, ...).plotProteins(x, ...))
+          signature(x = "Proteins", y = "missing"),
+          function(x, y, ...) .plotProteins(x, ...))
 
 setMethod("pmetadata",
           "Proteins",
-          function(x)mcols(x@pfeatures))
+          function(x) mcols(x@pfeatures))
 
 setMethod("show",
           "Proteins",

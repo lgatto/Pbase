@@ -7,20 +7,21 @@ import(Pviz)
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
 
-importFrom(cleaver, cleave)
+importFrom(cleaver, cleave, cleavageRanges)
 
 exportClasses(Proteins)
 
 exportMethods(
     ## class methods
     Proteins,
-    "[", "[[",
+    # "[", # BUG: commented because of the strange Gviz behaviour
+    "[[",
     aa,
     pfeatures,
+    metadata,
     acols,
     ametadata,
     length,
-    metadata,
     pcols,
     plot,
     pmetadata,
