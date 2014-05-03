@@ -12,15 +12,12 @@
   aa <- do.call(c, seqs)
 
   filenames <- Rle(factor(filenames), lengths = sapply(seqs, length))
-  seqnames <- names(seqs)
+  seqnames <- names(aa)
 
-  nz <- nzchar(seqnames)
+  fastaMetaData <- .fastaCommentParser(seqnames)
+  fastaMetaData$filenames <- filenames
 
-  if (!any(nz)) {
-    seqnames[!nz] <- as.character(seq(sum(nz)))
-  }
-
-  ametadata <- DataFrame(filenames = filenames)
+  ametadata <- fastaMetaData
   aa@elementMetadata <- ametadata
 
   metadata <- list(created = date())
@@ -38,7 +35,7 @@
     idx <- (i - 1L) * nTracks
     tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE)
     tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
-                                               name = names(object@aa)[i])
+                                               name = ametadata(object)$ID[i])
     if (length(object@pfeatures)) {
       ## TODO: adding an ATrack results in an error if "[" is set:
       ## Error in callNextMethod(x, i) :
@@ -48,6 +45,7 @@
                                    name = "cleavage products")
     }
   }
+  tracks <- tracks[sapply(tracks, length) > 0L]
 
   plotTracks(tracks, from = from, to = to)
 }
