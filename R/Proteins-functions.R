@@ -15,7 +15,7 @@
   seqnames <- names(aa)
 
   fastaMetaData <- .fastaComments2DataFrame(seqnames)
-  fastaMetaData$filenames <- filenames
+  fastaMetaData$filename <- filenames
 
   ametadata <- fastaMetaData
   aa@elementMetadata <- ametadata
