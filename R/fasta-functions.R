@@ -9,7 +9,7 @@
   ##
   ## short perl explanation:
   ## (?<NAME>...) creates a named group
-  ## (?:...) create a group but don't list it in the results
+  ## (?:...) creates a group but doesn't list it in the results
   ## (...)? optional group
   ## \\s matches spaces
   rx <- gregexpr(pattern = paste0(
