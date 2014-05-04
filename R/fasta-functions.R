@@ -1,4 +1,7 @@
 ## UniProt definition: http://www.uniprot.org/help/fasta-headers
+## Please note the Accession number is according to
+## http://www.uniprot.org/faq/6 the stable ID of the entries.
+## In contrast the EntryName could change
 .fastaCommentParser <- function(x) {
   ## >db|UniqueIdentifier|EntryName ProteinName OS=OrganismName[ GN=GeneName]
   ## PE=ProteinExistence SV=SequenceVersion
@@ -15,8 +18,8 @@
   rx <- gregexpr(pattern = paste0(
     ## Database ID, e.g. "tr"
     "^>?(?<DB>[a-z]+)\\|",
-    ## UniqueIdentifier, e.g "B1XAE9"
-    "(?<ID>[A-Z_0-9-]+)\\|",
+    ## AccessionNumber/UniqueIdentifier, e.g "B1XAE9"
+    "(?<AN>[A-Z_0-9-]+)\\|",
     ## EntryName, e.g. "B1XAE9_ECODH"
     "(?<EN>[A-Z_0-9]+)\\s+",
     ## optional isoform (could be "Isoform IsoformName of ProteiName")
@@ -48,13 +51,21 @@
 .fastaComments2DataFrame <- function(x) {
   x <- .fastaCommentParser(x)
   DataFrame(DB = Rle(factor(x[, 1L])),
-            ID = x[, 2L],
+            AccessionNumber = x[, 2L],
             EntryName = x[, 3L],
             IsoformName = Rle(x[, 4L]),
             ProteinName = x[, 5L],
             OrganismName = Rle(factor(x[, 6L])),
             GeneName = x[, 7L],
-            ProteinExistence = Rle(x[, 8L]),
+            ## Levels of evidence:
+            ## http://www.uniprot.org/manual/protein_existence
+            ProteinExistence = Rle(factor(x[, 8L],
+                                      labels = c("Evidence at protein level",
+                                                 "Evidence at transcript level",
+                                                 "Inferred from homology",
+                                                 "Predicted",
+                                                 "Uncertain"),
+                                      levels = 1L:5L)),
             SequenceVersion = Rle(x[, 9L]))
 }
 
