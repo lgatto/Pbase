@@ -1,10 +1,13 @@
-## Proteins
-if (is.null(getGeneric("Proteins")))
-  setGeneric("Proteins", function(file, uniprotIds, ...)
-             standardGeneric("Proteins"))
+################################################################################
+## VirtualProteins
+################################################################################
+
 ## accessors
 if (is.null(getGeneric("aa")))
   setGeneric("aa", function(x, ...) standardGeneric("aa"))
+if (is.null(getGeneric("accessionNumber")))
+  setGeneric("accessionNumber", function(x, ...)
+             standardGeneric("accessionNumber"))
 if (is.null(getGeneric("ametadata")))
   setGeneric("ametadata", function(x, ...) standardGeneric("ametadata"))
 if (is.null(getGeneric("acols")))
@@ -15,6 +18,13 @@ if (is.null(getGeneric("pcols")))
   setGeneric("pcols", function(x, ...) pmetadata(x, ...))
 if (is.null(getGeneric("pfeatures")))
   setGeneric("pfeatures", function(x, ...) standardGeneric("pfeatures"))
+
+################################################################################
+## Proteins
+################################################################################
+if (is.null(getGeneric("Proteins")))
+  setGeneric("Proteins", function(file, uniprotIds, ...)
+             standardGeneric("Proteins"))
 
 ## methods
 if (is.null(getGeneric("cleave")))

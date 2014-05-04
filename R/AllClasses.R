@@ -1,15 +1,31 @@
 ################################################################################
 ## class definitions
 ################################################################################
-setClass("Proteins",
-         contains = "Versioned",
+
+setClass("VirtualProteins",
+         contains = c("Versioned", "VIRTUAL"),
          slots = list(
           metadata = "list",
-          aa = "AAStringSet",
+          aa = "AAStringSet"),
+         prototype = prototype(
+          new("Versioned",
+              versions = c(VirtualProteins = "0.1"))))
+
+setClass("Proteins",
+         contains = c("Versioned", "VirtualProteins"),
+         slots = list(
           pfeatures = "CompressedIRangesList"),
          prototype = prototype(
           new("Versioned",
               versions = c(Proteins = "0.1"))))
+
+setClass("ProteinCoverageSummary",
+         contains = c("Versioned", "VirtualProteins"),
+         slots = list(
+          coverage = "RleList"),
+         prototype = prototype(
+          new("Versioned",
+              versions = c(ProteinCoverageSummary = "0.1"))))
 
 ################################################################################
 ## validity checks

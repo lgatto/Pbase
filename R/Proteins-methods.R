@@ -42,16 +42,6 @@ setMethod("Proteins",
 #                metadata = x@metadata)
 #          })
 
-setMethod("[[",
-          "Proteins",
-          function(x, i, j, ..., drop = TRUE) {
-            return(x@aa[[i]])
-          })
-
-setMethod("aa",
-          "Proteins",
-          function(x) x@aa)
-
 setMethod("cleave",
           "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0) {
@@ -63,18 +53,6 @@ setMethod("cleave",
 setMethod("pfeatures",
           "Proteins",
           function(x) x@pfeatures)
-
-setMethod("ametadata",
-          "Proteins",
-          function(x) mcols(x@aa))
-
-setMethod("length",
-          "Proteins",
-          function(x) length(x@aa))
-
-setMethod("metadata",
-          "Proteins",
-          function(x) x@metadata)
 
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
@@ -88,21 +66,7 @@ setMethod("show",
           "Proteins",
           function(object) {
 
-  topics <- c("S4 class type",
-              "Class version",
-              "Created",
-              "Number of Proteins")
-
-  topics <- format(topics, justify = "left")
-
-  n <- length(object)
-
-  values <- c(class(object),
-              tail(as(classVersion(object), "character"), 1L),
-              object@metadata$created,
-              n)
-
-  cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
+  callNextMethod(object)
 
   cat("Sequences:", tail(capture.output(object@aa), -1), sep = "\n")
 })

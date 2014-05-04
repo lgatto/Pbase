@@ -9,7 +9,8 @@ importFrom(Biobase, classVersion, isCurrent, validMsg)
 
 importFrom(cleaver, cleave, cleavageRanges)
 
-exportClasses(Proteins)
+exportClasses(Proteins,
+              ProteinCoverageSummary)
 
 exportMethods(
     ## class methods

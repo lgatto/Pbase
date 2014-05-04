@@ -4,21 +4,16 @@
 
   if (any(!isExistingFile)) {
     stop("The file(s) ", paste0(sQuote(filenames[!isExistingFile]),
-                                collapse = ","),
-         " do(es) not exist!")
+                                collapse = ","), " do(es) not exist!")
   }
 
-  seqs <- lapply(filenames, readAAStringSet, ...)
-  aa <- do.call(c, seqs)
+  ## readAAStringSet can handle multiple input files but we want to know which
+  ## entry belongs to which file (and this information is not stored).
+  aa <- lapply(filenames, readAAStringSet, ...)
+  filenames <- Rle(factor(filenames), lengths = sapply(aa, length))
 
-  filenames <- Rle(factor(filenames), lengths = sapply(seqs, length))
-  seqnames <- names(aa)
-
-  fastaMetaData <- .fastaComments2DataFrame(seqnames)
-  fastaMetaData$filename <- filenames
-
-  ametadata <- fastaMetaData
-  aa@elementMetadata <- ametadata
+  aa <- do.call(c, aa)
+  aa <- .addMcolAAStringSet(aa, filenames = filenames)
 
   metadata <- list(created = date())
 
