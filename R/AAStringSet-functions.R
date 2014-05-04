@@ -27,10 +27,17 @@
     })))
   }
 
+  if (verbose) {
+    message("Matching accession numbers.")
+  }
+
   idx <- match(pid, sid)
 
   patternList <- unname(split(pattern,
                               factor(idx, levels = seq_along(subject))))
+  if (verbose) {
+    message("Pre-allocating memory.")
+  }
 
   l <- vector(mode = "list", length = length(subject))
 
@@ -55,3 +62,4 @@
   object[il] <- AAStringSet(tolower(object[il]))
   object
 }
+
