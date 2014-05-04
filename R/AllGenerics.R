@@ -25,6 +25,9 @@ if (is.null(getGeneric("pfeatures")))
 if (is.null(getGeneric("Proteins")))
   setGeneric("Proteins", function(file, uniprotIds, ...)
              standardGeneric("Proteins"))
+if (is.null(getGeneric("proteinCoverage")))
+  setGeneric("proteinCoverage", function(x, y, ...)
+             standardGeneric("proteinCoverage"))
 
 ## methods
 if (is.null(getGeneric("cleave")))

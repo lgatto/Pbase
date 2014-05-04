@@ -20,15 +20,24 @@
   pid <- mcols(pattern)$AccessionNumber
   sid <- mcols(subject)$AccessionNumber
 
+  if (is.null(pid)) {
+    warning("Could not found any AccessionNumber in ", sQuote("pattern"), "!")
+    return(RleList(lapply(elementLengths(subject), function(n) {
+      Rle(logical(1L), lengths = n)
+    })))
+  }
+
   idx <- match(pid, sid)
 
   patternList <- unname(split(pattern,
                               factor(idx, levels = seq_along(subject))))
+
   l <- vector(mode = "list", length = length(subject))
 
   if (verbose) {
     pb <- txtProgressBar(0L, length(subject), style = 3L)
   }
+
   for (i in seq(along = subject)) {
     l[[i]] <- .coverageAAString(patternList[[i]], subject[[i]])
     if (verbose) {

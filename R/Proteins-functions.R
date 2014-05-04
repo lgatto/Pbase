@@ -45,3 +45,25 @@
   plotTracks(tracks, from = from, to = to)
 }
 
+#' @param x AAStringSet should be the Proteins@aa slot (subject)
+#' @param y mzID data.frame (see flatten) or MSnExp@featureData data.frame (see
+#' fData)
+#' @return ProteinCoverageSummary instance
+#' @noRd
+.proteinCoverageMzIdOrMSnExp <- function(x, y, ..., verbose = TRUE) {
+  y <- y[!is.na(y$pepseq), ]
+  aa <- AAStringSet(y$pepseq)
+  fastacomments <- paste(y$accession, y$description)
+  aa <- .addMcolAAStringSet(aa, fastacomments = fastacomments,
+                            filenames = y$databaseFile)
+  .proteinCoverage(x, aa, ..., verbose = verbose)
+}
+
+#' @param x AAStringSet should be the Proteins@aa slot (subject)
+#' @param y AAStringSet or AAStringSetList (pattern)
+#' @return ProteinCoverageSummary instance
+#' @noRd
+.proteinCoverage <- function(x, y, ..., verbose = TRUE) {
+  .ProteinCoverageSummary(pattern = y, subject = x, ..., verbose = verbose)
+}
+
