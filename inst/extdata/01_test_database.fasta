@@ -1,6 +1,6 @@
->sp|P1|protein 1, length 10
+>td|P1|P1_TEST protein 1, length 10 OS=machina arithmetica GN=g1 PE=1 SV=1
 AKAKBKCKDE
->sp|P2|protein 2, length 5
+>td|P2|P2_TEST protein 2, length 5 OS=machina arithmetica GN=g2 PE=1 SV=1
 FKGHD
->sp|P3|protein 3, length 15
+>td|P3|P3_TEST protein 3, length 15 OS=machina arithmetica GN=g3 PE=1 SV=1
 JKKLMKNKDOPQRST
