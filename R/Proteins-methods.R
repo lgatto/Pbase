@@ -10,49 +10,23 @@ setMethod("Proteins",
             .toBeImplemented()
           })
 
-## BUG: commented because Gviz crashes with callNextMethod error
-#setMethod("[", "Proteins",
-#          function(x, i, j, ..., drop)
-#          {
-#            if (!missing(j) || length(list(...)) > 0L) {
-#              stop("invalid subsetting")
-#            }
-#            if (missing(i) || (is.logical(i) && all(i))) {
-#              return(x)
-#            }
-#            if (is.logical(i)) {
-#              i <- which(i)
-#            }
-#            if (!is.numeric(i) || any(is.na(i))) {
-#              stop("invalid subsetting")
-#            }
-#            if (any(i < 1) || any(i > length(x))) {
-#              stop("subscript out of bounds")
-#            }
-#
-#            if (length(pfeatures)) {
-#              pfeatures <- x@pfeatures[i]
-#            } else {
-#              pfeatures <- IRangesList
-#            }
-#
-#            new(class(x),
-#                aa = x@aa[i],
-#                pfeatures = pfeatures,
-#                metadata = x@metadata)
-#          })
-
 setMethod("cleave",
           "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0) {
-            x@pfeatures <- cleavageRanges(x = x@aa, enzym = enzym,
-                                          missedCleavages = missedCleavages)
+            x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
+                                        missedCleavages = missedCleavages)
             return(x)
           })
 
 setMethod("pfeatures",
           "Proteins",
-          function(x) x@pfeatures)
+          function(x) {
+            if (length(x@pranges)) {
+              return(extractAt(x@aa, x@pranges))
+            } else {
+              stop("No peptide features found. Do you want to cleave first?")
+            }
+          })
 
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
@@ -60,7 +34,7 @@ setMethod("plot",
 
 setMethod("pmetadata",
           "Proteins",
-          function(x) mcols(x@pfeatures))
+          function(x) mcols(x@pranges))
 
 setMethod("proteinCoverage",
           signature(x = "Proteins", y = "AAStringSet"),

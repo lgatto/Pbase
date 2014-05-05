@@ -14,7 +14,7 @@ setClass("VirtualProteins",
 setClass("Proteins",
          contains = c("Versioned", "VirtualProteins"),
          slots = list(
-          pfeatures = "CompressedIRangesList"),
+          pranges = "CompressedIRangesList"),
          prototype = prototype(
           new("Versioned",
               versions = c(Proteins = "0.1"))))

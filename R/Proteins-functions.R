@@ -31,12 +31,12 @@
     tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE)
     tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
                                                name = ametadata(object)$ID[i])
-    if (length(object@pfeatures)) {
+    if (length(object@pranges)) {
       ## TODO: adding an ATrack results in an error if "[" is set:
       ## Error in callNextMethod(x, i) :
       ##    bad object found as method (class “function”)
-      tracks[[idx + 3L]] <- ATrack(start = start(object@pfeatures[[i]]),
-                                   end = end(object@pfeatures[[i]]),
+      tracks[[idx + 3L]] <- ATrack(start = start(object@pranges[[i]]),
+                                   end = end(object@pranges[[i]]),
                                    name = "cleavage products")
     }
   }
