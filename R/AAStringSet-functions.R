@@ -39,13 +39,15 @@
     message("Pre-allocating memory.")
   }
 
-  l <- vector(mode = "list", length = length(subject))
+  l <- lapply(elementLengths(subject), Rle, values = logical(1L))
+
+  idx <- unique(idx)
 
   if (verbose) {
-    pb <- txtProgressBar(0L, length(subject), style = 3L)
+    pb <- txtProgressBar(0L, length(idx), style = 3L)
   }
 
-  for (i in seq(along = subject)) {
+  for (i in idx) {
     l[[i]] <- .coverageAAString(patternList[[i]], subject[[i]])
     if (verbose) {
       setTxtProgressBar(pb, i)

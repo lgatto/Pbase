@@ -1,4 +1,5 @@
 library("Pbase")
+library("cleaver")
 library("Biostrings")
 
 p <- Proteins("../inst/extdata/04_test_database.fasta")
