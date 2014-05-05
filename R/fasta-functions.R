@@ -40,6 +40,31 @@
   x
 }
 
+## Details:http://www.uniprot.org/manual/accession_numbers
+## This regexpr already includes the upcoming extension to 10 characters
+## (announced for 07/2014: http://www.uniprot.org/changes/accession_format).
+.isUniProtAccessionNumber <- function(x) {
+  grepl(paste0("^[OPQ][0-9][A-Z0-9]{3}[0-9]|^[A-NR-Z][0-9]",
+               "([A-Z][A-Z0-9]{2}[0-9]){1,2}$"), x)
+}
+
+.isPbaseAccessionNumber <- function(x) {
+  grepl("^Pb[0-9]+$", x)
+}
+
+.isValidAccessionNumber <- function(x) {
+  isUniProtAccessionNumber(x) | isPbaseAccessionNumber(x)
+}
+
+#' these AccessionNumbers replace missing UniProt AccessionNumbers
+#' format: Pb[0-9]+
+#' @param x numbers
+#' @return character, ID
+#' @noRd
+.createPbaseAccessionNumbers <- function(x) {
+  paste0("Pb", x)
+}
+
 .perlRxSubstring <- function(x, rx) {
   mapply(function(xx, rr) {
     start <- attr(rr, "capture.start")
@@ -49,23 +74,33 @@
 }
 
 .fastaComments2DataFrame <- function(x) {
-  x <- .fastaCommentParser(x)
-  DataFrame(DB = Rle(factor(x[, 1L])),
-            AccessionNumber = x[, 2L],
-            EntryName = x[, 3L],
-            IsoformName = Rle(x[, 4L]),
-            ProteinName = x[, 5L],
-            OrganismName = Rle(factor(x[, 6L])),
-            GeneName = x[, 7L],
+  m <- .fastaCommentParser(x)
+  comments <- rep(NA_character_, nrow(m))
+
+  ## any missing AccessionNumber?
+  if (anyNA(m[, 2L])) {
+    isNA <- which(is.na(m[, 2L]))
+    m[isNA, 2L] <- .createPbaseAccessionNumbers(seq_along(isNA))
+    comments[isNA] <- gsub("^>", "", x[isNA])
+  }
+
+  DataFrame(DB = Rle(factor(m[, 1L])),
+            AccessionNumber = m[, 2L],
+            EntryName = m[, 3L],
+            IsoformName = Rle(m[, 4L]),
+            ProteinName = m[, 5L],
+            OrganismName = Rle(factor(m[, 6L])),
+            GeneName = Rle(factor(m[, 7L])),
             ## Levels of evidence:
             ## http://www.uniprot.org/manual/protein_existence
-            ProteinExistence = Rle(factor(x[, 8L],
+            ProteinExistence = Rle(factor(m[, 8L],
                                       labels = c("Evidence at protein level",
                                                  "Evidence at transcript level",
                                                  "Inferred from homology",
                                                  "Predicted",
                                                  "Uncertain"),
                                       levels = 1L:5L)),
-            SequenceVersion = Rle(x[, 9L]))
+            SequenceVersion = Rle(m[, 9L]),
+            Comment = Rle(comments))
 }
 
