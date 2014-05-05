@@ -46,13 +46,39 @@
 }
 
 #' @param x AAStringSet should be the Proteins@aa slot (subject)
-#' @param y mzID data.frame (see flatten) or MSnExp@featureData data.frame (see
+#' @param y MSnExp@featureData data.frame (see
 #' fData)
 #' @return ProteinCoverageSummary instance
 #' @noRd
-.proteinCoverageMzIdOrMSnExp <- function(x, y, ..., verbose = TRUE) {
+.proteinCoverageMSnExp <- function(x, y, ..., verbose = TRUE) {
   y <- y[!is.na(y$pepseq), ]
-  aa <- AAStringSet(y$pepseq)
+
+  ## if we have double matches MSnbase combines the entries accession and
+  ## description using its utils.vec2ssv function, e.g. "accession1;accession2"
+  ## TODO: where is the right place for vec2ssv/ssv2vec ?
+  accession <- MSnbase:::utils.ssv2list(y$accession)
+  description <- MSnbase:::utils.ssv2vec(y$description)
+
+  m <- vapply(accession, length, integer(1L))
+  ## duplicate peptide sequences and databaseFiles
+  m <- rep(1:nrow(y), m)
+  pepseq <- y$pepseq[m]
+  fastafile <- y$databaseFile[m]
+
+  aa <- AAStringSet(pepseq)
+  fastacomments <- paste(accession, description)
+  aa <- .addMcolAAStringSet(aa, fastacomments = fastacomments,
+                            filenames = fastafile)
+  .proteinCoverage(x, aa, ..., verbose = verbose)
+}
+
+#' @param x AAStringSet should be the Proteins@aa slot (subject)
+#' @param y mzID data.frame (see flatten)
+#' fData)
+#' @return ProteinCoverageSummary instance
+#' @noRd
+.proteinCoverageMzId <- function(x, y, ..., verbose = TRUE) {
+  aa <- AAStringSet(pepseq)
   fastacomments <- paste(y$accession, y$description)
   aa <- .addMcolAAStringSet(aa, fastacomments = fastacomments,
                             filenames = y$databaseFile)
