@@ -74,8 +74,8 @@ test_that(".fastaComments2DataFrame", {
                                              "Uncertain"),
                                   levels = 1L:5L)),
     SequenceVersion = Rle(c("1", "2", "2", NA_character_, NA_character_)),
-    Comments = Rle(c(rep(NA_character_, 4),
-                     "FOO|NO_ID_HERE|Not a random string")))
+    Comment = Rle(c(rep(NA_character_, 4),
+                    "FOO|NO_ID_HERE|Not a random string")))
   expect_equal(Pbase:::.fastaComments2DataFrame(fastacmt), result)
 })
 
