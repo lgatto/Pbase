@@ -37,33 +37,9 @@ setMethod("pmetadata",
           function(x) mcols(x@pranges))
 
 setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "AAStringSet"),
-          function(x, y, ..., verbose = TRUE) {
-            .proteinCoverage(x@aa, y, ..., verbose = verbose)
-          })
-
-setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "AAStringSetList"),
-          function(x, y, ..., verbose = TRUE) {
-            .proteinCoverage(x@aa, y, ..., verbose = verbose)
-          })
-
-setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "MSnExp"),
-          function(x, y, ..., verbose = TRUE) {
-            .proteinCoverageMSnExp(x@aa, fData(y), ..., verbose = verbose)
-          })
-
-setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "MSnSet"),
-          function(x, y, ..., verbose = TRUE) {
-            .proteinCoverageMSnExp(x@aa, fData(y), ..., verbose = verbose)
-          })
-
-setMethod("proteinCoverage",
           signature(x = "Proteins", y = "mzID"),
           function(x, y, ..., verbose = TRUE) {
-            .proteinCoverageMzId(x@aa, flatten(y), ..., verbose = verbose)
+            .proteinCoverageMzId(x, flatten(y), ..., verbose = verbose)
           })
 
 setMethod("show",

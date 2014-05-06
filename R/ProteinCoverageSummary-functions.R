@@ -1,13 +1,12 @@
 ## constructors
-## patterns: AAStringSetList to compare against
-## subject: Proteins@aa (AAStringSet)
-.ProteinCoverageSummary <- function(pattern, subject, verbose = TRUE) {
-  coverage <- .coverageAAStringSet(pattern = pattern, subject = subject,
-                                   verbose = verbose)
+#' @param x Proteins object
+#' @param ranges IRanges object containing the ranges of the peptides
+#' @noRd
+.ProteinCoverageSummary <- function(x, ranges, verbose = TRUE) {
 
   metadata <- list(created = date())
 
-  new("ProteinCoverageSummary", aa = subject, coverage = coverage,
+  new("ProteinCoverageSummary", aa = x@aa, coverage = coverage,
       metadata = metadata)
 }
 

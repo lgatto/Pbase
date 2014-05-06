@@ -46,51 +46,16 @@
   plotTracks(tracks, from = from, to = to)
 }
 
-#' @param x AAStringSet should be the Proteins@aa slot (subject)
-#' @param y MSnExp@featureData data.frame (see
-#' fData)
-#' @return ProteinCoverageSummary instance
-#' @noRd
-.proteinCoverageMSnExp <- function(x, y, ..., verbose = TRUE) {
-  y <- y[!is.na(y$pepseq), ]
-
-  ## if we have double matches MSnbase combines the entries accession and
-  ## description using its utils.vec2ssv function, e.g. "accession1;accession2"
-  ## TODO: where is the right place for vec2ssv/ssv2vec ?
-  accession <- MSnbase:::utils.ssv2list(y$accession)
-  description <- MSnbase:::utils.ssv2vec(y$description)
-
-  m <- vapply(accession, length, integer(1L))
-  ## duplicate peptide sequences and databaseFiles
-  m <- rep(1:nrow(y), m)
-  pepseq <- y$pepseq[m]
-  fastafile <- y$databaseFile[m]
-
-  aa <- AAStringSet(pepseq)
-  fastacomments <- paste(accession, description)
-  aa <- .addMcolAAStringSet(aa, fastacomments = fastacomments,
-                            filenames = fastafile)
-  .proteinCoverage(x, aa, ..., verbose = verbose)
-}
-
-#' @param x AAStringSet should be the Proteins@aa slot (subject)
+#' @param x Proteins object
 #' @param y mzID data.frame (see flatten)
 #' fData)
 #' @return ProteinCoverageSummary instance
 #' @noRd
 .proteinCoverageMzId <- function(x, y, ..., verbose = TRUE) {
-  aa <- AAStringSet(pepseq)
+  ir <- IRanges(start = y$start, end = y$end)
   fastacomments <- paste(y$accession, y$description)
-  aa <- .addMcolAAStringSet(aa, fastacomments = fastacomments,
-                            filenames = y$databaseFile)
-  .proteinCoverage(x, aa, ..., verbose = verbose)
-}
-
-#' @param x AAStringSet should be the Proteins@aa slot (subject)
-#' @param y AAStringSet or AAStringSetList (pattern)
-#' @return ProteinCoverageSummary instance
-#' @noRd
-.proteinCoverage <- function(x, y, ..., verbose = TRUE) {
-  .ProteinCoverageSummary(pattern = y, subject = x, ..., verbose = verbose)
+  ir <- .addMcolpp(ir, fastacomments = fastacomments,
+                   filenames = y$databaseFile)
+  .ProteinCoverageSummary(x, ranges = ir, ..., verbose = verbose)
 }
 
