@@ -13,7 +13,8 @@
   filenames <- Rle(factor(filenames), lengths = sapply(aa, length))
 
   aa <- do.call(c, aa)
-  aa <- .addMcolAAStringSet(aa, filenames = filenames)
+  aa <- .addFastaInformation2Mcol(aa, fastacomments = names(aa),
+                                  filenames = filenames)
 
   metadata <- list(created = date())
 
