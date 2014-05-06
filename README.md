@@ -9,6 +9,12 @@ Uses `Pviz` for visualisation.
 
 See `AllClasses.R`
 
+## Accessors
+
+- `pfeatures` returns an `AAStringSetList` of peptides (using `extractAt`)
+- `pranges` returns the `pranges` slot (`CompressedIRangesList`) - was `pfeatures`.
+- `aa` returns the protein sequences as an `AAStringSet`.
+
 ## metadata
 
 - global: slot `metadata`, accessor `metadata`
@@ -25,7 +31,7 @@ See `AllClasses.R`
   - `mcols(.@pfeatures)` with accessor `pcols` `pmetadata`
   - `metadata(.@pfeatures)` - ignore
   - We need access to `mcols(pfeatures(.)[[i]])`
-
+  
 ## Constructor
 
 `Proteins("fastafile")` returns a `Proteins` instance.
@@ -50,13 +56,12 @@ point). The return value would have its own `plot` method using
 ```s
 setGeneric("proteinCoverage", function(x, y, ...), standardGeneric("proteinCoverage"))
 ## uses internal IRanges or, if absent, first cleaves the protein
-setMethod("proteinCoverage", c("Protein", "missing"), function(x, y) { ... } )
-setMethod("proteinCoverage", c("Protein", "MSnSet"), function(x, y, fcol = "pepseq") { ... } )
-setMethod("proteinCoverage", c("Protein", "MSnExp"), function(x, y, fcol = "pepseq") { ... } )
-setMethod("proteinCoverage", c("Protein", "mzID"), function(x, y) { ... } )
+setMethod("proteinCoverage", c("Proteins", "missing"), function(x, y) { ... } )
+## later
+## setMethod("proteinCoverage", c("Proteins", "MSnSet"), function(x, y, fcol = "pepseq") { ... } )
+## setMethod("proteinCoverage", c("Proteins", "MSnExp"), function(x, y, fcol = "pepseq") { ... } )
+##setMethod("proteinCoverage", c("Proteins", "mzID"), function(x, y) { ... } )
 ```
-
-And the same pf `Proteins`.
 
 ### Assessing the redundancy of a protein fasta database
 
