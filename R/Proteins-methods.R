@@ -10,6 +10,17 @@ setMethod("Proteins",
             .toBeImplemented()
           })
 
+setMethod("[", "Proteins",
+          function(x, i, j, ..., drop) {
+            p <- callNextMethod()
+
+            if (length(x@pranges)) {
+              p@pranges <- x@pranges[i]
+            }
+
+            return(p)
+          })
+
 setMethod("cleave",
           "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0) {
