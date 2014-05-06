@@ -42,6 +42,10 @@ setMethod("proteinCoverage",
             .proteinCoverageMzId(x, flatten(y), ..., verbose = verbose)
           })
 
+setMethod("seqnames",
+          signature(x = "Proteins"),
+          function(x) mcols(x@aa)$AccessionNumber)
+
 setMethod("show",
           "Proteins",
           function(object) {

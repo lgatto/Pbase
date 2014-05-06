@@ -29,6 +29,7 @@ exportMethods(
     pcols,
     plot,
     pmetadata,
+    seqnames,
     show,
     ## action methods
     cleave,
