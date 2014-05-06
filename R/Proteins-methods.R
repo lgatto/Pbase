@@ -32,8 +32,6 @@ setMethod("pranges",
             }
           })
 
-
-
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
           function(x, y, ...) .plotProteins(x, ...))

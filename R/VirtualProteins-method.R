@@ -1,34 +1,36 @@
-## BUG: commented because Gviz crashes with callNextMethod error
-#setMethod("[", "Proteins",
-#          function(x, i, j, ..., drop)
-#          {
-#            if (!missing(j) || length(list(...)) > 0L) {
-#              stop("invalid subsetting")
-#            }
-#            if (missing(i) || (is.logical(i) && all(i))) {
-#              return(x)
-#            }
-#            if (is.logical(i)) {
-#              i <- which(i)
-#            }
-#            if (!is.numeric(i) || any(is.na(i))) {
-#              stop("invalid subsetting")
-#            }
-#            if (any(i < 1) || any(i > length(x))) {
-#              stop("subscript out of bounds")
-#            }
-#
-#            if (length(pfeatures)) {
-#              pfeatures <- x@pfeatures[i]
-#            } else {
-#              pfeatures <- IRangesList
-#            }
-#
-#            new(class(x),
-#                aa = x@aa[i],
-#                pfeatures = pfeatures,
-#                metadata = x@metadata)
-#          })
+## TODO:/BUG: commented because Gviz crashes with callNextMethod error
+## see also: https://stat.ethz.ch/pipermail/bioc-devel/2014-May/005701.html
+setMethod("[", "Proteins",
+          function(x, i, j, ..., drop)
+          {
+            if (!missing(j) || length(list(...)) > 0L) {
+              stop("invalid subsetting")
+            }
+            if (missing(i) || (is.logical(i) && all(i))) {
+              return(x)
+            }
+            if (is.logical(i)) {
+              i <- which(i)
+            }
+            if (!is.numeric(i) || any(is.na(i))) {
+              stop("invalid subsetting")
+            }
+            if (any(i < 1) || any(i > length(x))) {
+              stop("subscript out of bounds")
+            }
+
+            if (length(x@pranges)) {
+              print(length(x@pranges))
+              pranges <- x@pranges[i]
+            } else {
+              pranges <- IRangesList()
+            }
+
+            new(class(x),
+                aa = x@aa[i],
+                pranges = pranges,
+                metadata = x@metadata)
+          })
 
 setMethod("[[",
           "VirtualProteins",

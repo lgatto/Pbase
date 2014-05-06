@@ -18,7 +18,7 @@ exportClasses(Proteins,
 exportMethods(
     ## class methods
     Proteins,
-    # "[", # BUG: commented because of the strange Gviz behaviour
+    "[",
     "[[",
     aa,
     acols,
