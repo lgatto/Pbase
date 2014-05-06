@@ -22,7 +22,7 @@ setClass("Proteins",
 setClass("ProteinCoverageSummary",
          contains = c("Versioned", "VirtualProteins"),
          slots = list(
-          coverage = "RleList"),
+          coverage = "CompressedLogicalList"),
          prototype = prototype(
           new("Versioned",
               versions = c(ProteinCoverageSummary = "0.1"))))
