@@ -53,7 +53,7 @@
 }
 
 .isValidAccessionNumber <- function(x) {
-  isUniProtAccessionNumber(x) | isPbaseAccessionNumber(x)
+  .isUniProtAccessionNumber(x) | .isPbaseAccessionNumber(x)
 }
 
 #' these AccessionNumbers replace missing UniProt AccessionNumbers
