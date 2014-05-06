@@ -21,14 +21,15 @@ exportMethods(
     # "[", # BUG: commented because of the strange Gviz behaviour
     "[[",
     aa,
-    pfeatures,
-    metadata,
     acols,
     ametadata,
     length,
+    metadata,
     pcols,
+    pfeatures,
     plot,
     pmetadata,
+    pranges,
     seqnames,
     show,
     ## action methods

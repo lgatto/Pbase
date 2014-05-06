@@ -18,6 +18,8 @@ if (is.null(getGeneric("pcols")))
   setGeneric("pcols", function(x, ...) pmetadata(x, ...))
 if (is.null(getGeneric("pfeatures")))
   setGeneric("pfeatures", function(x, ...) standardGeneric("pfeatures"))
+if (is.null(getGeneric("pranges")))
+  setGeneric("pranges", function(x, ...) standardGeneric("pranges"))
 
 ################################################################################
 ## Proteins

@@ -20,13 +20,19 @@ setMethod("cleave",
 
 setMethod("pfeatures",
           "Proteins",
+          function(x) extractAt(aa(x), pranges(x)))
+
+setMethod("pranges",
+          "Proteins",
           function(x) {
             if (length(x@pranges)) {
-              return(extractAt(x@aa, x@pranges))
+              return(x@pranges)
             } else {
               stop("No peptide features found. Do you want to cleave first?")
             }
           })
+
+
 
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
