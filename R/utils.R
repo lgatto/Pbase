@@ -5,14 +5,18 @@
 
 #' @param x IRangesList
 #' @param shift if TRUE the IRanges will shift (similar to AAStringSet@ranges)
+#' @param shiftBy if shift TRUE and shiftBy it is used to shift the IRanges,
+#' lenght must be equal to 1 or the length of x
 #' @return an IRanges similar to AAStringSet's @ranges slot (an AAStringSet is
 #' just a long "character" vector with ranges)
 #' @noRd
-.flatIRangesList <- function(x, shift = FALSE) {
+.flatIRangesList <- function(x, shift = FALSE, shiftBy) {
   stopifnot(is(x, "IRangesList"))
   if (shift) {
-    w <- c(0L, unlist(lapply(end(x), tail, n = 1L)))
-    x <- shift(x, head(cumsum(w), -1L))
+    if (missing(shiftBy)) {
+      shiftBy <- head(c(0L, unlist(lapply(end(x), tail, n = 1L))), -1L)
+    }
+    x <- shift(x, shiftBy)
   }
   unlist(x)
 }

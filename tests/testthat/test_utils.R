@@ -7,9 +7,12 @@ test_that(".flatIRangesList", {
                      IRanges(start = c(7, 10), end = c(9, 15)))
   result <- IRanges(start = c(1, 5, 7, 10), end = c(3, 10, 9, 15))
   resultShift <- IRanges(start = c(1, 5, 17, 20), end = c(3, 10, 19, 25))
+  resultShiftBy <- IRanges(start = c(2, 6, 27, 30), end = c(4, 11, 29, 35))
 
   expect_equal(Pbase:::.flatIRangesList(irl), result)
   expect_equal(Pbase:::.flatIRangesList(irl, shift = TRUE), resultShift)
+  expect_equal(Pbase:::.flatIRangesList(irl, shift = TRUE, shiftBy = c(1, 20)),
+               resultShiftBy)
 
 })
 
