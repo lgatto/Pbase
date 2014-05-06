@@ -20,17 +20,11 @@
 #' @param x IRanges
 #' @param f defines the grouping (see ?split)
 #' @param unshift if TRUE the IRanges will shift back to start with 1L
-#' @param USE.NAMES should names preserved?
 #' @return a IRangesList
 #' @noRd
-.splitIRanges <- function(x, f = seq_along(x), unshift = FALSE,
-                          USE.NAMES = TRUE) {
+.splitIRanges <- function(x, f = seq_along(x), unshift = FALSE) {
   stopifnot(is(x, "IRanges"))
-  x <- split(x, f)
-
-  if (!USE.NAMES) {
-    names(x) <- NULL
-  }
+  x <- split(unname(x), f)
 
   if (unshift) {
     w <- c(0L, unlist(lapply(end(x), tail, n = 1L)))

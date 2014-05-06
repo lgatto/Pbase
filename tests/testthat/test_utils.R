@@ -22,6 +22,7 @@ test_that(".splitIRanges", {
                         IRanges(start = 5, end = 10),
                         IRanges(start = 17, end = 19),
                         IRanges(start = 20, end = 25))
+  names(result) <- as.character(1:4)
 
   resultSplit <- IRangesList(IRanges(start = c(1, 5), end = c(3, 10)),
                              IRanges(start = c(17, 20), end = c(19, 25)))
@@ -29,11 +30,11 @@ test_that(".splitIRanges", {
 
   resultUnshift <- IRangesList(IRanges(start = c(1, 5), end = c(3, 10)),
                                IRanges(start = c(7, 10), end = c(9, 15)))
+  names(resultUnshift) <- as.character(1:2)
 
-  expect_equal(Pbase:::.splitIRanges(ir, USE.NAMES = FALSE), result)
-  expect_equal(Pbase:::.splitIRanges(ir), setNames(result, as.character(1:4)))
+  expect_equal(Pbase:::.splitIRanges(ir), result)
   expect_equal(Pbase:::.splitIRanges(ir, f = c(1, 1, 2, 2)), resultSplit)
-  expect_equal(Pbase:::.splitIRanges(ir, f = c(1, 1, 2, 2), unshift = TRUE,
-                                     USE.NAMES = FALSE), resultUnshift)
+  expect_equal(Pbase:::.splitIRanges(ir, f = c(1, 1, 2, 2), unshift = TRUE),
+                                     resultUnshift)
 })
 
