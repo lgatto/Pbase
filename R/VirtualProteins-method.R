@@ -72,3 +72,17 @@ setMethod("show",
   cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
 })
 
+
+## replacement
+
+## internal use only; not exported
+setMethod("addacol",
+          "VirtualProteins",
+          function(x, column, content, force = FALSE) {
+            mcols(x@aa) <- .addColumn(x,
+                                      column = column,
+                                      content = content,
+                                      force = force)
+            x
+          })
+

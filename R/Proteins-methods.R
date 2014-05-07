@@ -21,14 +21,7 @@ setMethod("[", "Proteins",
             return(p)
           })
 
-setMethod("cleave",
-          "Proteins",
-          function(x, enzym = "trypsin", missedCleavages = 0) {
-            x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
-                                        missedCleavages = missedCleavages)
-            return(x)
-          })
-
+## accessor
 setMethod("pfeatures",
           "Proteins",
           function(x) extractAt(aa(x), unname(pranges(x))))
@@ -43,19 +36,9 @@ setMethod("pranges",
             }
           })
 
-setMethod("plot",
-          signature(x = "Proteins", y = "missing"),
-          function(x, y, ...) .plotProteins(x, ...))
-
 setMethod("pmetadata",
           "Proteins",
           function(x) mcols(x@pranges))
-
-setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "mzID"),
-          function(x, y, ..., verbose = TRUE) {
-            .proteinCoverageMzId(x, flatten(y), ..., verbose = verbose)
-          })
 
 setMethod("seqnames",
           signature(x = "Proteins"),
@@ -69,4 +52,37 @@ setMethod("show",
 
   cat("Sequences:", tail(capture.output(object@aa), -1), sep = "\n")
 })
+
+## replacement
+
+## internal use only; not exported
+setMethod("addpcol",
+          "VirtualProteins",
+          function(x, column, content, force = FALSE) {
+            mcols(x@pranges) <- .addColumn(x,
+                                           column = column,
+                                           content = content,
+                                           force = force)
+            x
+          })
+
+
+## methods
+setMethod("cleave",
+          "Proteins",
+          function(x, enzym = "trypsin", missedCleavages = 0) {
+            x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
+                                        missedCleavages = missedCleavages)
+            return(x)
+          })
+
+setMethod("plot",
+          signature(x = "Proteins", y = "missing"),
+          function(x, y, ...) .plotProteins(x, ...))
+
+setMethod("proteinCoverage",
+          signature(x = "Proteins", y = "mzID"),
+          function(x, y, ..., verbose = TRUE) {
+            .proteinCoverageMzId(x, flatten(y), ..., verbose = verbose)
+          })
 

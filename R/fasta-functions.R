@@ -104,7 +104,7 @@
             Comment = Rle(comments))
 }
 
-.addFastaInformation2Mcol <- function(x, fastacomments, filenames) {
+.addFastaInformation2mcol <- function(x, fastacomments, filenames) {
 
   if (missing(fastacomments)) {
     fastacomments <- names(x)
@@ -119,7 +119,7 @@
   }
 
   fastaMetaData <- .fastaComments2DataFrame(fastacomments)
-  fastaMetaData$Filename <- filenames
+  fastaMetaData <- .addColumn(fastaMetaData, "Filename", filenames)
 
   mcols(x) <- fastaMetaData
 

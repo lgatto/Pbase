@@ -13,7 +13,7 @@
   filenames <- Rle(factor(filenames), lengths = sapply(aa, length))
 
   aa <- do.call(c, aa)
-  aa <- .addFastaInformation2Mcol(aa, fastacomments = names(aa),
+  aa <- .addFastaInformation2mcol(aa, fastacomments = names(aa),
                                   filenames = filenames)
 
   metadata <- list(created = date())
@@ -25,7 +25,8 @@
 #' @param unshift if TRUE the IRanges will shift back to start with 1L
 #' @return named IRangesList, length == length(x@aa), each element is an IRanges
 #' object starting at 1 and ending at length(x@aa[i]).
-.aaRanges <- function(x, unshift = FALSE) {
+#' @noRd
+.aaRangesProteins <- function(x, unshift = FALSE) {
   r <- unname(as(aa(x)@ranges, "IRanges"))
   irl <- .splitIRanges(r, unshift = unshift)
   names(irl) <- seqnames(x)

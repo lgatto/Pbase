@@ -1,5 +1,22 @@
 context("utils")
 
+test_that(".addColumn", {
+  d <- data.frame(a = 1:3, b = 4:6)
+  result <- data.frame(a = 1:3, b = 4:6, c = 7:9)
+  resultForced <- data.frame(a = 1:3, b = 7:9)
+
+  expect_error(Pbase:::.addColumn(list()))
+  expect_error(Pbase:::.addColumn(d))
+  expect_error(Pbase:::.addColumn(d, character()))
+  expect_error(Pbase:::.addColumn(d, ""))
+  expect_error(Pbase:::.addColumn(d, "b", integer()))
+  expect_error(Pbase:::.addColumn(d, "b", 7:9),
+               "The column .*b.* already exists.")
+
+  expect_equal(Pbase:::.addColumn(d, "c", 7:9), result)
+  expect_equal(Pbase:::.addColumn(d, "b", 7:9, force = TRUE), resultForced)
+})
+
 test_that(".flatIRangesList", {
   expect_error(Pbase:::.flatIRangesList(list()))
 
