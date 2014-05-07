@@ -31,7 +31,7 @@ setMethod("cleave",
 
 setMethod("pfeatures",
           "Proteins",
-          function(x) extractAt(aa(x), pranges(x)))
+          function(x) extractAt(aa(x), unname(pranges(x))))
 
 setMethod("pranges",
           "Proteins",
