@@ -12,8 +12,7 @@ importFrom(cleaver, cleave, cleavageRanges)
 importClassesFrom(MSnbase, MSnExp, MSnSet)
 importClassesFrom(mzID, mzID)
 
-exportClasses(Proteins,
-              ProteinCoverageSummary)
+exportClasses(Proteins)
 
 exportMethods(
     ## class methods
@@ -27,12 +26,12 @@ exportMethods(
     metadata,
     pcols,
     pfeatures,
-    plot,
     pmetadata,
     pranges,
     seqnames,
     show,
     ## action methods
     cleave,
+    plot,
     proteinCoverage
     )
