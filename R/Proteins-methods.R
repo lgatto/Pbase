@@ -87,7 +87,7 @@ setMethod("plot",
 
 setMethod("proteinCoverage",
           signature(x = "Proteins", y = "mzID"),
-          function(x, y, ..., verbose = TRUE) {
-            .proteinCoverageMzId(x, flatten(y), ..., verbose = verbose)
+          function(x, y, ...) {
+            .proteinCoverageProteinsMzId(x, flatten(y), ...)
           })
 

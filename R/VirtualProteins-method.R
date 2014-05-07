@@ -33,6 +33,13 @@ setMethod("aa",
           "VirtualProteins",
           function(x) x@aa)
 
+## internal use only; not exported
+setMethod("aaranges",
+          "VirtualProteins",
+          function(x, unshift = FALSE) {
+            .aarangesVirtualProteins(x, unshift = unshift)
+          })
+
 setMethod("accessionNumber",
           "VirtualProteins",
           function(x) {
@@ -79,7 +86,7 @@ setMethod("show",
 setMethod("addacol",
           "VirtualProteins",
           function(x, column, content, force = FALSE) {
-            mcols(x@aa) <- .addColumn(mcols(x),
+            mcols(x@aa) <- .addColumn(mcols(x@aa),
                                       column = column,
                                       content = content,
                                       force = force)

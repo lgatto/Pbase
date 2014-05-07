@@ -21,18 +21,6 @@
   new("Proteins", aa = aa, metadata = metadata)
 }
 
-#' @param x Proteins object
-#' @param unshift if TRUE the IRanges will shift back to start with 1L
-#' @return named IRangesList, length == length(x@aa), each element is an IRanges
-#' object starting at 1 and ending at length(x@aa[i]).
-#' @noRd
-.aaRangesProteins <- function(x, unshift = FALSE) {
-  r <- unname(as(aa(x)@ranges, "IRanges"))
-  irl <- .splitIRanges(r, unshift = unshift)
-  names(irl) <- seqnames(x)
-  irl
-}
-
 .plotProteins <- function(object, from = 1L,
                           to = max(elementLengths(object@aa)), ...) {
 
@@ -61,13 +49,27 @@
 #' @param x Proteins object
 #' @param y mzID data.frame (see flatten)
 #' fData)
-#' @return ProteinCoverageSummary instance
+#' @return a modified Proteins object
 #' @noRd
-.proteinCoverageMzId <- function(x, y, ..., verbose = TRUE) {
+.proteinCoverageProteinsMzId <- function(x, y, ...) {
+  an <- y$accession
   ir <- IRanges(start = y$start, end = y$end)
-  fastacomments <- paste(y$accession, y$description)
-  ir <- .addMcolpp(ir, fastacomments = fastacomments,
-                   filenames = y$databaseFile)
-  .ProteinCoverageSummary(x, ranges = ir, ..., verbose = verbose)
+  names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
+
+  irl <- split(ir, names(ir))
+
+  .proteinCoverageProteinsRanges(x, ranges = irl, ...)
+}
+
+#' @param x Proteins object
+#' @param ranges IRanges object containing the ranges of the peptides
+#' fData)
+#' @return a modified Proteins object
+#' @noRd
+.proteinCoverageProteinsRanges <- function(x, ranges, ...) {
+  subject <- aaranges(x, unshift = TRUE)
+  coverage <- .proteinCoverage(pattern = ranges, subject = subject)
+
+  addacol(x, "Coverage", coverage)
 }
 

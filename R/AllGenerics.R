@@ -5,6 +5,8 @@
 ## accessors
 if (is.null(getGeneric("aa")))
   setGeneric("aa", function(x, ...) standardGeneric("aa"))
+if (is.null(getGeneric("aaranges")))
+  setGeneric("aaranges", function(x, ...) standardGeneric("aaranges"))
 if (is.null(getGeneric("accessionNumber")))
   setGeneric("accessionNumber", function(x, ...)
              standardGeneric("accessionNumber"))
