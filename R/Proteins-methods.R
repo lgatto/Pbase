@@ -73,6 +73,11 @@ setMethod("cleave",
           function(x, enzym = "trypsin", missedCleavages = 0) {
             x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
                                         missedCleavages = missedCleavages)
+            x@pranges <- IRangesList(lapply(x@pranges, function(r) {
+              mc <- missedCleavages[cumsum(start(r) == 1L)]
+              mcols(r) <- DataFrame(MissedCleavages = mc)
+              r
+            }))
             return(x)
           })
 
