@@ -31,7 +31,7 @@
     idx <- (i - 1L) * nTracks
     tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE)
     tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
-                                               name = ametadata(object)$ID[i])
+                                               name = ametadata(object)$AccessionNumber[i])
     if (length(object@pranges)) {
       ## TODO: adding an ATrack results in an error if "[" is set:
       ## Error in callNextMethod(x, i) :
