@@ -79,7 +79,7 @@ setMethod("show",
 setMethod("addacol",
           "VirtualProteins",
           function(x, column, content, force = FALSE) {
-            mcols(x@aa) <- .addColumn(x,
+            mcols(x@aa) <- .addColumn(mcols(x),
                                       column = column,
                                       content = content,
                                       force = force)

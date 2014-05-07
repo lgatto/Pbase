@@ -38,7 +38,7 @@ setMethod("pranges",
 
 setMethod("pmetadata",
           "Proteins",
-          function(x) mcols(x@pranges))
+          function(x) lapply(x@pranges, mcols))
 
 setMethod("seqnames",
           signature(x = "Proteins"),
