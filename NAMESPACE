@@ -9,7 +9,6 @@ importFrom(Biobase, classVersion, isCurrent, validMsg)
 
 importFrom(cleaver, cleave, cleavageRanges)
 
-importClassesFrom(MSnbase, MSnExp, MSnSet)
 importClassesFrom(mzID, mzID)
 
 exportClasses(Proteins)
