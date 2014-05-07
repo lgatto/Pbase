@@ -6,7 +6,7 @@
 
   metadata <- list(created = date())
 
-  subject <- .aaRanges(x)
+  subject <- .aaRanges(x, unshift = TRUE)
 
   coverage <- .calculateProteinCoverage(pattern = ranges, subject = subject)
 
@@ -40,7 +40,6 @@
   hits <- as.matrix(findOverlaps(pattern, subjectForest, maxgap = 0L,
                                  minoverlap = 1L, type = "within",
                                  select = "all"))
-
   ## turn Hits into a LogicalList
   subwidth <- unlist(width(subject))
 
