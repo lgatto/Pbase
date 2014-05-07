@@ -1,8 +1,7 @@
 ## TODO:/BUG: commented because Gviz crashes with callNextMethod error
 ## see also: https://stat.ethz.ch/pipermail/bioc-devel/2014-May/005701.html
-setMethod("[", "Proteins",
-          function(x, i, j, ..., drop)
-          {
+setMethod("[", "VirtualProteins",
+          function(x, i, j, ..., drop) {
             if (!missing(j) || length(list(...)) > 0L) {
               stop("invalid subsetting")
             }
@@ -19,16 +18,8 @@ setMethod("[", "Proteins",
               stop("subscript out of bounds")
             }
 
-            if (length(x@pranges)) {
-              print(length(x@pranges))
-              pranges <- x@pranges[i]
-            } else {
-              pranges <- IRangesList()
-            }
-
             new(class(x),
                 aa = x@aa[i],
-                pranges = pranges,
                 metadata = x@metadata)
           })
 
