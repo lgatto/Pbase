@@ -1,7 +1,9 @@
 setMethod("Proteins",
           signature(file = "character", uniprotIds = "missing"),
           function(file, uniprotIds, ...) {
-            .ProteinsFromFasta(filenames = file, ...)
+            p <- .ProteinsFromFasta(filenames = file, ...)
+            names(p@aa) <- acols(p)$AccessionNumber
+            p
           })
 
 setMethod("Proteins",
@@ -42,7 +44,7 @@ setMethod("pmetadata",
 
 setMethod("seqnames",
           signature(x = "Proteins"),
-          function(x) mcols(x@aa)$AccessionNumber)
+          function(x) names(aa(x)))
 
 setMethod("show",
           "Proteins",
