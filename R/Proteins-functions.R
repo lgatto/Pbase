@@ -56,7 +56,19 @@
   ir <- IRanges(start = y$start, end = y$end)
   names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
 
+  fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
+  meta <- as(y[, !colnames(y) %in% c("accession", "description")],
+             "DataFrame")
+  mcols(ir) <- cbind(fasta, meta)
+
   irl <- split(ir, names(ir))
+
+  if (length(x@pranges)) {
+    warning("The ", sQuote("pranges"), " slot is not empty! ",
+            "No ranges and metadata added.")
+  } else {
+    x@pranges <- irl
+  }
 
   .proteinCoverageProteinsRanges(x, ranges = irl, ...)
 }

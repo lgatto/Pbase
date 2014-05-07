@@ -22,3 +22,4 @@ boxplot(cv[cv > 0])
 plot(n[cv > 0], cv[cv > 0], col = "#00000040")
 par(mfrow = c(1, 1))
 
+pcols(pc[1:5])
