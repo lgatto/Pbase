@@ -19,14 +19,6 @@ setClass("Proteins",
           new("Versioned",
               versions = c(Proteins = "0.1"))))
 
-setClass("ProteinCoverageSummary",
-         contains = c("Versioned", "VirtualProteins"),
-         slots = list(
-          coverage = "CompressedLogicalList"),
-         prototype = prototype(
-          new("Versioned",
-              versions = c(ProteinCoverageSummary = "0.1"))))
-
 ################################################################################
 ## validity checks
 ################################################################################

@@ -100,9 +100,3 @@
   coverage
 }
 
-.calculateProteinCoverageSummary <- function(object) {
-  m <- setNames(mean(object@coverage), accessionNumber(object))
-  attr(m, "overall") <- mean(m)
-  m
-}
-
