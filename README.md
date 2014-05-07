@@ -9,6 +9,12 @@ Uses `Pviz` for visualisation.
 
 See `AllClasses.R`
 
+Current decision is to avoid `pranges` from multiple origins. It is
+probably easier to manage this situation using different `Proteins`
+instances. We can then think about *comparing* `Proteins` instances
+(that have `identical(p1@aa, p2@aa)` and easily return *common*
+sequences.
+
 ## Accessors
 
 - `pfeatures` returns an `AAStringSetList` of peptides (using `extractAt`)
@@ -28,9 +34,8 @@ See `AllClasses.R`
   - `metadata(.@seq)` - ignore
 
 - `pfeatures` metadata:
-  - `mcols(.@pfeatures)` with accessor `pcols` `pmetadata`
+  - `lapply(.@pfeatures, mcols)` with accessor `pcols` `pmetadata`
   - `metadata(.@pfeatures)` - ignore
-  - We need access to `mcols(pfeatures(.)[[i]])`
   
 ## Constructor
 
