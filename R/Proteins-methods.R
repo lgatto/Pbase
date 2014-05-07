@@ -56,15 +56,15 @@ setMethod("show",
 ## replacement
 
 ## internal use only; not exported
-setMethod("addpcol",
-          "VirtualProteins",
-          function(x, column, content, force = FALSE) {
-            mcols(x@pranges) <- .addColumn(x,
-                                           column = column,
-                                           content = content,
-                                           force = force)
-            x
-          })
+#setMethod("addpcol",
+#          "Proteins",
+#          function(x, column, content, force = FALSE) {
+#            mcols(x@pranges) <- .addColumn(mcols(x@pranges),
+#                                           column = column,
+#                                           content = content,
+#                                           force = force)
+#            x
+#          })
 
 
 ## methods

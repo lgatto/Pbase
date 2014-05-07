@@ -39,8 +39,8 @@ if (is.null(getGeneric("pranges")))
   setGeneric("pranges", function(x, ...) standardGeneric("pranges"))
 
 ## replacement
-if (is.null(getGeneric("addpcol")))
-  setGeneric("addpcol", function(x, ...) addpcol(x, ...))
+#if (is.null(getGeneric("addpcol")))
+#  setGeneric("addpcol", function(x, ...) addpcol(x, ...))
 
 ## methods
 if (is.null(getGeneric("cleave")))
