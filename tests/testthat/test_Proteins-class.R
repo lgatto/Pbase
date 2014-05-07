@@ -8,9 +8,14 @@ test_that("fasta constructor", {
 
   f <- file.path(system.file("extdata", package = "Pbase"),
                  "01_test_database.fasta")
-  aa <- AAStringSet(c("sp|P1|protein 1, length 10"="AKAKBKCKDE",
-                      "sp|P2|protein 2, length 5"="FKGHD",
-                      "sp|P3|protein 3, length 15"="JKKLMKNKDOPQRST"))
+  aa <- AAStringSet(c(
+  "td|P1|P1_TEST protein 1, length 10 OS=machina arithmetica GN=g1 PE=1 SV=1" =
+    "AKAKBKCKDE",
+  "td|P2|P2_TEST protein 2, length 5 OS=machina arithmetica GN=g2 PE=1 SV=1" =
+    "FKGHD",
+  "td|P3|P3_TEST protein 3, length 15 OS=machina arithmetica GN=g3 PE=1 SV=1" =
+    "JKKLMKNKDOPQRST"))
+
   p <- Proteins(f)
   p2 <- p
   p2@aa <- p@aa[1:2]
@@ -18,9 +23,11 @@ test_that("fasta constructor", {
 
   expect_identical(length(p), 3L)
   expect_identical(nrow(ametadata(p)), 3L)
-  expect_identical(as.integer(ametadata(p)[1L, ]), 1L)
-  expect_identical(basename(levels(ametadata(p)[1L, ])),
+  expect_identical(as.integer(ametadata(p)$Filename), rep(1L, 3L))
+  expect_identical(basename(levels(ametadata(p)$Filename)),
                    "01_test_database.fasta")
+
+  expect_identical(seqnames(p), c("P1", "P2", "P3"))
 
   ## could not be compare directly because testthat throws an error:
   ##  "cannot unclass an external pointer"

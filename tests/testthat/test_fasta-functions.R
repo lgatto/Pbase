@@ -83,7 +83,7 @@ test_that(".fastaComments2DataFrame", {
   result <- ir
   mcols(result) <- df
 
-  expect_equal(Pbase:::.addFastaInformation2Mcol(ir, fastacmt, "uniprot.fasta"),
+  expect_equal(Pbase:::.addFastaInformation2mcol(ir, fastacmt, "uniprot.fasta"),
                result)
 })
 
