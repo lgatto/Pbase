@@ -22,6 +22,8 @@ setMethod("[", "Proteins",
                   return(x)
               if (is.logical(i))
                   i <- which(i)
+              if (is.character(i))
+                  i <- match(i, seqnames(x))
               if (!is.numeric(i) || any(is.na(i)))
                   stop("invalid subsetting")
               if (any(i < 1) || any(i > length(x)))
