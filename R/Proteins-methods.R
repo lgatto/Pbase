@@ -126,14 +126,17 @@ setMethod("addacol", "Proteins",
             x
           })
 
-setMethod("addpcol", "Proteins",
-         function(x, column, content, force = FALSE) {
-           mcols(x@pranges) <- .addColumn(mcols(x@pranges),
-                                          column = column,
-                                          content = content,
-                                          force = force)
-           x
-         })
+# TODO: this should modify the mcols(x@pranges[[i]]); for i in 1:n; (each
+# individual IRanges has its own mcols) instead of the mcols in IRangesList.
+# disabled for now
+#setMethod("addpcol", "Proteins",
+#         function(x, column, content, force = FALSE) {
+#           mcols(x@pranges) <- .addColumn(mcols(x@pranges),
+#                                          column = column,
+#                                          content = content,
+#                                          force = force)
+#           x
+#         })
 
 setMethod("aaranges",
           "Proteins",
