@@ -47,7 +47,14 @@ setMethod("metadata", "Proteins",
           function(x) x@metadata)
 
 setMethod("pmetadata", "Proteins",
-          function(x) lapply(x@pranges, mcols))
+          function(x) {
+              if (!is.null(x@pranges@unlistData@elementMetadata)) {
+                  f <- rep.int(seqnames(x), elementLengths(x@pranges))
+                  split(x@pranges@unlistData@elementMetadata, f)
+              } else {
+                  return(NULL)
+              }
+          })
 
 setMethod("ametadata", "Proteins",
           function(x) mcols(x@aa))
