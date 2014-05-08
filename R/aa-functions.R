@@ -1,6 +1,7 @@
 #' calculates the monoisotopic mass for peptide sequences
 #' @param a character vector
 #' @return a named doubled vector
+#' @noRd
 .calculateMolecularWeight <- function(x) {
     water <- sum(get.atomic.mass()[c("H", "H", "O")])
 
@@ -12,12 +13,6 @@
     }))
     ppmass <- ppmass + water
 
-    if (is.null(names(x))) {
-        names(ppmass) <- as.character(x)
-    } else {
-        names(ppmass) <- names(x)
-    }
-
-    ppmass
+    .setNames2(ppmass, x)
 }
 

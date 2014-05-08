@@ -58,3 +58,16 @@
   x
 }
 
+#' setNames2 is similar to setNames but uses the names of the applied second
+#' argument if they are available
+#' @param object object to give names to
+#' @param nm names/object with names
+#' @return named object
+.setNames2 <- function(object, nm) {
+    if (is.null(names(nm))) {
+        names(object) <- as.character(nm)
+    } else {
+        names(object) <- names(nm)
+    }
+    object
+}
