@@ -12,7 +12,7 @@ importFrom(cleaver, cleave, cleavageRanges)
 importClassesFrom(mzID, mzID)
 importFrom(mzID, mzID, flatten)
 
-importFrom(MSnbase, addIdentificationData, get.amino.acids)
+importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
 
 exportClasses(Proteins)
 
