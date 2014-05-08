@@ -6,6 +6,9 @@
 \alias{class:Proteins}
 \alias{Proteins}
 
+\alias{Proteins,character,missing-method}
+\alias{Proteins,missing,character-method}
+
 \alias{[,Proteins,ANY,ANY-method}
 \alias{[[,Proteins,ANY,ANY-method}
 \alias{aa,Proteins-method}
