@@ -30,7 +30,7 @@
 \alias{seqnames,Proteins-method}
 \alias{show,Proteins-method}
 
-\alias{proteinCoverage,Proteins,missing-method}
+\alias{proteinCoverage,Proteins-method}
 \alias{proteinCoverage}
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
