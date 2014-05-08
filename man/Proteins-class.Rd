@@ -37,8 +37,13 @@
 \title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
 
 \description{
-  The \code{Proteins} class encapsulates data and meta-data for proteomics
-  experiments, as described in the \code{slots} section.
+
+  The \code{Proteins} class encapsulates data and meta-data for
+  proteomics experiments. The class stores the protein sequences as well
+  as specific subsets of interest, typically peptides, as ranges. The
+  \code{Proteins} instances as well as the sequence and peptide slots
+  are described by metadata attributes.
+  
 }
 
 \section{Objects from the Class}{
@@ -52,18 +57,20 @@
 
 \section{Slots}{
   \describe{
-    \item{\code{metadata}:}{Object of class \code{"list"} containing
-      global metadata.
+    \item{\code{metadata}:}{ Object of class \code{"list"} containing
+      global metadata, accessed with \code{metadata}.
     }
-    \item{\code{aa}:}{Object of class \code{"AAStringSet"} storing the
-      protein sequences.
+    \item{\code{aa}:}{ Object of class \code{"AAStringSet"} storing the
+      protein sequences, accessed with \code{aa}.
     }
-    \item{\code{pranges}:}{Object of class
+    \item{\code{pranges}:}{ Object of class
       \code{"CompressedIRangesList"} containg protein feature ranges
       such as theoretical (obtain by in silico cleavage) or observed
-      peptides.
+      peptides. Accessed as an \code{\linkS4class{IRangesList}} with
+      \code{pranges} or and \code{\linkS4class{AAStringSetList}} with
+      \code{pfeatres}. 
     }
-    \item{\code{.__classVersion__}:}{Object of class \code{"Versions"}
+    \item{\code{.__classVersion__}:}{ Object of class \code{"Versions"}
       documenting the class verions. Intended for developer use and
       debugging.
     }
