@@ -99,6 +99,11 @@ Requirements for in-silico created peptides: `missedCleavages = 0:2`, `length(pe
 # of pos./neg. charged residues, hydrophobicity (different models),
 polarity (different models), bulkiness, AA singlet counts
 
+### Hydropathy/Hydrophobicity
+
+http://web.expasy.org/tools/protparam/protparam-doc.html
+http://web.expasy.org/compute_pi/pi_tool-doc.html
+[Kyte, Jack, and Russell F. Doolittle. "A simple method for displaying the hydropathic character of a protein." Journal of molecular biology 157.1 (1982): 105-132.](http://dx.doi.org/10.1016/0022-2836(82)90515-0)
 
 ### Selection of optimal heavy peptides for absolute quantitation
 
