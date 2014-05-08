@@ -16,15 +16,17 @@
   aa <- .addFastaInformation2mcol(aa, fastacomments = names(aa),
                                   filenames = filenames)
 
-  pranges <- replicate(length(aa), IRanges())
+  ## we reorder the new Proteins object by the seqnames (AccessionNumber)
+  names(aa) <- mcols(aa)$AccessionNumber
+  aa <- aa[order(names(aa))]
+
+  ## pranges should have the same order and the same names
+  pranges <- IRangesList(replicate(length(aa), IRanges()))
+  names(pranges) <- names(aa)
 
   metadata <- list(created = date())
 
   p <- new("Proteins", aa = aa, pranges = pranges, metadata = metadata)
-
-  ## we reorder the new Proteins object by the seqnames (AccessionNumber)
-  p[order(seqnames(p))] <- p
-  p
 }
 
 #' @param x Proteins object
