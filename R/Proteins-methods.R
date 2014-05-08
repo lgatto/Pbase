@@ -93,10 +93,8 @@ setMethod("plot",
           function(x, y, ...) .plotProteins(x, ...))
 
 setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "missing"),
-          function(x, y, ...) {
-            .proteinCoverageProteins(x, ...)
-          })
+          signature(x = "Proteins"),
+          function(x, y, ...) .proteinCoverageProteins(x, ...))
 
 setMethod("show", "Proteins",
           function(object) {
