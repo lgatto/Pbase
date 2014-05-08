@@ -82,7 +82,23 @@ Some literature about estimating detectability:
 - LogR: [Liu, Hui, et al. "The Prediction of Peptide Detectability in MS Data Analysis Using Logistic Regression." Bioinformatics and Biomedical Engineering,(iCBBE) 2011 5th International Conference on. IEEE, 2011.](http://dx.doi.org/10.1109/icbbe.2011.5780167)
 - SVM: [Webb-Robertson, Bobbie-Jo M., et al. "A support vector machine model for the prediction of proteotypic peptides for accurate mass and time proteomics." Bioinformatics 24.13 (2008): 1503-1509.](http://dx.doi.org/10.1093/bioinformatics/btn218)
 - NN: [Sanders, William S., et al. "Prediction of peptides observable by mass spectrometry applied at the experimental set level." BMC bioinformatics 8.Suppl 7 (2007): S23.](http://dx.doi.org/10.1186/1471-2105-8-S7-S23)
-- [Mallick, Parag, et al. "Computational prediction of proteotypic peptides for quantitative proteomics." Nature biotechnology 25.1 (2007): 125-131.](http://dx.doi.org/10.1038/nbt1275)
+- Gausian Mixed Discrimination [Mallick, Parag, et al. "Computational prediction of proteotypic peptides for quantitative proteomics." Nature biotechnology 25.1 (2007): 125-131.](http://dx.doi.org/10.1038/nbt1275)
+
+##### Liu et al. 2011:
+
+Requirements for in-silico created peptides: `missedCleavages = 0:2`, `length(peptides) >= 6`, `mass(peptides) < 6000` (Da)
+
+Logistic Regression based on Hydrophobicity, Isoelectric point, length,
+molecular weight, average hydrophobicity, average isoelectric point
+
+##### Webb-Robertson et al. 2007:
+
+Requirements for in-silico created peptides: `missedCleavages = 0:2`, `length(peptides) >= 6`, `mass(peptides) < 6000` (Da)
+
+35 features: length, weidght, # of (non-)polar, # of (un)charged,
+# of pos./neg. charged residues, hydrophobicity (different models),
+polarity (different models), bulkiness, AA singlet counts
+
 
 ### Selection of optimal heavy peptides for absolute quantitation
 
