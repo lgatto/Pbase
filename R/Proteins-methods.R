@@ -38,14 +38,7 @@ setMethod("pfeatures", "Proteins",
           function(x) extractAt(aa(x), unname(pranges(x))))
 
 setMethod("pranges", "Proteins",
-          function(x) {
-            if (length(x@pranges)) {
-              return(x@pranges)
-            } else {
-              stop("No peptide features found. Do you want to cleave first?")
-            }
-          })
-
+          function(x) x@pranges)
 
 setMethod("length", "Proteins",
           function(x) length(x@aa))

@@ -42,7 +42,7 @@
 }
 
 .addIdentificationDataProteins <- function(object, filename) {
-  if (length(x@pranges)) {
+  if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
          "No ranges and metadata could be added.")
   }
@@ -71,10 +71,12 @@
 
   for (i in seq(along = object@aa)) {
     idx <- (i - 1L) * nTracks
-    tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE)
+    tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE,
+                                           name = paste0("axis-",
+                                                         seqnames(object[i])))
     tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
-                                               name = ametadata(object)$AccessionNumber[i])
-    if (length(object@pranges)) {
+                                               name = seqnames(object)[i])
+    if (length(object@pranges[[i]])) {
       ## TODO: adding an ATrack results in an error if "[" is set:
       ## Error in callNextMethod(x, i) :
       ##    bad object found as method (class “function”)
@@ -83,7 +85,9 @@
                                    name = "cleavage products")
     }
   }
-  tracks <- tracks[sapply(tracks, length) > 0L]
+  ## ProteinAxisTrack returns length == 0L; that's why we are using the
+  ## `is(track[[i]], "NULL")` function here, to exclude empty elements
+  tracks <- tracks[!sapply(tracks, is.null)]
 
   plotTracks(tracks, from = from, to = to)
 }
