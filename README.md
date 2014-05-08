@@ -36,7 +36,7 @@ sequences.
 - `pfeatures` metadata:
   - `lapply(.@pfeatures, mcols)` with accessor `pcols` `pmetadata`
   - `metadata(.@pfeatures)` - ignore
-  
+
 ## Constructor
 
 `Proteins("fastafile")` returns a `Proteins` instance.
@@ -74,6 +74,15 @@ Given a protein fasta file, what is the maximal sensitivity that can
 be expected from a mass spectrometry experiment with 0, 1,
 ... miscleavages. This should probably also include a filtering step
 for peptide *flyability*.
+
+#### Flyability/Detectability
+
+Some literature about estimating detectability:
+
+- LogR: [Liu, Hui, et al. "The Prediction of Peptide Detectability in MS Data Analysis Using Logistic Regression." Bioinformatics and Biomedical Engineering,(iCBBE) 2011 5th International Conference on. IEEE, 2011.](http://dx.doi.org/10.1109/icbbe.2011.5780167)
+- SVM: [Webb-Robertson, Bobbie-Jo M., et al. "A support vector machine model for the prediction of proteotypic peptides for accurate mass and time proteomics." Bioinformatics 24.13 (2008): 1503-1509.](http://dx.doi.org/10.1093/bioinformatics/btn218)
+- NN: [Sanders, William S., et al. "Prediction of peptides observable by mass spectrometry applied at the experimental set level." BMC bioinformatics 8.Suppl 7 (2007): S23.](http://dx.doi.org/10.1186/1471-2105-8-S7-S23)
+- [Mallick, Parag, et al. "Computational prediction of proteotypic peptides for quantitative proteomics." Nature biotechnology 25.1 (2007): 125-131.](http://dx.doi.org/10.1038/nbt1275)
 
 ### Selection of optimal heavy peptides for absolute quantitation
 
