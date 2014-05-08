@@ -26,9 +26,10 @@ setMethod("[", "Proteins",
                   stop("invalid subsetting")
               if (any(i < 1) || any(i > length(x)))
                   stop("subscript out of bounds")
-              p@aa <- p@aa[i]
-              if (length(x@pranges))
-                  x@pranges <- x@pranges[i]
+
+              x@aa <- x@aa[i]
+              x@pranges <- x@pranges[i]
+
               return(x)
           })
 
