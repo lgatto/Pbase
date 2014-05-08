@@ -30,9 +30,10 @@
 \alias{seqnames,Proteins-method}
 \alias{show,Proteins-method}
 
-\alias{proteinCoverage,Proteins,mzID-method}
+\alias{proteinCoverage,Proteins,missing-method}
 \alias{proteinCoverage}
 \alias{cleave,Proteins-method}
+\alias{addIdentificationData,Proteins-method}
 
 \title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
 
@@ -120,10 +121,11 @@
       Returns an \code{\linkS4class{AAString}} instance representing the
       sequence of the selected protein.}
 
-    \item{proteinCoverage}{\code{signature(x = "Proteins", y = "mzID")}:
-      ... }    
+    \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
     
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
+
+    \item{addIdentificationData}{\code{signature(object = "Proteins")}: ... }
     
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the

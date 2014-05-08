@@ -12,6 +12,8 @@ importFrom(cleaver, cleave, cleavageRanges)
 importClassesFrom(mzID, mzID)
 importFrom(mzID, mzID, flatten)
 
+importFrom(MSnbase, addIdentificationData, get.amino.acids)
+
 exportClasses(Proteins)
 
 exportMethods(
@@ -33,5 +35,6 @@ exportMethods(
     ## action methods
     cleave,
     plot,
+    addIdentificationData,
     proteinCoverage
     )

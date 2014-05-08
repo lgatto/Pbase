@@ -7,7 +7,7 @@ if (is.null(getGeneric("Proteins")))
   setGeneric("Proteins", function(file, uniprotIds, ...)
              standardGeneric("Proteins"))
 if (is.null(getGeneric("proteinCoverage")))
-  setGeneric("proteinCoverage", function(x, y, ...)
+  setGeneric("proteinCoverage", function(x, ...)
              standardGeneric("proteinCoverage"))
 
 ## accessors
@@ -29,9 +29,6 @@ if (is.null(getGeneric("pranges")))
   setGeneric("pranges", function(x, ...) standardGeneric("pranges"))
 
 ## replacement
-if (is.null(getGeneric("addIdentificationData")))
-  setGeneric("addIdentificationData", function(object, ...)
-             addIdentificationData(object, ...))
 if (is.null(getGeneric("addacol")))
   setGeneric("addacol", function(x, ...) addacol(x, ...))
 #if (is.null(getGeneric("addpcol")))
