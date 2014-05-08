@@ -54,6 +54,14 @@ setMethod("show",
 })
 
 ## replacement
+setReplaceMethod("[", signature(x = "Proteins", value = "Proteins"),
+                 function(x, i, j, ..., value) {
+                   print(x)
+                   print(i)
+                  x <- callNextMethod(x = x, i = i, j = j,  ..., value = value)
+                  x@pranges[i] <- value@pranges
+                  x
+                 })
 
 ## internal use only; not exported
 #setMethod("addpcol",
@@ -65,6 +73,12 @@ setMethod("show",
 #                                           force = force)
 #            x
 #          })
+
+setMethod("addIdentificationData",
+          "Proteins",
+          function(object, filename) {
+            .addIdentificationDataProteins(object, filename)
+          })
 
 
 ## methods
@@ -86,8 +100,8 @@ setMethod("plot",
           function(x, y, ...) .plotProteins(x, ...))
 
 setMethod("proteinCoverage",
-          signature(x = "Proteins", y = "mzID"),
+          signature(x = "Proteins", y = "missing"),
           function(x, y, ...) {
-            .proteinCoverageProteinsMzId(x, flatten(y), ...)
+            .proteinCoverageProteins(x, ...)
           })
 

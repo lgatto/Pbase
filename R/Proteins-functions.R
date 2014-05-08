@@ -16,9 +16,37 @@
   aa <- .addFastaInformation2mcol(aa, fastacomments = names(aa),
                                   filenames = filenames)
 
+  pranges <- replicate(length(aa), IRanges())
+
   metadata <- list(created = date())
 
-  new("Proteins", aa = aa, metadata = metadata)
+  p <- new("Proteins", aa = aa, pranges = pranges, metadata = metadata)
+
+  ## we reorder the new Proteins object by the seqnames (AccessionNumber)
+  p[order(seqnames(p))] <- p
+  p
+}
+
+.addIdentificationDataProteins <- function(object, filename) {
+  if (length(x@pranges)) {
+    stop("The ", sQuote("pranges"), " slot is not empty! ",
+         "No ranges and metadata could be added.")
+  }
+
+  y <- flatten(mzID(filename))
+
+  an <- y$accession
+  ir <- IRanges(start = y$start, end = y$end)
+  names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
+
+  fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
+  meta <- as(y[, !colnames(y) %in% c("accession", "description")],
+             "DataFrame")
+  mcols(ir) <- cbind(fasta, meta)
+
+  x@pranges <- split(ir, names(ir))
+
+  x
 }
 
 .plotProteins <- function(object, from = 1L,
@@ -47,30 +75,10 @@
 }
 
 #' @param x Proteins object
-#' @param y mzID data.frame (see flatten)
-#' fData)
 #' @return a modified Proteins object
 #' @noRd
-.proteinCoverageProteinsMzId <- function(x, y, ...) {
-  an <- y$accession
-  ir <- IRanges(start = y$start, end = y$end)
-  names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
-
-  fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
-  meta <- as(y[, !colnames(y) %in% c("accession", "description")],
-             "DataFrame")
-  mcols(ir) <- cbind(fasta, meta)
-
-  irl <- split(ir, names(ir))
-
-  if (length(x@pranges)) {
-    warning("The ", sQuote("pranges"), " slot is not empty! ",
-            "No ranges and metadata added.")
-  } else {
-    x@pranges <- irl
-  }
-
-  .proteinCoverageProteinsRanges(x, ranges = irl, ...)
+.proteinCoverageProteins <- function(x, ...) {
+  .proteinCoverageProteinsRanges(x, ranges = pranges(x), ...)
 }
 
 #' @param x Proteins object

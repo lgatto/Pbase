@@ -81,6 +81,29 @@ setMethod("show",
 
 
 ## replacement
+setReplaceMethod("[", signature(x = "VirtualProteins",
+                                value = "VirtualProteins"),
+                 function(x, i, j, ..., value) {
+                    if (!missing(j) || length(list(...)) > 0L) {
+                      stop("invalid subsetting")
+                    }
+                    if (missing(i) || (is.logical(i) && all(i))) {
+                      return(value)
+                    }
+                    if (is.logical(i)) {
+                      i <- which(i)
+                    }
+                    if (!is.numeric(i) || any(is.na(i))) {
+                      stop("invalid subsetting")
+                    }
+                    if (any(i < 1) || any(i > length(x))) {
+                      stop("subscript out of bounds")
+                    }
+
+                    x@aa[i] <- value@aa
+                    x
+                 })
+
 
 ## internal use only; not exported
 setMethod("addacol",
