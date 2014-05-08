@@ -95,9 +95,7 @@ molecular weight, average hydrophobicity, average isoelectric point
 
 Requirements for in-silico created peptides: `missedCleavages = 0:2`, `length(peptides) >= 6`, `mass(peptides) < 6000` (Da)
 
-35 features: length, weidght, # of (non-)polar, # of (un)charged,
-# of pos./neg. charged residues, hydrophobicity (different models),
-polarity (different models), bulkiness, AA singlet counts
+35 features: length, weidght, # of (non-)polar, # of (un)charged, # of pos./neg. charged residues, hydrophobicity (different models), polarity (different models), bulkiness, AA singlet counts
 
 ### Hydropathy/Hydrophobicity
 
