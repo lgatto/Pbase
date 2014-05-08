@@ -2,19 +2,12 @@
 ## class definitions
 ################################################################################
 
-setClass("VirtualProteins",
-         contains = c("Versioned", "VIRTUAL"),
-         slots = list(
-          metadata = "list",
-          aa = "AAStringSet"),
-         prototype = prototype(
-          new("Versioned",
-              versions = c(VirtualProteins = "0.1"))))
-
 setClass("Proteins",
-         contains = c("Versioned", "VirtualProteins"),
+         contains = c("Versioned"),
          slots = list(
-          pranges = "CompressedIRangesList"),
+             metadata = "list",
+             aa = "AAStringSet",
+             pranges = "CompressedIRangesList"),
          prototype = prototype(
           new("Versioned",
               versions = c(Proteins = "0.1"))))

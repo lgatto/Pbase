@@ -1,14 +1,17 @@
 library("Pbase")
 
-fas <- "swissprot_human_canonical_19_09_12.fasta"
+fas <- list.files(system.file("extdata", package = "Pbase"),
+                  full.names = TRUE,
+                  pattern = "fasta$")
 
 #p <- Proteins(fas)[1:10]
-p <- Proteins(fas)
+(p <- Proteins(fas[2]))
 pfeatures(p)
 ametadata(p)
+pmetadata(p)
 
 #pp <- cleave(p[1:10])
-pp <- cleave(p, missedCleavages = 0)
+(pp <- cleave(p, missedCleavages = 0))
 pfeatures(pp)
 
 ## emulate subsetting

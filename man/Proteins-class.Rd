@@ -1,7 +1,6 @@
 \name{Proteins-class}
 \Rdversion{1.1}
 \docType{class}
-\concept{Proteins}
 
 \alias{Proteins-class}
 \alias{class:Proteins}
@@ -9,41 +8,72 @@
 
 \alias{Proteins,character,missing-method}
 \alias{Proteins,missing,character-method}
+
 \alias{[,Proteins,ANY,ANY-method}
 \alias{[[,Proteins,ANY,ANY-method}
-\alias{aa}
 \alias{aa,Proteins-method}
-\alias{acols}
-\alias{acols,Proteins-method}
-\alias{ametadata}
+\alias{aa}
 \alias{ametadata,Proteins-method}
-\alias{length,Proteins-method}
+\alias{ametadata}
+\alias{acols}
 \alias{metadata,Proteins-method}
-\alias{pcols}
-\alias{pcols,Proteins-method}
-\alias{plot,Proteins,ANY-method}
-\alias{pmetadata}
+\alias{pfeatures,Proteins-method}
+\alias{pfeatures}
+\alias{plot,Proteins,missing-method}
 \alias{pmetadata,Proteins-method}
+\alias{pmetadata}
+\alias{pcols}
+\alias{pranges,Proteins-method}
+\alias{pranges}
+
+\alias{length,Proteins-method}
+\alias{seqnames,Proteins-method}
 \alias{show,Proteins-method}
 
-\title{The 'Proteins' Class for Proteomics Data And Meta-Data}
+\alias{proteinCoverage,Proteins,mzID-method}
+\alias{proteinCoverage}
+\alias{cleave,Proteins-method}
+
+\title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
 
 \description{
-  The \code{Proteins} class encapsulates data and meta-data for proteomics
-  experiments, as described in the \code{slots} section.
+
+  The \code{Proteins} class encapsulates data and meta-data for
+  proteomics experiments. The class stores the protein sequences as well
+  as specific subsets of interest, typically peptides, as ranges. The
+  \code{Proteins} instances as well as the sequence and peptide slots
+  are described by metadata attributes.
+  
 }
 
 \section{Objects from the Class}{
-  Objects can be created using its constructor \code{Proteins}.
+
+  Objects can be created using its constructor \code{Proteins}. The
+  constructor either takes a \code{fasta} file name as first argument
+  or, alternatively a named \code{uniprotIda} argument with valid
+  UniProt accession numbers.
+  
 }
 
 \section{Slots}{
   \describe{
-    \item{\code{metadata}:}{\code{list}, containing global metadata.}
-
-    \item{\code{aa}:}{\code{\linkS4class{AAStringSet}}, containing the sequence
-        information of each protein.}
-    \item{\code{pfeatures}:}{\code{\linkS4class{IRangesList}}.}
+    \item{\code{metadata}:}{ Object of class \code{"list"} containing
+      global metadata, accessed with \code{metadata}.
+    }
+    \item{\code{aa}:}{ Object of class \code{"AAStringSet"} storing the
+      protein sequences, accessed with \code{aa}.
+    }
+    \item{\code{pranges}:}{ Object of class
+      \code{"CompressedIRangesList"} containg protein feature ranges
+      such as theoretical (obtain by in silico cleavage) or observed
+      peptides. Accessed as an \code{\linkS4class{IRangesList}} with
+      \code{pranges} or and \code{\linkS4class{AAStringSetList}} with
+      \code{pfeatres}. 
+    }
+    \item{\code{.__classVersion__}:}{ Object of class \code{"Versions"}
+      documenting the class verions. Intended for developer use and
+      debugging.
+    }
   }
 }
 
@@ -53,52 +83,58 @@
 
 \section{Methods}{
   \describe{
-    \item{Proteins}{\code{signature(file = "character",
-        uniprotIds = "missing")}:
-      Creates an \code{\linkS4class{Proteins}} instance from one or multiple
-      fasta files.}
 
-    \item{Proteins}{\code{signature(file = "missing",
-        uniprotIds = "character")}:
-      \bold{NOT IMPLEMENTED YET}
-    }
 
-    \item{[}{\code{signature(x = "Proteins", ...)}:
-      Creates a subset of \code{\linkS4class{Proteins}}.}
+    \item{aa}{\code{signature(x = "Proteins")}: Returns an
+      \code{\linkS4class{AAStringSet}} instance representing the
+      sequences of the proteins.}
+    
+    \item{pfeatures}{\code{signature(x = "Proteins")}: ... }    
+    \item{pranges}{\code{signature(x = "Proteins")}: ... }
 
-    \item{[[}{\code{signature(x = "Proteins", ...)}:
+    \item{metadata}{\code{signature(x = "Proteins")}: Returns a
+      \code{list} of global metadata of the instance \code{x}, including
+      data of instance creation or, if created from a set of UnitProt
+      identifiers (see constructors above), the UniProt version and
+      \code{UnitProt.WS} version number. }
+    
+    \item{ametadata}{\code{signature(x = "Proteins")}: Returns a
+      \code{\linkS4class{DataFrame}} of protein metadata. }    
+    \item{acols}{\code{signature(x = "Proteins")}: See
+      \code{ametadata}. }    
+    \item{pmetadata}{\code{signature(x = "Proteins")}: Returns a
+      \code{list} of feature metadata. }    
+    \item{pcols}{\code{signature(x = "Proteins")}: See
+      \code{pmetadata}. } 
+    
+    \item{seqnames}{\code{signature(x = "Proteins")}: Returns the
+      protein sequence names defined as UniProt accession numbers. }
+
+    \item{length}{\code{signature(x = "Proteins")}: Returns the number
+      of proteins. }
+    
+    \item{[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
+      Creates a subset of the \code{Proteins} insance.}
+      
+    \item{[[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
       Returns an \code{\linkS4class{AAString}} instance representing the
       sequence of the selected protein.}
 
-    \item{aa}{\code{signature(x = "Proteins")}:
-      Returns an \code{\linkS4class{AAStringSet}} instance representing the
-      sequences of the proteins.}
+    \item{proteinCoverage}{\code{signature(x = "Proteins", y = "mzID")}:
+      ... }    
+    
+    \item{cleave}{\code{signature(x = "Proteins")}: ... }
+    
+    \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
+      all proteins and associated peptides using the
+      \code{Gviz}/\code{Pviz} infrastructure. }
 
-    \item{acols}{\code{signature(x = "Proteins")}:
-      See \code{\link{ametadata}}.}
-
-    \item{ametadata}{\code{signature(x = "Proteins")}:
-      Returns a \code{\linkS4class{DataFrame}} of protein metadata.}
-
-    \item{metadata}{\code{signature(x = "Proteins")}:
-      Returns a \code{list} of global metadata.}
-
-    \item{length}{\code{signature(x = "Proteins")}:
-      Returns the number of proteins.}
-
-    \item{pcols}{\code{signature(x = "Proteins")}:
-      See \code{\link{ametadata}}.}
-
-    \item{plot}{\code{signature(x = "Proteins", \dots)}:
-      Plots all protein sequences.}
-
-    \item{pmetadata}{\code{signature(x = "Proteins")}:
-      Returns a \code{\linkS4class{DataFrame}} of peptide metadata.}
-
-    \item{show}{\code{signature(object = "Proteins")}:
-      Displays object content as text. }
+    \item{show}{\code{signature(object = "Proteins")}: Displays object
+      summary as text. }
+      
   }
 }
+
 
 \author{
   Laurent Gatto <lg390@cam.ac.uk> and Sebastian Gibb <mail@sebastiangibb.de>
@@ -112,5 +148,6 @@ p
 
 plot(p[1:5], from = 1, to = 30)
 }
+
 
 \keyword{classes}
