@@ -1,4 +1,5 @@
 import(methods)
+import(Rcpp)
 import(BiocGenerics)
 import(Biostrings)
 import(IRanges)
