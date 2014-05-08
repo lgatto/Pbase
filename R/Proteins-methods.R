@@ -135,8 +135,9 @@ setMethod("addpcol", "Proteins",
            x
          })
 
-## setMethod("aaranges",
-##           "Proteins",
-##           function(x, unshift = FALSE) {
-##             .aarangesProteins(x, unshift = unshift)
-##           })
+setMethod("aaranges",
+          "Proteins",
+          function(x, unshift = FALSE) {
+            .aarangesProteins(x, unshift = unshift)
+          })
+

@@ -27,6 +27,18 @@
   p
 }
 
+#' @param x Proteins object
+#' @param unshift if TRUE the IRanges will shift back to start with 1L
+#' @return named IRangesList, length == length(x@aa), each element is an IRanges
+#' object starting at 1 and ending at length(x@aa[i]).
+#' @noRd
+.aarangesProteins <- function(x, unshift = FALSE) {
+  r <- unname(as(aa(x)@ranges, "IRanges"))
+  irl <- .splitIRanges(r, unshift = unshift)
+  names(irl) <- seqnames(x)
+  irl
+}
+
 .addIdentificationDataProteins <- function(object, filename) {
   if (length(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
