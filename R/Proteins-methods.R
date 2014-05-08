@@ -15,7 +15,7 @@ setMethod("Proteins",
 ## TODO:/BUG: commented because Gviz crashes with callNextMethod error
 ## see also: https://stat.ethz.ch/pipermail/bioc-devel/2014-May/005701.html
 setMethod("[", "Proteins",
-          function(x, i, j, ..., drop) {
+          function(x, i, j = "missing", ..., drop) {
               if (!missing(j) || length(list(...)) > 0L)
                   stop("invalid subsetting")
               if (missing(i) || (is.logical(i) && all(i))) 
@@ -63,7 +63,7 @@ setMethod("seqnames","Proteins",
 
 
 setMethod("[[", "Proteins",
-          function(x, i, j, ..., drop = TRUE) return(x@aa[[i]]))
+          function(x, i, j = missing, ..., drop = TRUE) return(x@aa[[i]]))
 
 setMethod("aa", "Proteins", function(x) x@aa)
 
