@@ -10,7 +10,7 @@ importFrom(Biobase, classVersion, isCurrent, validMsg)
 importFrom(cleaver, cleave, cleavageRanges)
 
 importClassesFrom(mzID, mzID)
-importFrom(mzID, flatten)
+importFrom(mzID, mzID, flatten)
 
 exportClasses(Proteins)
 
