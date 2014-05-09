@@ -71,3 +71,12 @@
     }
     object
 }
+
+#' in contrast to base::unique this function removes all duplicated values and
+#' keeps only singular ones. base::unique keeps one copy of each duplicate.
+#' @param x vector
+#' @return reduced x
+.singular <- function(x) {
+    x[! (duplicated(x) | duplicated(x, fromLast = TRUE))]
+}
+

@@ -66,3 +66,12 @@ test_that(".setNames2", {
     expect_equal(Pbase:::.setNames2(x, nm2), setNames(x, names(nm2)))
 })
 
+test_that(".singular", {
+    x1 <- c(1, 2, 2, 3, 1, 5, 4, 3, 2, 1)
+    x2 <- rep(1, 10)
+    x3 <- 1:5
+    expect_equal(Pbase:::.singular(x1), c(5, 4))
+    expect_equal(Pbase:::.singular(x2), double())
+    expect_equal(Pbase:::.singular(x3), 1:5)
+})
+
