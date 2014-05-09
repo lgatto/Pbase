@@ -97,6 +97,42 @@ Requirements for in-silico created peptides: `missedCleavages = 0:2`, `length(pe
 
 35 features: length, weidght, # of (non-)polar, # of (un)charged, # of pos./neg. charged residues, hydrophobicity (different models), polarity (different models), bulkiness, AA singlet counts
 
+##### Sanders et al. 2007
+
+Requirements for in-silico created peptides: `length(peptides) >= 6`
+
+Features: Length, Charge, Isoelectric Point, Molecular Weight, Hydropathicity, Counts of each AA (20 Features), Percent composition of each AA (20 Features), Percent of polar, psoitive, negative, hydrophobic AA
+
+take-home-message: a model of one species/dataset could not be transfered to another dataset (without dramatically decreasing the performance)
+
+##### Mallick et al. 2007
+
+~1000 Features.
+
+Some of the most discriminating properties:
+Total/Average net/positive charge, hydrophobic moment, isoelectric point, Histidine composition
+
+take-home-message: The model of one species is comparable to another if the evolutionary
+distance is small (e.g. yeast and human) but you can't compare different devices/datasets (e.g. MALDI vs ESI)
+
+###### Simple Rules
+
+Mass: `500:4500`
+
+http://www.nature.com/nbt/journal/v25/n1/extref/nbt1275-S5.pdf
+http://ieeexplore.ieee.org/ielx5/5779756/5779971/5780167/html/img/5780167-fig-1-large.gif
+
+Length: `5:40`
+
+http://www.nature.com/nbt/journal/v25/n1/extref/nbt1275-S6.pdf
+http://ieeexplore.ieee.org/ielx5/5779756/5779971/5780167/html/img/5780167-fig-1-large.gif
+
+95% of all peptides are of length `5:30`:
+http://www.nature.com/nbt/journal/v25/n1/extref/nbt1275-S24.pdf
+
+Average Isoelectric point: `seq(0, 1.4)`
+http://ieeexplore.ieee.org/ielx5/5779756/5779971/5780167/html/img/5780167-fig-1-large.gif
+
 ### Hydropathy/Hydrophobicity
 
 http://web.expasy.org/tools/protparam/protparam-doc.html
