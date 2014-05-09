@@ -105,9 +105,22 @@
 #' @return a modified Proteins object
 #' @noRd
 .proteinCoverageProteinsRanges <- function(x, ranges, ...) {
-  subject <- aaranges(x, unshift = TRUE)
-  coverage <- .proteinCoverage(pattern = ranges, subject = subject)
+    subject <- aaranges(x, unshift = TRUE)
+    coverage <- .proteinCoverage(pattern = ranges, subject = subject)
 
-  addacol(x, "Coverage", coverage)
+    addacol(x, "Coverage", coverage)
+}
+
+#' @param x Proteins object
+#' @return a modified Proteins object
+#' @noRd
+.proteotypic <- function(x) {
+    if (isEmpty(x@pranges)) {
+        stop("The ", sQuote("pranges"), " slot is empty!")
+    }
+
+    pp <- as.character(unlist(pfeatures(x)))
+    proteotypic <- Rle(pp %in% .singular(pp))
+    addpcol(x, "Proteotypic", proteotypic)
 }
 

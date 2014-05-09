@@ -82,7 +82,7 @@ setMethod("cleave", "Proteins",
                                         missedCleavages = missedCleavages)
             x@pranges <- IRangesList(lapply(x@pranges, function(r) {
               mc <- missedCleavages[cumsum(start(r) == 1L)]
-              mcols(r) <- DataFrame(MissedCleavages = mc)
+              mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
               r
             }))
             return(x)
@@ -120,24 +120,22 @@ setMethod("show", "Proteins",
 ## internal use only; not exported
 setMethod("addacol", "Proteins",
           function(x, column, content, force = FALSE) {
-            mcols(x@aa) <- .addColumn(mcols(x@aa),
-                                      column = column,
-                                      content = content,
-                                      force = force)
-            x
+              mcols(x@aa) <- .addColumn(mcols(x@aa),
+                                        column = column,
+                                        content = content,
+                                        force = force)
+              x
           })
 
-# TODO: this should modify the mcols(x@pranges[[i]]); for i in 1:n; (each
-# individual IRanges has its own mcols) instead of the mcols in IRangesList.
-# disabled for now
-#setMethod("addpcol", "Proteins",
-#         function(x, column, content, force = FALSE) {
-#           mcols(x@pranges) <- .addColumn(mcols(x@pranges),
-#                                          column = column,
-#                                          content = content,
-#                                          force = force)
-#           x
-#         })
+setMethod("addpcol", "Proteins",
+         function(x, column, content, force = FALSE) {
+             x@pranges@unlistData@elementMetadata <-
+                 .addColumn(x@pranges@unlistData@elementMetadata,
+                            column = column,
+                            content = content,
+                            force = force)
+             x
+         })
 
 setMethod("aaranges",
           "Proteins",
