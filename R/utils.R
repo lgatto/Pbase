@@ -26,12 +26,15 @@
 
 #' test whether a given vector is in the range from:to
 #' @param x numeric
-#' @param from numeric, length 1
-#' @param to numeric, lengh 1
+#' @param range numeric, lengh == 2
 #' @return logical of length(x)
 #' @noRd
-.isInRange <- function(x, from, to) {
-    from <= x & x <= to
+.isInRange <- function(x, range) {
+    stopifnot(is.numeric(range) && length(range) == 2L)
+    if (range[1L] > range[2L]) {
+        range[2L:1L] <- range[1L:2L]
+    }
+    range[1L] <= x & x <= range[2L]
 }
 
 #' @param x IRangesList

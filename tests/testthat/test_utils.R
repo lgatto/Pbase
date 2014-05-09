@@ -20,9 +20,11 @@ test_that(".addColumn", {
 test_that(".isInRange", {
     x <- 1:10
     result <- rep(c(FALSE, TRUE, FALSE), c(2, 4, 4))
-    expect_equal(Pbase:::.isInRange(x, 3, 6), result)
-    expect_equal(Pbase:::.isInRange(x, 1, 20), rep(TRUE, 10))
-    expect_equal(Pbase:::.isInRange(x, 11, 20), rep(FALSE, 10))
+    expect_error(Pbase:::.isInRange(x, 3))
+    expect_error(Pbase:::.isInRange(x, "foo"))
+    expect_equal(Pbase:::.isInRange(x, c(3, 6)), result)
+    expect_equal(Pbase:::.isInRange(x, c(1, 20)), rep(TRUE, 10))
+    expect_equal(Pbase:::.isInRange(x, c(11, 20)), rep(FALSE, 10))
 })
 
 test_that(".flatIRangesList", {
