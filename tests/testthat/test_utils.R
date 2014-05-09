@@ -17,6 +17,14 @@ test_that(".addColumn", {
     expect_equal(Pbase:::.addColumn(d, "b", 7:9, force = TRUE), resultForced)
 })
 
+test_that(".isInRange", {
+    x <- 1:10
+    result <- rep(c(FALSE, TRUE, FALSE), c(2, 4, 4))
+    expect_equal(Pbase:::.isInRange(x, 3, 6), result)
+    expect_equal(Pbase:::.isInRange(x, 1, 20), rep(TRUE, 10))
+    expect_equal(Pbase:::.isInRange(x, 11, 20), rep(FALSE, 10))
+})
+
 test_that(".flatIRangesList", {
     expect_error(Pbase:::.flatIRangesList(list()))
 

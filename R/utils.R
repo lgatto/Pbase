@@ -24,6 +24,16 @@
   x
 }
 
+#' test whether a given vector is in the range from:to
+#' @param x numeric
+#' @param from numeric, length 1
+#' @param to numeric, lengh 1
+#' @return logical of length(x)
+#' @noRd
+.isInRange <- function(x, from, to) {
+    from <= x & x <= to
+}
+
 #' @param x IRangesList
 #' @param shift if TRUE the IRanges will shift (similar to AAStringSet@ranges)
 #' @param shiftBy if shift TRUE and shiftBy it is used to shift the IRanges,
