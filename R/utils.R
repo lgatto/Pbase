@@ -63,6 +63,7 @@
 #' @param object object to give names to
 #' @param nm names/object with names
 #' @return named object
+#' @noRd
 .setNames2 <- function(object, nm) {
     if (is.null(names(nm))) {
         names(object) <- as.character(nm)
@@ -72,10 +73,24 @@
     object
 }
 
+#' splits a sequence into single AA
+#' @param x character, AAString, AAStringSet
+#' @return list of single characters
+#' @noRd
+.singleAA <- function(x) {
+    ## if we always apply as.character the names of original characters are
+    ## removed
+    if (!is.character(x)) {
+        x <- as.character(x)
+    }
+    strsplit(x, split = character(), fixed = TRUE)
+}
+
 #' in contrast to base::unique this function removes all duplicated values and
 #' keeps only singular ones. base::unique keeps one copy of each duplicate.
 #' @param x vector
 #' @return reduced x
+#' @noRd
 .singular <- function(x) {
     x[! (duplicated(x) | duplicated(x, fromLast = TRUE))]
 }

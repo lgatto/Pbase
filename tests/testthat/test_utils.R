@@ -66,6 +66,19 @@ test_that(".setNames2", {
     expect_equal(Pbase:::.setNames2(x, nm2), setNames(x, names(nm2)))
 })
 
+test_that(".singleAA", {
+    x1 <- "ABC"
+    x2 <- c(a = "ABC", b = "DEF")
+    x3 <- AAString(x1)
+    x4 <- AAStringSet(x2)
+    result1 <- list(LETTERS[1:3])
+    result2 <- list(a = LETTERS[1:3], b = LETTERS[4:6])
+    expect_equal(Pbase:::.singleAA(x1), result1)
+    expect_equal(Pbase:::.singleAA(x2), result2)
+    expect_equal(Pbase:::.singleAA(x3), result1)
+    expect_equal(Pbase:::.singleAA(x4), result2)
+})
+
 test_that(".singular", {
     x1 <- c(1, 2, 2, 3, 1, 5, 4, 3, 2, 1)
     x2 <- rep(1, 10)

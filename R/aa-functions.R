@@ -8,7 +8,7 @@
     aamass <- setNames(.get.amino.acids()$ResidueMass,
                        .get.amino.acids()$AA)
 
-    ppmass <- unlist(lapply(strsplit(as.character(x), ""), function(p) {
+    ppmass <- unlist(lapply(.singleAA, function(p) {
         sum(aamass[p])
     }))
     ppmass <- ppmass + water
