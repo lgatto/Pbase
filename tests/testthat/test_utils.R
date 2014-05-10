@@ -23,6 +23,7 @@ test_that(".isInRange", {
     expect_error(Pbase:::.isInRange(x, 3))
     expect_error(Pbase:::.isInRange(x, "foo"))
     expect_equal(Pbase:::.isInRange(x, c(3, 6)), result)
+    expect_equal(Pbase:::.isInRange(x, c(6, 3)), result)
     expect_equal(Pbase:::.isInRange(x, c(1, 20)), rep(TRUE, 10))
     expect_equal(Pbase:::.isInRange(x, c(11, 20)), rep(FALSE, 10))
 })
