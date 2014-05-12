@@ -32,7 +32,7 @@
 #' test peptides for some properties
 #' @param x character, AAString, AAStringSet: sequence
 #' @param mass double, length == 2, mass range [Da]
-#' @param length double, length == 2, length range
+#' @param len double, length == 2, length range
 #' @return logical vector, TRUE if the peptides fulfills all criteria otherwise
 #' FALSE
 #' @noRd

@@ -6,9 +6,6 @@
 if (is.null(getGeneric("Proteins")))
   setGeneric("Proteins", function(file, uniprotIds, ...)
              standardGeneric("Proteins"))
-if (is.null(getGeneric("proteinCoverage")))
-  setGeneric("proteinCoverage", function(x, ...)
-             standardGeneric("proteinCoverage"))
 
 ## accessors
 if (is.null(getGeneric("aa")))
@@ -39,4 +36,11 @@ if (is.null(getGeneric("cleave")))
   setGeneric("cleave", function(x, ...) standardGeneric("cleave"))
 if (is.null(getGeneric("plot")))
   setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
+if (is.null(getGeneric("pfilter")))
+  setGeneric("pfilter", function(x, y, ...) standardGeneric("pfilter"))
+if (is.null(getGeneric("proteinCoverage")))
+  setGeneric("proteinCoverage", function(x, ...)
+             standardGeneric("proteinCoverage"))
+if (is.null(getGeneric("proteotypic")))
+  setGeneric("proteotypic", function(x, y, ...) standardGeneric("proteotypic"))
 

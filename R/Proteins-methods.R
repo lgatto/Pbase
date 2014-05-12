@@ -92,9 +92,19 @@ setMethod("plot",
           signature(x = "Proteins", y = "missing"),
           function(x, y, ...) .plotProteins(x, ...))
 
+setMethod("pfilter",
+          "Proteins",
+          function(x, mass = NULL, len = NULL, ...) {
+              .pfilterProteins(x, mass = mass, len = len, ...)
+          })
+
 setMethod("proteinCoverage",
           signature(x = "Proteins"),
           function(x, y, ...) .proteinCoverageProteins(x, ...))
+
+setMethod("proteotypic",
+          "Proteins",
+          function(x) .proteotypicProteins(x))
 
 setMethod("show", "Proteins",
           function(object) {

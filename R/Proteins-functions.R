@@ -41,6 +41,10 @@
   irl
 }
 
+#' @param object Proteins object
+#' @param filename mzIdentML filename
+#' @return a modified Proteins object
+#' @noRd
 .addIdentificationDataProteins <- function(object, filename) {
   if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
@@ -61,6 +65,20 @@
   x@pranges <- split(ir, names(ir))
 
   x
+}
+
+#' @param x Proteins object
+#' @param mass numeric, length == 2, mass range
+#' @param length numeric, length == 2, length range
+#' @return modified Proteins object (pcols(x) gains a new "Filtered" column)
+#' @noRd
+.pfilterProteins <- function(x, mass = NULL, len = NULL) {
+    if (isEmpty(x@pranges)) {
+        stop("The ", sQuote("pranges"), " slot is empty!")
+    }
+
+    filtered <- !.isValidPeptide(pfeatures(x), mass = mass, len = len)
+    addpcol(x, "Filtered", unlist(filtered), force = TRUE)
 }
 
 .plotProteins <- function(object, from = 1L,
@@ -112,15 +130,15 @@
 }
 
 #' @param x Proteins object
-#' @return a modified Proteins object
+#' @return a modified Proteins object (pcols(x) gains a "Proteotypic" column)
 #' @noRd
-.proteotypic <- function(x) {
+.proteotypicProteins <- function(x) {
     if (isEmpty(x@pranges)) {
         stop("The ", sQuote("pranges"), " slot is empty!")
     }
 
     pp <- as.character(unlist(pfeatures(x)))
     proteotypic <- Rle(pp %in% .singular(pp))
-    addpcol(x, "Proteotypic", proteotypic)
+    addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
