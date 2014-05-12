@@ -59,7 +59,12 @@
 #' @return a named IRangesList
 #' @noRd
 .peptidePosition <- function(pattern, subject) {
-    if (anyDuplicated(names(subject))) {
+    if (is.null(names(pattern))) {
+        stop("No names for ", sQuote("pattern"), " available!")
+    }
+    if (is.null(names(subject))) {
+        stop("No names for ", sQuote("subject"), " available!")
+    } else if (anyDuplicated(names(subject))) {
         stop("No duplicated names for ", sQuote("subject"), " allowed!")
     }
 

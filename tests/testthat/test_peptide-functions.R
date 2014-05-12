@@ -25,9 +25,14 @@ test_that(".peptidePosition", {
     subject <- c(P1 = "ACEDE", P3 = "JKLMN", P2 = "FGHIL")
     result <- IRangesList(c(P1 = IRanges(1, 3),
                             P2 = IRanges(4, 5)))
+    expect_error(Pbase:::.peptidePosition(unname(pattern), subject),
+                 "No names for .*pattern.* available!")
+    expect_error(Pbase:::.peptidePosition(pattern, unname(subject)),
+                 "No names for .*subject.* available!")
     expect_error(Pbase:::.peptidePosition(pattern,
                                           setNames(subject, c(rep("P1", 3)))),
                  "No duplicated names for .*subject.* allowed!")
+
     expect_equal(Pbase:::.peptidePosition(pattern, subject), result)
 })
 
