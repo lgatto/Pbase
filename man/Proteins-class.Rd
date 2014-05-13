@@ -196,9 +196,6 @@ plot(pp[1:2], from = 20, to = 30)
 pp <- proteinCoverage(pp)
 avarLabels(pp)
 pp
-
-
-
 }
 
 
