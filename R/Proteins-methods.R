@@ -139,7 +139,7 @@ setMethod("show", "Proteins",
                   else {
                       cat(paste(paste0("[", 1:3, "]"), x[1:3]))
                       cat(" ... ")
-                      cat(paste(paste0("[", (nx-2):nx, "]"), tail(nx, 3)))
+                      cat(paste(paste0("[", (nx-2):nx, "]"), tail(x, 3)))
                   }
 
               }

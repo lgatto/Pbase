@@ -183,6 +183,9 @@ p
 plot(p[1:5], from = 1, to = 30)
 
 pp <- cleave(p[1:100])
+plot(pp[1:2], from = 20, to = 30)
+
+pp <- proteinCoverage(pp)
 pp
 
 }
