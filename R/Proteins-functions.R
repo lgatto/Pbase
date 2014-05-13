@@ -100,7 +100,7 @@
       ##    bad object found as method (class “function”)
       tracks[[idx + 3L]] <- ATrack(start = start(object@pranges[[i]]),
                                    end = end(object@pranges[[i]]),
-                                   name = "cleavage products")
+                                   name = "peptides")
     }
   }
   ## ProteinAxisTrack returns length == 0L; that's why we are using the
