@@ -34,8 +34,11 @@
 \alias{seqnames,Proteins-method}
 \alias{show,Proteins-method}
 
+
 \alias{proteinCoverage,Proteins-method}
 \alias{proteinCoverage}
+\alias{proteotypic,Proteins-method}
+\alias{proteotypic}
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
 
@@ -156,6 +159,8 @@
       sequence of the selected protein.}
 
     \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
+
+    \item{proteotypic}{\code{signature(x = "Proteins")}: ... }
     
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
 
