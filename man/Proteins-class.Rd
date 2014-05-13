@@ -25,13 +25,20 @@
 \alias{pcols}
 \alias{pranges,Proteins-method}
 \alias{pranges}
+\alias{pvarLabels,Proteins-method}
+\alias{pvarLabels}
+\alias{avarLabels,Proteins-method}
+\alias{avarLabels}
 
 \alias{length,Proteins-method}
 \alias{seqnames,Proteins-method}
 \alias{show,Proteins-method}
 
+
 \alias{proteinCoverage,Proteins-method}
 \alias{proteinCoverage}
+\alias{proteotypic,Proteins-method}
+\alias{proteotypic}
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
 
@@ -42,8 +49,8 @@
   The \code{Proteins} class encapsulates data and meta-data for
   proteomics experiments. The class stores the protein sequences as well
   as specific subsets of interest, typically peptides, as ranges. The
-  \code{Proteins} instances as well as the sequence and peptide slots
-  are described by metadata attributes.
+  \code{Proteins} instances, the sequence and peptide slots are
+  described by their respective metadata attributes.
   
 }
 
@@ -55,6 +62,31 @@
   UniProt accession numbers.
   
 }
+
+\section{Details}{
+  An instance of class \code{Proteins} is characterised by one of
+  multiple protein sequences that can be accessed as \code{AASrringSet}
+  with the \code{aa} accessor. Sequence-specific annotation, such as
+  accession numbers, protein and gene names, ... is available with the
+  \code{ametadata} or \code{acols} methods. General metadata such as the
+  data of creation of the instance are stored as a \code{list} returned
+  by the \code{metadata} accessor.
+
+  Each sequence of a \code{Proteins} instance can also be characterised
+  by a set of specific ranges describing peptides of interest. These
+  \emph{peptide features} can be extracted as an \code{AAStringSetList},
+  where each sequence features 0 or more peptide features. These
+  peptides features are encode as ranges along the original proteins
+  sequences (a \code{list} of \code{IRanges}) that can be extracted with
+  the \code{pranges} function. These peptide features have their own
+  metadata describing for example peptide identification scores, number
+  of missed cleavages, ... available with the \code{pmetadata} or
+  \code{pcols} methods.
+  
+
+
+}
+
 
 \section{Slots}{
   \describe{
@@ -107,6 +139,11 @@
       \code{list} of feature metadata. }    
     \item{pcols}{\code{signature(x = "Proteins")}: See
       \code{pmetadata}. } 
+
+    \item{avarLabels}{\code{signature(x = "Proteins")}: Returns the
+      names of the sequences metadata. }
+    \item{pvarLabels}{\code{signature(x = "Proteins")}: Returns the
+      names of the peptide feature metadata. }
     
     \item{seqnames}{\code{signature(x = "Proteins")}: Returns the
       protein sequence names defined as UniProt accession numbers. }
@@ -122,6 +159,8 @@
       sequence of the selected protein.}
 
     \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
+
+    \item{proteotypic}{\code{signature(x = "Proteins")}: ... }
     
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
 
@@ -137,7 +176,6 @@
   }
 }
 
-
 \author{
   Laurent Gatto <lg390@cam.ac.uk> and Sebastian Gibb <mail@sebastiangibb.de>
 }
@@ -147,8 +185,17 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
-
 plot(p[1:5], from = 1, to = 30)
+
+pp <- cleave(p[1:100])
+pp <- proteotypic(pp)
+pp
+pcols(pp[1:2])
+plot(pp[1:2], from = 20, to = 30)
+
+pp <- proteinCoverage(pp)
+avarLabels(pp)
+pp
 }
 
 

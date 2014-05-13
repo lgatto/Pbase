@@ -31,6 +31,8 @@ exportMethods(
     pfeatures,
     pmetadata,
     pranges,
+    pvarLabels,
+    avarLabels,
     seqnames,
     show,
     ## action methods
