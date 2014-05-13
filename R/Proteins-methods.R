@@ -131,7 +131,7 @@ setMethod("show", "Proteins",
 
               cat("Sequences:", tail(capture.output(object@aa), -1), sep = "\n")
               cat("Features: ")
-              if (emptyPfeatures(object)) cat("None")
+              if (isEmpty(pfeatures(object))) cat("None")
               else {
                   x <- pvarLabels(object)
                   nx <- length(x)

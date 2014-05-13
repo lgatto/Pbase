@@ -142,8 +142,3 @@
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
-##' @param x Protein object
-##' @return a logical indicating empty pfeatures
-##' @noRd
-emptyPfeatures <- function(x) 
-    all(sapply(x@pranges, length) == 0)
