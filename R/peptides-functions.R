@@ -24,10 +24,64 @@
 #' "Amino acid and peptide net charges: a simple calculational procedure."
 #' Biochemical Education 13.1 (1985): 10-11.
 #' http://dx.doi.org/10.1016/0307-4412(85)90114-1
+#'
+#' sum(q / (1+10^(q*(pH - pKa)))
 #' @noRd
-#.calculateIsoelectricPoint <- function(x) {
-#}
-#
+.calculateIsoelectricPoint <- function(x) {
+
+    ## pKa/charge values taken from:
+    ## Sillero, Antonio, and Andres Maldonado.
+    ## "Isoelectric point determination of proteins and other macromolecules:
+    ## oscillating method."
+    ## Computers in biology and medicine 36.2 (2006): 157-166.
+    ## http://dx.doi.org/10.1016/j.compbiomed.2004.09.006
+    pKa <- c("CT" = 3.2,
+             "NT" = 8.2,
+             "C"  = 9.0,
+             "E"  = 4.5,
+             "D"  = 4.0,
+             "H"  = 6.4,
+             "K"  = 10.4,
+             "R"  = 12.0,
+             "Y"  = 10.0)
+    charge <- c("CT" = -1,
+                "NT" = 1,
+                "C"  = -1,
+                "E"  = -1,
+                "D"  = -1,
+                "H"  = 1,
+                "K"  = 1,
+                "R"  = 1,
+                "Y"  = -1)
+
+    ## Other algorithms use a bisect search to determine the best approximation
+    ## of the isoelectric point. Because our pKa values have a very low
+    ## precision I think we are satisfied with two digits for the pH.
+    ## This has the advantage that we can use matrix based calculations instead
+    ## of a bisect search (which requires loops with if/else-statements and R is
+    ## not very good in running multiple loops). The bisect search could also be
+    ## implemented using `?optimize` or similar functions. I think it is hardly
+    ## faster than the current implementation but I didn't try it.
+
+    ## create 1401 pH values (0-14)
+    pH <- seq(0, 14, 0.01)
+    ## recycle this matrix for each charged AA (1401 x 9)
+    pHm <- matrix(pH, nrow=length(pH), ncol=length(pKa))
+
+    ## calculate pI for each AA and each pH
+    pI <- charge / (1 + 10^(charge * (t(pHm) - pKa)))
+    rownames(pI) <- names(pKa)
+
+    i <- unlist(lapply(.singleAA(x), function(y) {
+        ## remove non-charged AA and add N- and C-terminus
+        y <- c("NT", y[y %in% names(pKa)], "CT")
+        ## sum the pI for each AA to get the peptide pIs
+        pI <- colSums(pI[y, , drop=FALSE])
+        ## the pI that is closest to 0 is our solution
+        max.col(t(-abs(pI)), ties = "first")
+    }))
+    pH[i]
+}
 
 #' test peptides for some properties
 #' @param x character, AAString, AAStringSet: sequence
