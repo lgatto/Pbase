@@ -108,3 +108,19 @@
     x[! (duplicated(x) | duplicated(x, fromLast = TRUE))]
 }
 
+addacol <- function(x, column, content, force = FALSE) {
+    mcols(x@aa) <- .addColumn(mcols(x@aa),
+                              column = column,
+                              content = content,
+                              force = force)
+    x
+}
+
+addpcol <- function(x, column, content, force = FALSE) {
+    x@pranges@unlistData@elementMetadata <-
+        .addColumn(x@pranges@unlistData@elementMetadata,
+                   column = column,
+                   content = content,
+                   force = force)
+    x
+}

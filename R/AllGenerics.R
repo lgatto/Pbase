@@ -1,4 +1,4 @@
-################################################################################
+ >################################################################################
 ## Proteins
 ################################################################################
 
@@ -26,10 +26,6 @@ if (is.null(getGeneric("pranges")))
   setGeneric("pranges", function(x, ...) standardGeneric("pranges"))
 
 ## replacement
-if (is.null(getGeneric("addacol")))
-  setGeneric("addacol", function(x, ...) addacol(x, ...))
-if (is.null(getGeneric("addpcol")))
-  setGeneric("addpcol", function(x, ...) addpcol(x, ...))
 
 ## methods
 if (is.null(getGeneric("cleave")))
@@ -44,3 +40,6 @@ if (is.null(getGeneric("proteinCoverage")))
 if (is.null(getGeneric("proteotypic")))
   setGeneric("proteotypic", function(x, y, ...) standardGeneric("proteotypic"))
 
+
+setGeneric("pvarLabels", function(object, ...) standardGeneric("pvarLabels"))
+setGeneric("avarLabels", function(object, ...) standardGeneric("avarLabels"))
