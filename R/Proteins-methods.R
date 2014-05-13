@@ -64,6 +64,13 @@ setMethod("ametadata", "Proteins",
 setMethod("seqnames","Proteins",
           function(x) names(aa(x)))
 
+
+setMethod("avarLabels", "Proteins",
+          function(object) names(aa(object)@elementMetadata))
+
+setMethod("pvarLabels", "Proteins",
+          function(object) names(pranges(object)@unlistData@elementMetadata@listData))
+
 setMethod("[[", "Proteins",
           function(x, i, j = missing, ..., drop = TRUE) return(x@aa[[i]]))
 
@@ -123,29 +130,24 @@ setMethod("show", "Proteins",
               cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
 
               cat("Sequences:", tail(capture.output(object@aa), -1), sep = "\n")
-          })
+              cat("Features: ")
+              if (emptyPfeatures(object)) cat("None")
+              else {
+                  x <- pvarLabels(object)
+                  nx <- length(x)
+                  if (nx <= 6) cat(paste(x, collapse = ", "))
+                  else {
+                      cat(paste(paste0("[", 1:3, "]"), x[1:3]))
+                      cat(" ... ")
+                      cat(paste(paste0("[", (nx-2):nx, "]"), tail(nx, 3)))
+                  }
 
+              }
+              cat("\n")
+          })
 
 
 ## internal use only; not exported
-setMethod("addacol", "Proteins",
-          function(x, column, content, force = FALSE) {
-              mcols(x@aa) <- .addColumn(mcols(x@aa),
-                                        column = column,
-                                        content = content,
-                                        force = force)
-              x
-          })
-
-setMethod("addpcol", "Proteins",
-         function(x, column, content, force = FALSE) {
-             x@pranges@unlistData@elementMetadata <-
-                 .addColumn(x@pranges@unlistData@elementMetadata,
-                            column = column,
-                            content = content,
-                            force = force)
-             x
-         })
 
 setMethod("aaranges",
           "Proteins",
