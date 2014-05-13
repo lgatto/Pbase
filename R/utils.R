@@ -124,3 +124,16 @@ addpcol <- function(x, column, content, force = FALSE) {
                    force = force)
     x
 }
+
+htcat <- function(x, n = 3) {
+    nx <- length(x)
+    if (nx <= n) {
+        cat(paste(x, collapse = ", "))
+    } else {
+        cat(paste(paste0("[", 1:n, "]"), head(x, n)))
+        cat(" ... ")
+        cat(paste(paste0("[", (nx-n+1):nx, "]"), tail(x, n)))
+    }
+    cat("\n")
+}
+    

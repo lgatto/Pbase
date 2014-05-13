@@ -121,29 +121,22 @@ setMethod("show", "Proteins",
                           "Number of Proteins")
               topics <- format(topics, justify = "left")
               n <- length(object)
-
               values <- c(class(object),
                           tail(as(classVersion(object), "character"), 1L),
                           object@metadata$created,
                           n)
-
+              
               cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
-
-              cat("Sequences:", tail(capture.output(object@aa), -1), sep = "\n")
-              cat("Features: ")
-              if (isEmpty(pranges(object))) cat("None")
+              sn <- seqnames(object)
+              ln <- length(object)
+              cat("Sequences:\n  "); htcat(sn, n = 2)
+              cat("afeatures:\n  "); htcat(avarLabels(object), n = 2)
+              cat("pfeatures:")
+              if (isEmpty(pranges(object))) cat(" None\n")
               else {
-                  x <- pvarLabels(object)
-                  nx <- length(x)
-                  if (nx <= 6) cat(paste(x, collapse = ", "))
-                  else {
-                      cat(paste(paste0("[", 1:3, "]"), x[1:3]))
-                      cat(" ... ")
-                      cat(paste(paste0("[", (nx-2):nx, "]"), tail(x, 3)))
-                  }
-
+                  cat("\n  ")
+                  htcat(pvarLabels(object), n = 2)
               }
-              cat("\n")
           })
 
 
