@@ -130,8 +130,8 @@ setMethod("show", "Proteins",
               sn <- seqnames(object)
               ln <- length(object)
               cat("Sequences:\n  "); htcat(sn, n = 2)
-              cat("afeatures:\n  "); htcat(avarLabels(object), n = 2)
-              cat("pfeatures:")
+              cat("Sequence features:\n  "); htcat(avarLabels(object), n = 2)
+              cat("Peptide features:")
               if (isEmpty(pranges(object))) cat(" None\n")
               else {
                   cat("\n  ")
