@@ -49,6 +49,51 @@
         valid <- valid & .isInRange(nchar(x), range = len)
     }
 
-    valid
+    .setNames2(valid, x)
+}
+
+#' calculates IRanges for a peptide "pattern" in a protein "subject"
+#' (TODO: this function is too slow!)
+#' @param pattern named character, AAString, AAStringSet, AAStringSetList
+#' @param subject named character, AAString, AAStringSet
+#' @return a named IRangesList
+#' @noRd
+.peptidePosition <- function(pattern, subject) {
+    if (is.null(names(pattern))) {
+        stop("No names for ", sQuote("pattern"), " available!")
+    }
+    if (is.null(names(subject))) {
+        stop("No names for ", sQuote("subject"), " available!")
+    } else if (anyDuplicated(names(subject))) {
+        stop("No duplicated names for ", sQuote("subject"), " allowed!")
+    }
+
+    lpat <- split(pattern, names(pattern))
+    ## Caution: this will maybe fail for large AA
+    lpat <- lapply(lpat, function(x)paste0(unlist(x), collapse="|"))
+    lsub <- split(subject, names(subject))
+
+    m <- match(names(lsub), names(lpat))
+
+    r <- mapply(function(p, s, j) {
+        if (!is.null(p)) {
+            rx <- gregexpr(p, s, fixed = TRUE)[[1L]]
+            i <- which(rx > 0L)
+            l <- attr(rx, "match.length")[i]
+            rx <- rx[i]
+            if (length(rx)) {
+                return(matrix(c(rx, rx+l-1, rep.int(j, length(rx))), ncol = 3))
+            }
+        }
+    }, p = lpat[m], s = lsub, j = m, SIMPLIFY = FALSE, USE.NAMES = FALSE)
+
+    if (length(r) && any(elementLengths(r) > 0)) {
+        r <- do.call(rbind, r)
+        ir <- .splitIRanges(IRanges(start = r[, 1L], end = r[, 2L]), f=r[,3L])
+        names(ir) <- names(lpat)[unique(r[, 3L])]
+    } else {
+        ir <- IRanges()
+    }
+    ir
 }
 
