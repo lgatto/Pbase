@@ -82,12 +82,15 @@ test_that(".singleAA", {
     x2 <- c(a = "ABC", b = "DEF")
     x3 <- AAString(x1)
     x4 <- AAStringSet(x2)
+    x5 <- AAStringSetList(list(P1=x2, P2=x2[2]))
     result1 <- list(LETTERS[1:3])
     result2 <- list(a = LETTERS[1:3], b = LETTERS[4:6])
+    result5 <- list(P1=LETTERS[1:3], P1=LETTERS[4:6], P2=LETTERS[4:6])
     expect_equal(Pbase:::.singleAA(x1), result1)
     expect_equal(Pbase:::.singleAA(x2), result2)
     expect_equal(Pbase:::.singleAA(x3), result1)
     expect_equal(Pbase:::.singleAA(x4), result2)
+    expect_equal(Pbase:::.singleAA(x5), result5)
 })
 
 test_that(".singular", {

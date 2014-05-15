@@ -91,6 +91,9 @@
 #' @return list of single characters
 #' @noRd
 .singleAA <- function(x) {
+    if (is(x, "AAStringSetList")) {
+        x <- unlist(x)
+    }
     ## if we always apply as.character the names of original characters are
     ## removed
     if (!is.character(x)) {
@@ -136,4 +139,4 @@ htcat <- function(x, n = 3) {
     }
     cat("\n")
 }
-    
+
