@@ -3,7 +3,7 @@ Pbase
 
 Manipulating and exploring protein and proteomics data.
 
-Uses `Pviz` for visualisation.
+Uses [`Pviz`](https://github.com/RGLab/Pviz) for visualisation.
 
 ## Getting started
 
