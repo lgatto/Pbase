@@ -65,10 +65,10 @@
 
 \section{Details}{
   An instance of class \code{Proteins} is characterised by one of
-  multiple protein sequences that can be accessed as \code{AASrringSet}
+  multiple protein sequences that can be accessed as \code{AAStringSet}
   with the \code{aa} accessor. Sequence-specific annotation, such as
   accession numbers, protein and gene names, ... is available with the
-  \code{ametadata} or \code{acols} methods. General metadata such as the
+  \code{metadata} or \code{acols} methods. General metadata such as the
   data of creation of the instance are stored as a \code{list} returned
   by the \code{metadata} accessor.
 
@@ -82,9 +82,6 @@
   metadata describing for example peptide identification scores, number
   of missed cleavages, ... available with the \code{pmetadata} or
   \code{pcols} methods.
-  
-
-
 }
 
 

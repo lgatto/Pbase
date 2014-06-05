@@ -5,6 +5,10 @@ Manipulating and exploring protein and proteomics data.
 
 Uses `Pviz` for visualisation.
 
+## Getting started
+
+Currently, the best way to get started in `?Proteins`. 
+
 ## Classes
 
 See `AllClasses.R`
@@ -207,7 +211,7 @@ EEYDESGPGIVHRKCF
 8. Choose the Sequence/Protein link in the left navigation bar to get the aminoacid sequence.
 9. Compare both sequences.
 
-#### Short cut
+#### TL;DR
 
 1. Visit the Uniprot page of the protein of interest.
 2. Look for section *Sequence databases* and choose *EMBL* and an identifier.
