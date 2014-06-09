@@ -1,0 +1,45 @@
+import(methods)
+import(Rcpp)
+import(BiocGenerics)
+import(Biostrings)
+import(IRanges)
+import(Pviz)
+
+importClassesFrom(Biobase, Versioned)
+importFrom(Biobase, classVersion, isCurrent, validMsg)
+
+importFrom(cleaver, cleave, cleavageRanges)
+
+importClassesFrom(mzID, mzID)
+importFrom(mzID, mzID, flatten)
+
+importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
+
+exportClasses(Proteins)
+
+exportMethods(
+    ## class methods
+    Proteins,
+    "[",
+    "[[",
+    aa,
+    acols,
+    ametadata,
+    length,
+    metadata,
+    pcols,
+    pfeatures,
+    pmetadata,
+    pranges,
+    pvarLabels,
+    avarLabels,
+    seqnames,
+    show,
+    ## action methods
+    cleave,
+    plot,
+    addIdentificationData,
+    pfilter,
+    proteinCoverage,
+    proteotypic
+    )
