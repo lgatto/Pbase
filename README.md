@@ -3,13 +3,45 @@ Pbase
 
 Manipulating and exploring protein and proteomics data.
 
-Uses [`Pviz`](https://github.com/RGLab/Pviz) for visualisation.
+## Installation
+
+It is advised to install `Pbase` from Bioconductor:
+
+    library("BiocInstaller")
+	biocLite("Pbase")
+
+Note however that you will need the *devel* version of Bioconductor
+for this. See `?useDevel' for details.
+
+From github using `devtools::install_github`:
+
+    library("devtools")
+    install_github("ComputationalProteomicsUnit/Pbase")
+
+### Dependencies
+
+See the `DESCRIPTION` file for a complete list.
+
+Uses [`Pviz`](https://github.com/RGLab/Pviz) for visualisation. All
+other dependencies can be installer directly from Bioconductor. 
 
 ## Getting started
 
-Currently, the best way to get started in `?Proteins`. 
+Currently, the best way to get started is `?Proteins`. 
 
-## Classes
+## Development
+
+`Pbase` is under heavy development and is likely to considerably
+change in the near future. Suggestion and bug reports are welcome and
+can be file as
+[github issues](https://github.com/ComputationalProteomicsUnit/pbase/issues).
+If you would like to contribute, please directly send pull
+requests. For major contributions, we suggest to first get in touch
+with the package maintainers. 
+
+## Infrastructure
+
+### Classes
 
 See `AllClasses.R`
 
@@ -19,13 +51,13 @@ instances. We can then think about *comparing* `Proteins` instances
 (that have `identical(p1@aa, p2@aa)` and easily return *common*
 sequences.
 
-## Accessors
+### Accessors
 
 - `pfeatures` returns an `AAStringSetList` of peptides (using `extractAt`)
 - `pranges` returns the `pranges` slot (`CompressedIRangesList`) - was `pfeatures`.
 - `aa` returns the protein sequences as an `AAStringSet`.
 
-## metadata
+### metadata
 
 - global: slot `metadata`, accessor `metadata`
   - `created` character
@@ -41,7 +73,7 @@ sequences.
   - `lapply(.@pfeatures, mcols)` with accessor `pcols` `pmetadata`
   - `metadata(.@pfeatures)` - ignore
 
-## Constructor
+### Constructor
 
 `Proteins("fastafile")` returns a `Proteins` instance.
 
@@ -217,14 +249,14 @@ EEYDESGPGIVHRKCF
 2. Look for section *Sequence databases* and choose *EMBL* and an identifier.
 3. Use this identifier to search on http://ensembl.org .
 
-## Dependencies
+## Interoperability
 
-The package should allow to easily interact with `AAString` and
+The package allows to easily interact with `AAString` and
 `AAStringSet` instances, protein databases such as UniProt (and
-possibly biomaRt) using protein identifiers, protein identification
-results (`mzID` package and, later `mzR`) and possibly also `MSnExp`
-and `MSnSet` instances.
+possibly biomaRt in the future) using protein identifiers, protein
+identification results (`mzID` package and, later `mzR`) and possibly
+also `MSnExp` and `MSnSet` instances.
 
 ## Data
-- Availble on prot-main.
+- Availble on prot-main (CPU).
 - Copy locally in `Pbase/sandbox` and use local path to enable reproducibility.
