@@ -43,6 +43,12 @@ with the package maintainers.
 
 ### Classes
 
+## Getting started
+
+Currently, the best way to get started in `?Proteins`. 
+
+## Classes
+
 See `AllClasses.R`
 
 Current decision is to avoid `pranges` from multiple origins. It is
