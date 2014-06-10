@@ -68,7 +68,7 @@
   multiple protein sequences that can be accessed as \code{AAStringSet}
   with the \code{aa} accessor. Sequence-specific annotation, such as
   accession numbers, protein and gene names, ... is available with the
-  \code{metadata} or \code{acols} methods. General metadata such as the
+  \code{ametadata} or \code{acols} methods. General metadata such as the
   data of creation of the instance are stored as a \code{list} returned
   by the \code{metadata} accessor.
 
