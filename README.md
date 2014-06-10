@@ -1,7 +1,7 @@
 Pbase
 =====
 
-Manipulating and exploring protein and proteomics data.
+Manipulating and exploring protein and proteomics data. 
 
 ## Installation
 
@@ -28,17 +28,18 @@ from Bioconductor.
 
 ## Getting started
 
-Currently, the best way to get started is `?Proteins`. 
+Currently, the best way to get started is `?Proteins`. More
+documentation is on its way. 
 
 ## Development
 
 `Pbase` is under heavy development and is likely to considerably
 change in the near future. Suggestion and bug reports are welcome and
-can be file as
+can be filed as
 [github issues](https://github.com/ComputationalProteomicsUnit/pbase/issues).
 If you would like to contribute, please directly send pull
 requests. For major contributions, we suggest to first get in touch
-with the package maintainers. 
+with the package maintainers.
 
 ## Infrastructure
 
