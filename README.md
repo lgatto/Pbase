@@ -22,8 +22,9 @@ From github using `devtools::install_github`:
 
 See the `DESCRIPTION` file for a complete list.
 
-Uses [`Pviz`](https://github.com/RGLab/Pviz) for visualisation. All
-other dependencies can be installer directly from Bioconductor. 
+Uses [`Pviz`](https://github.com/RGLab/Pviz) (currently under review)
+for visualisation. All other dependencies can be installer directly
+from Bioconductor.
 
 ## Getting started
 
@@ -42,12 +43,6 @@ with the package maintainers.
 ## Infrastructure
 
 ### Classes
-
-## Getting started
-
-Currently, the best way to get started in `?Proteins`. 
-
-## Classes
 
 See `AllClasses.R`
 
