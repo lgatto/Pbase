@@ -182,13 +182,17 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
-plot(p[1:5], from = 1, to = 30)
+if (require("Pviz")) {
+    plot(p[1:5], from = 1, to = 30)
+}
 
 pp <- cleave(p[1:100])
 pp <- proteotypic(pp)
 pp
 pcols(pp[1:2])
-plot(pp[1:2], from = 20, to = 30)
+if (require("Pviz")) {
+    plot(pp[1:2], from = 20, to = 30)
+}
 
 pp <- proteinCoverage(pp)
 avarLabels(pp)
