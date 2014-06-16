@@ -98,7 +98,7 @@
       such as theoretical (obtain by in silico cleavage) or observed
       peptides. Accessed as an \code{\linkS4class{IRangesList}} with
       \code{pranges} or and \code{\linkS4class{AAStringSetList}} with
-      \code{pfeatres}. 
+      \code{pfeatures}.
     }
     \item{\code{.__classVersion__}:}{ Object of class \code{"Versions"}
       documenting the class verions. Intended for developer use and
