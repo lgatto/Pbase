@@ -3,7 +3,7 @@ import(Rcpp)
 import(BiocGenerics)
 import(Biostrings)
 import(IRanges)
-import(Pviz)
+#import(Pviz) ## Pviz is not available on BioC; see #4
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)

@@ -98,7 +98,7 @@
       such as theoretical (obtain by in silico cleavage) or observed
       peptides. Accessed as an \code{\linkS4class{IRangesList}} with
       \code{pranges} or and \code{\linkS4class{AAStringSetList}} with
-      \code{pfeatres}. 
+      \code{pfeatures}.
     }
     \item{\code{.__classVersion__}:}{ Object of class \code{"Versions"}
       documenting the class verions. Intended for developer use and
@@ -182,13 +182,17 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
-plot(p[1:5], from = 1, to = 30)
+if (require("Pviz")) {
+    plot(p[1:5], from = 1, to = 30)
+}
 
 pp <- cleave(p[1:100])
 pp <- proteotypic(pp)
 pp
 pcols(pp[1:2])
-plot(pp[1:2], from = 20, to = 30)
+if (require("Pviz")) {
+    plot(pp[1:2], from = 20, to = 30)
+}
 
 pp <- proteinCoverage(pp)
 avarLabels(pp)
