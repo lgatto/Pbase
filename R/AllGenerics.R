@@ -24,6 +24,8 @@ if (is.null(getGeneric("pfeatures")))
   setGeneric("pfeatures", function(x, ...) standardGeneric("pfeatures"))
 if (is.null(getGeneric("pranges")))
   setGeneric("pranges", function(x, ...) standardGeneric("pranges"))
+if (is.null(getGeneric("seqnames")))
+  setGeneric("seqnames", function(x, ...) standardGeneric("seqnames"))
 
 ## replacement
 
