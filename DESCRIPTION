@@ -1,13 +1,13 @@
 Package: Pbase
 Type: Package
 Title: Manipulating and exploring protein and proteomics data
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(person("Laurent", "Gatto", role = c("aut"),
                     email = "lg390@cam.ac.uk"),
              person("Sebastian", "Gibb", role = c("aut", "cre"),
                     email = "mail@sebastiangibb.de"))
 Depends: methods, BiocGenerics, Rcpp
-Imports: cleaver (>= 1.3.6), Biobase, Biostrings, IRanges, mzID,
+Imports: S4Vectors, IRanges, Biostrings, Biobase, cleaver (>= 1.3.6), mzID,
 	 MSnbase (>= 1.13.5)
 Suggests: testthat (>= 0.8), Pviz
 Description: A set of classes and functions to investigate and understand
