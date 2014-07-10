@@ -1,8 +1,9 @@
 import(methods)
 import(Rcpp)
 import(BiocGenerics)
-import(Biostrings)
+import(S4Vectors)
 import(IRanges)
+import(Biostrings)
 #import(Pviz) ## Pviz is not available on BioC; see #4
 
 importClassesFrom(Biobase, Versioned)
