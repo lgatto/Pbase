@@ -57,13 +57,16 @@
   ir <- IRanges(start = y$start, end = y$end)
   names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
 
-  fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
+  fasta <- Pbase:::.fastaComments2DataFrame(paste(y$accession, y$description))
   meta <- as(y[, !colnames(y) %in% c("accession", "description")],
              "DataFrame")
   mcols(ir) <- cbind(fasta, meta)
 
   x@pranges <- split(ir, names(ir))
-
+  ## ERROR: ignores empty ranges for proteins without any peptides...
+  ## Temporary fix: remove proteins without peptides
+  nms <- names(x@pranges)
+  x@aa <- aa(x)[nms]
   x
 }
 
