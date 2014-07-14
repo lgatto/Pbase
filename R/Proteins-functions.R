@@ -51,8 +51,7 @@
          "No ranges and metadata could be added.")
   }
 
-  ## y <- flatten(mzID(filename))
-  load("~/tmp/y.rda")
+  y <- flatten(mzID(filename))
 
   an <- y$accession
   ir <- IRanges(start = y$start, end = y$end)
