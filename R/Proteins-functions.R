@@ -41,11 +41,11 @@
   irl
 }
 
-#' @param object Proteins object
+#' @param x 
 #' @param filename mzIdentML filename
 #' @return a modified Proteins object
 #' @noRd
-.addIdentificationDataProteins <- function(object, filename) {
+.addIdentificationDataProteins <- function(x, filename, rmEmptyRanges) {
   if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
          "No ranges and metadata could be added.")
@@ -62,8 +62,17 @@
              "DataFrame")
   mcols(ir) <- cbind(fasta, meta)
 
-  x@pranges <- split(ir, names(ir))
-
+  if (rmEmptyRanges) {
+      x@pranges <- split(ir, names(ir))
+      nms <- names(x@pranges)
+      x@aa <- aa(x)[nms]
+  } else {
+      n <- length(x)
+      .irl <- IRangesList(replicate(n, IRanges()))
+      names(.irl) <- seqnames(x)
+      .irl[names(ir)] <- split(ir, names(ir))     
+      x@pranges <- .irl
+  }
   x
 }
 
@@ -86,14 +95,16 @@
 
   nTracks <- 3L
   tracks <- vector(mode="list", length=length(object) * nTracks)
-
+  snms <- seqnames(object)
+  
   for (i in seq(along = object@aa)) {
     idx <- (i - 1L) * nTracks
     tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE,
-                                           name = paste0("axis-",
-                                                         seqnames(object[i])))
+                                           name = paste0("axis-", snms[i]))
+  
     tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
-                                               name = seqnames(object)[i])
+                                               name = snms[i])
+
     if (length(object@pranges[[i]])) {
       ## TODO: adding an ATrack results in an error if "[" is set:
       ## Error in callNextMethod(x, i) :
@@ -142,3 +153,10 @@
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
+
+## might become a method
+rmEmptyRanges <- function(x) {
+    lns <- elementLengths(pranges(x)); 
+    em <- lns == 0
+    x[!em]
+}
