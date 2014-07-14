@@ -79,8 +79,8 @@ setMethod("aa", "Proteins", function(x) x@aa)
 ## methods
 setMethod("addIdentificationData",
           "Proteins",
-          function(object, filename) {
-            .addIdentificationDataProteins(object, filename)
+          function(object, filename, rmEmptyRanges=TRUE) {
+            .addIdentificationDataProteins(object, filename, rmEmptyRanges)
           })
 
 setMethod("cleave", "Proteins",

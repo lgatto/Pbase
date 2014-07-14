@@ -3,7 +3,9 @@ import(Rcpp)
 import(BiocGenerics)
 import(Biostrings)
 import(IRanges)
-#import(Pviz) ## Pviz is not available on BioC; see #4
+import(S4Vectors)
+import(Pviz) 
+import(Gviz) 
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
@@ -43,3 +45,5 @@ exportMethods(
     proteinCoverage,
     proteotypic
     )
+
+export(rmEmptyRanges)

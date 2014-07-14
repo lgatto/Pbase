@@ -45,13 +45,14 @@
 #' @param filename mzIdentML filename
 #' @return a modified Proteins object
 #' @noRd
-.addIdentificationDataProteins <- function(x, filename) {
+.addIdentificationDataProteins <- function(x, filename, rmEmptyRanges) {
   if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
          "No ranges and metadata could be added.")
   }
 
-  y <- flatten(mzID(filename))
+  ## y <- flatten(mzID(filename))
+  load("~/tmp/y.rda")
 
   an <- y$accession
   ir <- IRanges(start = y$start, end = y$end)
@@ -62,11 +63,17 @@
              "DataFrame")
   mcols(ir) <- cbind(fasta, meta)
 
-  x@pranges <- split(ir, names(ir))
-  ## ERROR: ignores empty ranges for proteins without any peptides...
-  ## Temporary fix: remove proteins without peptides
-  nms <- names(x@pranges)
-  x@aa <- aa(x)[nms]
+  if (rmEmptyRanges) {
+      x@pranges <- split(ir, names(ir))
+      nms <- names(x@pranges)
+      x@aa <- aa(x)[nms]
+  } else {
+      n <- length(x)
+      .irl <- IRangesList(replicate(n, IRanges()))
+      names(.irl) <- seqnames(x)
+      .irl[names(ir)] <- split(ir, names(ir))     
+      x@pranges <- .irl
+  }
   x
 }
 
@@ -145,4 +152,12 @@
     pp <- as.character(unlist(pfeatures(x)))
     proteotypic <- Rle(pp %in% .singular(pp))
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
+}
+
+
+## might become a method
+rmEmptyRanges <- function(x) {
+    lns <- elementLengths(pranges(x)); 
+    em <- lns == 0
+    x[!em]
 }

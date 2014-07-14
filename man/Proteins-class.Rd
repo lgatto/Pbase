@@ -42,6 +42,8 @@
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
 
+\alias{rmEmptyRanges}
+
 \title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
 
 \description{
@@ -114,7 +116,6 @@
 \section{Methods}{
   \describe{
 
-
     \item{aa}{\code{signature(x = "Proteins")}: Returns an
       \code{\linkS4class{AAStringSet}} instance representing the
       sequences of the proteins.}
@@ -161,7 +162,8 @@
     
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
 
-    \item{addIdentificationData}{\code{signature(object = "Proteins")}: ... }
+    \item{addIdentificationData}{\code{signature(object = "Proteins",
+	filename = "character", rmEmptyRanges = "logical")}: ... }
     
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the
@@ -170,6 +172,14 @@
     \item{show}{\code{signature(object = "Proteins")}: Displays object
       summary as text. }
       
+  }
+}
+
+\section{Functions}{
+  \describe{
+
+    \item{rmEmptyRanges}{signature(x = "Proteins")}{ ...}
+
   }
 }
 
