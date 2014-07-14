@@ -125,7 +125,7 @@
 #' @param x Proteins object
 #' @return a modified Proteins object
 #' @noRd
-.proteincoverageproteins <- function(x, ...) {
+.proteinCoverageProteins <- function(x, ...) {
   .proteinCoverageProteinsRanges(x, ranges = pranges(x), ...)
 }
 

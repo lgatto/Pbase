@@ -107,7 +107,7 @@ setMethod("pfilter",
 
 setMethod("proteinCoverage",
           signature(x = "Proteins"),
-          function(x, y, ...) .proteinCoverageProteins(x, ...))
+          function(x, ...) .proteinCoverageProteins(x, ...))
 
 setMethod("proteotypic",
           "Proteins",

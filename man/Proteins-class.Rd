@@ -25,6 +25,8 @@
 \alias{pcols}
 \alias{pranges,Proteins-method}
 \alias{pranges}
+\alias{pfilter,Proteins-method}
+\alias{pfilter}
 \alias{pvarLabels,Proteins-method}
 \alias{pvarLabels}
 \alias{avarLabels,Proteins-method}
@@ -156,6 +158,9 @@
       Returns an \code{\linkS4class{AAString}} instance representing the
       sequence of the selected protein.}
 
+    \item{pfilter}{\code{signature(x = "Proteins", mass = "numeric", len
+	= "numeric", ...)}: ... }
+    
     \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
 
     \item{proteotypic}{\code{signature(x = "Proteins")}: ... }
@@ -192,17 +197,16 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
-if (require("Pviz")) {
-    plot(p[1:5], from = 1, to = 30)
-}
+
+plot(p[1:5], from = 1, to = 30)
+
 
 pp <- cleave(p[1:100])
 pp <- proteotypic(pp)
 pp
 pcols(pp[1:2])
-if (require("Pviz")) {
-    plot(pp[1:2], from = 20, to = 30)
-}
+
+plot(pp[1:2], from = 20, to = 30)
 
 pp <- proteinCoverage(pp)
 avarLabels(pp)
