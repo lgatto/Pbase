@@ -25,6 +25,8 @@
 \alias{pcols}
 \alias{pranges,Proteins-method}
 \alias{pranges}
+\alias{pfilter,Proteins-method}
+\alias{pfilter}
 \alias{pvarLabels,Proteins-method}
 \alias{pvarLabels}
 \alias{avarLabels,Proteins-method}
@@ -41,6 +43,8 @@
 \alias{proteotypic}
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
+
+\alias{rmEmptyRanges}
 
 \title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
 
@@ -114,7 +118,6 @@
 \section{Methods}{
   \describe{
 
-
     \item{aa}{\code{signature(x = "Proteins")}: Returns an
       \code{\linkS4class{AAStringSet}} instance representing the
       sequences of the proteins.}
@@ -155,13 +158,17 @@
       Returns an \code{\linkS4class{AAString}} instance representing the
       sequence of the selected protein.}
 
+    \item{pfilter}{\code{signature(x = "Proteins", mass = "numeric", len
+	= "numeric", ...)}: ... }
+    
     \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
 
     \item{proteotypic}{\code{signature(x = "Proteins")}: ... }
     
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
 
-    \item{addIdentificationData}{\code{signature(object = "Proteins")}: ... }
+    \item{addIdentificationData}{\code{signature(object = "Proteins",
+	filename = "character", rmEmptyRanges = "logical")}: ... }
     
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the
@@ -170,6 +177,14 @@
     \item{show}{\code{signature(object = "Proteins")}: Displays object
       summary as text. }
       
+  }
+}
+
+\section{Functions}{
+  \describe{
+
+    \item{rmEmptyRanges}{signature(x = "Proteins")}{ ...}
+
   }
 }
 
@@ -182,17 +197,16 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
-if (require("Pviz")) {
-    plot(p[1:5], from = 1, to = 30)
-}
+
+plot(p[1:5], from = 1, to = 30)
+
 
 pp <- cleave(p[1:100])
 pp <- proteotypic(pp)
 pp
 pcols(pp[1:2])
-if (require("Pviz")) {
-    plot(pp[1:2], from = 20, to = 30)
-}
+
+plot(pp[1:2], from = 20, to = 30)
 
 pp <- proteinCoverage(pp)
 avarLabels(pp)

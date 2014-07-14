@@ -71,7 +71,7 @@
   x
 }
 
-#' setNames2 is similar to setNames but uses the names of the applied second
+#' setNames2 is similar to setNames but uses the names of the second
 #' argument if they are available
 #' @param object object to give names to
 #' @param nm names/object with names

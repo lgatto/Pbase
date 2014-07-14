@@ -79,8 +79,8 @@ setMethod("aa", "Proteins", function(x) x@aa)
 ## methods
 setMethod("addIdentificationData",
           "Proteins",
-          function(object, filename) {
-            .addIdentificationDataProteins(object, filename)
+          function(object, filename, rmEmptyRanges=TRUE) {
+            .addIdentificationDataProteins(object, filename, rmEmptyRanges)
           })
 
 setMethod("cleave", "Proteins",
@@ -107,7 +107,7 @@ setMethod("pfilter",
 
 setMethod("proteinCoverage",
           signature(x = "Proteins"),
-          function(x, y, ...) .proteinCoverageProteins(x, ...))
+          function(x, ...) .proteinCoverageProteins(x, ...))
 
 setMethod("proteotypic",
           "Proteins",
