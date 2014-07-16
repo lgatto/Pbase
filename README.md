@@ -22,14 +22,11 @@ From github using `devtools::install_github`:
 
 See the `DESCRIPTION` file for a complete list.
 
-Uses [`Pviz`](https://github.com/RGLab/Pviz) (currently under review)
-for visualisation. All other dependencies can be installer directly
-from Bioconductor.
-
 ## Getting started
 
-Currently, the best way to get started is `?Proteins`. More
-documentation is on its way. 
+Currently, the best way to get started is `?Proteins` and the
+[`Pbase-data`](https://github.com/ComputationalProteomicsUnit/Pbase/blob/master/vignettes/Pbase-data.md)
+vignette. More documentation is on its way.
 
 ## Development
 
@@ -37,53 +34,10 @@ documentation is on its way.
 change in the near future. Suggestion and bug reports are welcome and
 can be filed as
 [github issues](https://github.com/ComputationalProteomicsUnit/pbase/issues).
-If you would like to contribute, please directly send pull
-requests. For major contributions, we suggest to first get in touch
-with the package maintainers.
 
-## Infrastructure
-
-### Classes
-
-See `AllClasses.R`
-
-Current decision is to avoid `pranges` from multiple origins. It is
-probably easier to manage this situation using different `Proteins`
-instances. We can then think about *comparing* `Proteins` instances
-(that have `identical(p1@aa, p2@aa)` and easily return *common*
-sequences.
-
-### Accessors
-
-- `pfeatures` returns an `AAStringSetList` of peptides (using `extractAt`)
-- `pranges` returns the `pranges` slot (`CompressedIRangesList`) - was `pfeatures`.
-- `aa` returns the protein sequences as an `AAStringSet`.
-
-### metadata
-
-- global: slot `metadata`, accessor `metadata`
-  - `created` character
-  - `UniProtVersion` character
-  - `Uniprot.WS`, optional, only if constructed via ids.
-
-
-- `aa` metadata:
-  - `mcols(.@seq)` with accessor `acols` and `ametadata`
-  - `metadata(.@seq)` - ignore
-
-- `pfeatures` metadata:
-  - `lapply(.@pfeatures, mcols)` with accessor `pcols` `pmetadata`
-  - `metadata(.@pfeatures)` - ignore
-
-### Constructor
-
-`Proteins("fastafile")` returns a `Proteins` instance.
-
-- Definition of the UniProt fasta comment format:
-    http://www.uniprot.org/help/fasta-headers
-
-`Proteins("ids")` returns a `Proteins` instance, depending on the
-number of identifiers.
+If you would like to contribute, please directly send pull requests
+for minor contributions and typos. For major contributions, we suggest
+to first get in touch with the package maintainers. 
 
 ## Ideas
 
@@ -196,60 +150,7 @@ Maybe support for the annotation of detection of protein domains.
 
 ### Mapping a Protein Sequence to a Genome Sequence
 
-#### ACT3_DROME
-
-Manual example for two UniProt - Identifiers:
-
-1. [ACT3_DROME](http://www.uniprot.org/uniprot/P53501).
-2. Follow the [UniParc link](http://www.uniprot.org/uniparc/UPI0000000EDE) in section *Sequences*.
-3. Choose one EMBL entry, e.g. [ACV91653](http://www.ebi.ac.uk/ena/data/view/ACV91653).
-4. Look for the Identifier in the *Sequence* section, e.g. *ACV91653.1* (fasta file comment, 3rd column).
-5. Put these identifier into the search box of http://ensembl.org and choose the *Fruitfly* species.
-6. Choose the first search result, e.g. [Act57B](http://www.ensembl.org/Drosophila_melanogaster/Gene/Summary?g=FBgn0000044&db=core).
-7. Select the protein with the same length as the UniProt protein, e.g. [Act57B-RA/FBpp0071448](http://www.ensembl.org/Drosophila_melanogaster/Transcript/ProteinSummary?db=core;g=FBgn0000044;r=2R:16831533-16833945;t=FBtr0071519).
-8. Choose the Sequence/Protein link in the left navigation bar to get the aminoacid sequence.
-9. Compare both sequences.
-
-Uniprot
-```
->sp|P53501|ACT3_DROME Actin-57B OS=Drosophila melanogaster GN=Act57B PE=1 SV=1
-MCDDEVAALVVDNGSGMCKAGFAGDDAPRAVFPSIVGRPRHQGVMVGMGQKDSYVGDEAQ
-SKRGILTLKYPIEHGIITNWDDMEKIWHHTFYNELRVAPEEHPVLLTEAPLNPKANREKM
-TQIMFETFNSPAMYVAIQAVLSLYASGRTTGIVLDSGDGVSHTVPIYEGYALPHAILRLD
-LAGRDLTDYLMKILTERGYSFTTTAEREIVRDIKEKLCYVALDFEQEMATAAASTSLEKS
-YELPDGQVITIGNERFRCPESLFQPSFLGMESCGIHETVYNSIMKCDVDIRKDLYANIVM
-SGGTTMYPGIADRMQKEITSLAPSTIKIKIIAPPERKYSVWIGGSILASLSTFQQMWISK
-EEYDESGPGIVHRKCF
-```
-
-Ensembl
-```
-MCDDEVAALVVDNGSGMCKAGFAGDDAPRAVFPSIVGRPRHQGVMVGMGQKDSYVGDEAQ
-SKRGILTLKYPIEHGIITNWDDMEKIWHHTFYNELRVAPEEHPVLLTEAPLNPKANREKM
-TQIMFETFNSPAMYVAIQAVLSLYASGRTTGIVLDSGDGVSHTVPIYEGYALPHAILRLD
-LAGRDLTDYLMKILTERGYSFTTTAEREIVRDIKEKLCYVALDFEQEMATAAASTSLEKS
-YELPDGQVITIGNERFRCPESLFQPSFLGMESCGIHETVYNSIMKCDVDIRKDLYANIVM
-SGGTTMYPGIADRMQKEITSLAPSTIKIKIIAPPERKYSVWIGGSILASLSTFQQMWISK
-EEYDESGPGIVHRKCF
-```
-
-#### ALBU_HUMAN
-
-1. [ALBU_HUMAN](http://www.uniprot.org/uniprot/P02768).
-2. Follow the [UniParc link](http://www.uniprot.org/uniparc/?query=uniprot:P02768&direct=yes) in section *Sequences*.
-3. Choose one EMBL entry, e.g. CBL66721 is not working, choose the second one [ABJ16448](http://www.ebi.ac.uk/ena/data/view/ABJ16448).
-4. Look for the Identifier in the *Sequence* section, e.g. *ABJ16448.1* (fasta file comment, 3rd column).
-5. Put these identifier into the search box of http://ensembl.org and choose the *Human* species.
-6. Choose the first search result, e.g. [ALB-001](http://www.ensembl.org/Homo_sapiens/Transcript/Summary?t=ENST00000295897&db=core).
-7. Select the protein with the same length as the UniProt protein, e.g. [ALB-001/ENST00000295897](http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;g=ENSG00000163631;r=4:74269956-74287129;t=ENST00000295897).
-8. Choose the Sequence/Protein link in the left navigation bar to get the aminoacid sequence.
-9. Compare both sequences.
-
-#### TL;DR
-
-1. Visit the Uniprot page of the protein of interest.
-2. Look for section *Sequence databases* and choose *EMBL* and an identifier.
-3. Use this identifier to search on http://ensembl.org .
+To be documented in the `mapping` vignette.
 
 ## Interoperability
 
@@ -259,6 +160,3 @@ possibly biomaRt in the future) using protein identifiers, protein
 identification results (`mzID` package and, later `mzR`) and possibly
 also `MSnExp` and `MSnSet` instances.
 
-## Data
-- Availble on prot-main (CPU).
-- Copy locally in `Pbase/sandbox` and use local path to enable reproducibility.
