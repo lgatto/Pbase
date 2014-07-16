@@ -1,7 +1,7 @@
 Package: Pbase
 Type: Package
 Title: Manipulating and exploring protein and proteomics data
-Version: 0.1.4
+Version: 0.1.5
 Authors@R: c(person("Laurent", "Gatto", role = c("aut"),
                     email = "lg390@cam.ac.uk"),
              person("Sebastian", "Gibb", role = c("aut", "cre"),

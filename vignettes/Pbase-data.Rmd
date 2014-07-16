@@ -1,0 +1,87 @@
+---
+title: "Pbase example data"
+author: "Laurent Gatto - <lg390@cam.ac.uk>"
+output:
+  html_document:
+    toc: true
+    theme: united
+---
+
+```{r, env, echo=FALSE, message=FALSE, warning=FALSE}
+library("Pbase")
+```
+
+The original data is a 10 fmol
+[Peptide Retention Time Calibration Mixture](http://www.piercenet.com/product/peptide-retention-time-calibration-mixture)
+spiked into 50 ng HeLa background acquired on a Thermo Orbitrap Q
+Exactive instrument. A restricted set of high scoring human proteins
+from the UniProt release 2014_06 were searched using the MSGF+ engine.
+
+## The fasta database
+
+```{r, fa, cache=TRUE}
+library("Biostrings")
+fafile <- system.file("extdata/HUMAN_2014_06-09prots.fasta", package = "Pbase")
+fa <- readAAStringSet(fafile)
+fa
+```
+
+## The PSM data
+
+```{r, psm, cache=TRUE}
+library("mzID")
+idfile <- system.file("extdata/Thermo_Hela_PRTC_1_selected.mzid", package = "Pbase")
+id <- flatten(mzID(idfile))
+dim(id)
+head(id)
+```
+
+## The Proteins object
+
+```{r, p, cache=TRUE}
+library("Pbase")
+p <- Proteins(fafile)
+p <- addIdentificationData(p, idfile)
+p
+```
+
+A `Proteins` object is composed of a set of protein sequences
+accessible with the `aa` accessor as well as an optional set of
+peptides features that are mapped as coordinates along the proteins,
+available with `pranges`. The actual peptide sequences can be extraced
+with `pfeatures`.
+
+```{r, paccess}
+aa(p)
+pranges(p)
+pfeatures(p)
+```
+
+A Proteins instance is further described by general
+`metadata`. Protein sequence and peptide features annotations can be
+accessed with `ametadata` and `pmetadata` (or `acols` and `pcols`)
+respectively.
+
+```{r, metadata}
+metadata(p)
+head(acols(p))
+head(pcols(p))
+```
+
+Specific proteins can be extracted by index of name using
+`[` and proteins and their peptide features can be plotted
+with the default plot method.
+
+```{r, pplot, fig.align='center', cache=TRUE}
+seqnames(p)
+plot(p[c(1,9)])
+```
+
+More details can be found in `?Proteins`. The object generated above
+is also directly available as `data(p)`.
+
+## Session information
+
+```{r, si}
+sessionInfo()
+```

@@ -62,32 +62,50 @@
 
   Objects can be created using its constructor \code{Proteins}. The
   constructor either takes a \code{fasta} file name as first argument
-  or, alternatively a named \code{uniprotIda} argument with valid
-  UniProt accession numbers.
+  or, alternatively a named \code{uniprotIds} argument with valid
+  UniProt accession numbers (not yet implemented).
   
 }
 
 \section{Details}{
+
   An instance of class \code{Proteins} is characterised by one of
   multiple protein sequences that can be accessed as \code{AAStringSet}
   with the \code{aa} accessor. Sequence-specific annotation, such as
   accession numbers, protein and gene names, ... is available with the
   \code{ametadata} or \code{acols} methods. General metadata such as the
   data of creation of the instance are stored as a \code{list} returned
-  by the \code{metadata} accessor.
+  by the \code{metadata} accessor, which would typically contain a
+  \code{created} character that documents when the object was created, a
+  reference \code{genome} descriptor, a \code{UniProtRelease} with the
+  release data of the UniProt database and possibly others.
 
   Each sequence of a \code{Proteins} instance can also be characterised
   by a set of specific ranges describing peptides of interest. These
   \emph{peptide features} can be extracted as an \code{AAStringSetList},
-  where each sequence features 0 or more peptide features. These
+  where each protein sequence contains 0 or more peptide features. These
   peptides features are encode as ranges along the original proteins
   sequences (a \code{list} of \code{IRanges}) that can be extracted with
   the \code{pranges} function. These peptide features have their own
   metadata describing for example peptide identification scores, number
   of missed cleavages, ... available with the \code{pmetadata} or
   \code{pcols} methods.
+
 }
 
+\section{Developement notes}{
+
+  The current decision is to avoid \code{pranges} from multiple origins,
+  i.e. it is not possible to call `addIdentificationData` multiple
+  times. It is probably easier to manage this situation using different
+  \code{Proteins} instances. We can then think about \emph{comparing}
+  \code{Proteins} instances (that have \code{identical(p1@aa, p2@aa)}) 
+  and easily return \emph{common} sequences.
+
+  Other possible metadata fields: \code{Uniprot.SW}, \code{biomaRt}
+  instances.
+  
+}
 
 \section{Slots}{
   \describe{
@@ -187,6 +205,12 @@
 
   }
 }
+
+\references{
+  Definition of the UniProt fasta comment format:
+  \url{http://www.uniprot.org/help/fasta-headers}
+}
+
 
 \author{
   Laurent Gatto <lg390@cam.ac.uk> and Sebastian Gibb <mail@sebastiangibb.de>
