@@ -135,15 +135,6 @@ http://web.expasy.org/compute_pi/pi_tool-doc.html
 
 See Pavel's [idea](https://github.com/sgibb/cleaver/issues/5).
 
-### Creating a link between arbitrary protein sequences and a genomic reference
-
-If we want to migrate towards a `GRanges` infrastructure, it is
-important to be able to link proteins and full proteomics back to
-genomic coordinates. I don't know if this mapping is provided for the
-UniProt reference proteomes.
-
-See also the `sapFinder` Bioconductor packages.
-
 ### Protein domains
 
 Maybe support for the annotation of detection of protein domains.
