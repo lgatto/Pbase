@@ -12,8 +12,6 @@ setMethod("Proteins",
               .toBeImplemented()
           })
 
-## TODO:/BUG: commented because Gviz crashes with callNextMethod error
-## see also: https://stat.ethz.ch/pipermail/bioc-devel/2014-May/005701.html
 setMethod("[", "Proteins",
           function(x, i, j = "missing", ..., drop) {
               if (!missing(j) || length(list(...)) > 0L)
@@ -35,7 +33,8 @@ setMethod("[", "Proteins",
               return(x)
           })
 
-## accessor
+
+## accessors
 setMethod("pfeatures", "Proteins",
           function(x) extractAt(aa(x), unname(pranges(x))))
 
@@ -76,7 +75,8 @@ setMethod("[[", "Proteins",
 
 setMethod("aa", "Proteins", function(x) x@aa)
 
-## methods
+
+## Methods
 setMethod("addIdentificationData",
           "Proteins",
           function(object, filename, rmEmptyRanges=TRUE) {
