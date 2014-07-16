@@ -77,7 +77,8 @@ seqnames(p)
 plot(p[c(1,9)])
 ```
 
-More details can be found in `?Proteins`.
+More details can be found in `?Proteins`. The object generated above
+is also directly available as `data(p)`.
 
 ## Session information
 

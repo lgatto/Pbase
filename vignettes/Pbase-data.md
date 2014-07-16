@@ -498,7 +498,8 @@ plot(p[c(1,9)])
 
 <img src="figure/pplot.png" title="plot of chunk pplot" alt="plot of chunk pplot" style="display: block; margin: auto;" />
 
-More details can be found in `?Proteins`.
+More details can be found in `?Proteins`. The object generated above
+is also directly available as `data(p)`.
 
 ## Session information
 
