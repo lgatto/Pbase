@@ -99,7 +99,7 @@
   i.e. it is not possible to call `addIdentificationData` multiple
   times. It is probably easier to manage this situation using different
   \code{Proteins} instances. We can then think about \emph{comparing}
-  \code{Proteins] instances (that have \code{identical(p1@aa, p2@aa)}
+  \code{Proteins} instances (that have \code{identical(p1@aa, p2@aa)}) 
   and easily return \emph{common} sequences.
 
   Other possible metadata fields: \code{Uniprot.SW}, \code{biomaRt}
