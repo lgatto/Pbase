@@ -444,8 +444,8 @@ plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
   overlay additional information, such as quantitation data,
   identification scores, coverage, ...
 
-#### Session information
+## Session information
 
 ```{r, si}
-sessionInformation()
+sessionInfo()
 ```
