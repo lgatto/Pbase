@@ -141,7 +141,7 @@ Maybe support for the annotation of detection of protein domains.
 
 ### Mapping a Protein Sequence to a Genome Sequence
 
-To be documented in the `mapping` vignette.
+See the [`mapping`](https://github.com/ComputationalProteomicsUnit/Pbase/blob/master/vignettes/mapping.md) vignette.
 
 ## Interoperability
 
