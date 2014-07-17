@@ -388,7 +388,7 @@ peptides_on_genome <- IRanges(start = getPos(start(peprng2), start_ex),
 
 ### Plotting
 
-Based on the new peptide genomic coordinates, it is not
+Based on the new peptide genomic coordinates, it is now
 straightforward to create a new `AnnotationTrack` and add it the the
 track visualisation.
 
@@ -440,5 +440,12 @@ plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
            add53 = TRUE, add35 = TRUE)
 ```
 
-**TODO** Check spectra. Describe data tracks can be used to overlay
-  additional information.
+**TODO** Check spectra. Describe how data tracks can be used to
+  overlay additional information, such as quantitation data,
+  identification scores, coverage, ...
+
+#### Session information
+
+```{r, si}
+sessionInformation()
+```

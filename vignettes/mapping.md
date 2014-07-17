@@ -507,7 +507,7 @@ writePairwiseAlignments(pairwiseAlignment(pp[[1]], pptr))
 ```
 ## ########################################
 ## # Program: Biostrings (version 2.33.12), a Bioconductor package
-## # Rundate: Thu Jul 17 02:25:37 2014
+## # Rundate: Thu Jul 17 02:34:31 2014
 ## ########################################
 ## #=======================================
 ## #
@@ -614,7 +614,7 @@ peptides_on_genome <- IRanges(start = getPos(start(peprng2), start_ex),
 
 ### Plotting
 
-Based on the new peptide genomic coordinates, it is not
+Based on the new peptide genomic coordinates, it is now
 straightforward to create a new `AnnotationTrack` and add it the the
 track visualisation.
 
@@ -671,5 +671,17 @@ plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
 
 <img src="figure/msmsspectra.png" title="plot of chunk msmsspectra" alt="plot of chunk msmsspectra" style="display: block; margin: auto;" />
 
-**TODO** Check spectra. Describe data tracks can be used to overlay
-  additional information.
+**TODO** Check spectra. Describe how data tracks can be used to
+  overlay additional information, such as quantitation data,
+  identification scores, coverage, ...
+
+#### Session information
+
+
+```r
+sessionInformation()
+```
+
+```
+## Error: could not find function "sessionInformation"
+```
