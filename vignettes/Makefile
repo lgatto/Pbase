@@ -1,6 +1,7 @@
 
 all:
 	make data
+	make mapping
 
 setvars:
 ifeq (${R_HOME},)
@@ -9,6 +10,9 @@ endif
 
 data: 
 	"$(R_HOME)/bin/Rscript" -e 'require("knitr"); require("rmarkdown"); knit("Pbase-data.Rmd"); render("Pbase-data.md")'
+
+mapping: 
+	"$(R_HOME)/bin/Rscript" -e 'require("knitr"); require("rmarkdown"); knit("mapping.Rmd"); render("mapping.md")'
 
 clean: 
 	rm -f *~
