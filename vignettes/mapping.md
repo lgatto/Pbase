@@ -507,7 +507,7 @@ writePairwiseAlignments(pairwiseAlignment(pp[[1]], pptr))
 ```
 ## ########################################
 ## # Program: Biostrings (version 2.33.12), a Bioconductor package
-## # Rundate: Thu Jul 17 02:34:31 2014
+## # Rundate: Thu Jul 17 02:36:52 2014
 ## ########################################
 ## #=======================================
 ## #
@@ -675,13 +675,72 @@ plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
   overlay additional information, such as quantitation data,
   identification scores, coverage, ...
 
-#### Session information
+## Session information
 
 
 ```r
-sessionInformation()
+sessionInfo()
 ```
 
 ```
-## Error: could not find function "sessionInformation"
+## R Under development (unstable) (2014-04-10 r65396)
+## Platform: x86_64-unknown-linux-gnu (64-bit)
+## 
+## locale:
+##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  grid      methods   stats     graphics  grDevices utils    
+## [8] datasets  base     
+## 
+## other attached packages:
+##  [1] ggplot2_1.0.0                     BSgenome.Hsapiens.UCSC.hg19_1.4.0
+##  [3] BSgenome_1.33.8                   rtracklayer_1.25.13              
+##  [5] biomaRt_2.21.1                    Biostrings_2.33.12               
+##  [7] XVector_0.5.7                     Pbase_0.1.6                      
+##  [9] Rcpp_0.11.2                       Gviz_1.9.10                      
+## [11] GenomicRanges_1.17.23             GenomeInfoDb_1.1.12              
+## [13] IRanges_1.99.22                   S4Vectors_0.1.2                  
+## [15] BiocGenerics_0.11.3               rmarkdown_0.2.46                 
+## [17] knitr_1.6                        
+## 
+## loaded via a namespace (and not attached):
+##  [1] affy_1.43.3               affyio_1.33.0            
+##  [3] AnnotationDbi_1.27.8      BatchJobs_1.3            
+##  [5] BBmisc_1.7                Biobase_2.25.0           
+##  [7] BiocInstaller_1.15.5      BiocParallel_0.7.7       
+##  [9] biovizBase_1.13.8         bitops_1.0-6             
+## [11] brew_1.0-6                checkmate_1.1            
+## [13] cleaver_1.3.7             cluster_1.15.2           
+## [15] codetools_0.2-8           colorspace_1.2-4         
+## [17] data.table_1.9.2          DBI_0.2-7                
+## [19] dichromat_2.0-0           digest_0.6.4             
+## [21] doParallel_1.0.8          evaluate_0.5.5           
+## [23] fail_1.2                  foreach_1.4.2            
+## [25] formatR_0.10              Formula_1.1-1            
+## [27] GenomicAlignments_1.1.20  GenomicFeatures_1.17.12  
+## [29] gtable_0.1.2              Hmisc_3.14-4             
+## [31] htmltools_0.2.4           impute_1.39.0            
+## [33] iterators_1.0.7           labeling_0.2             
+## [35] lattice_0.20-29           latticeExtra_0.6-26      
+## [37] limma_3.21.10             MALDIquant_1.10          
+## [39] MASS_7.3-33               matrixStats_0.10.0       
+## [41] MSnbase_1.13.12           munsell_0.4.2            
+## [43] mzID_1.3.2                mzR_1.11.7               
+## [45] pcaMethods_1.55.0         plyr_1.8.1               
+## [47] preprocessCore_1.27.1     proto_0.3-10             
+## [49] Pviz_0.99.0               R.methodsS3_1.6.1        
+## [51] RColorBrewer_1.0-5        RCurl_1.95-4.1           
+## [53] reshape2_1.4              Rsamtools_1.17.31        
+## [55] RSQLite_0.11.4            scales_0.2.4             
+## [57] sendmailR_1.1-2           splines_3.2.0            
+## [59] stats4_3.2.0              stringr_0.6.2            
+## [61] survival_2.37-7           tools_3.2.0              
+## [63] VariantAnnotation_1.11.16 vsn_3.33.0               
+## [65] XML_3.98-1.1              zlibbioc_1.11.1
 ```
