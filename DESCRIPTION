@@ -1,7 +1,7 @@
 Package: Pbase
 Type: Package
 Title: Manipulating and exploring protein and proteomics data
-Version: 0.1.6
+Version: 0.1.7
 Authors@R: c(person("Laurent", "Gatto", role = c("aut", "cre"),
                     email = "lg390@cam.ac.uk"),
              person("Sebastian", "Gibb", role = c("aut", "cre"),
@@ -15,7 +15,6 @@ Description: A set of classes and functions to investigate and
              understand protein sequence data in the context of a
              proteomics experiment.
 License: GPL-3
-Packaged: 2014-06-09 17:40:28 UTC; mcarlson
 Author: Laurent Gatto [aut], Sebastian Gibb [aut, cre]
 Maintainer: Sebastian Gibb <mail@sebastiangibb.de>, 
 	    Laurent Gatto <lg390@cam.ac.uk>
