@@ -507,7 +507,7 @@ writePairwiseAlignments(pairwiseAlignment(pp[[1]], pptr))
 ```
 ## ########################################
 ## # Program: Biostrings (version 2.33.12), a Bioconductor package
-## # Rundate: Mon Jul 21 01:43:05 2014
+## # Rundate: Mon Jul 21 01:49:06 2014
 ## ########################################
 ## #=======================================
 ## #
