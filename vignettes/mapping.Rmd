@@ -26,10 +26,13 @@ to genomic locations.
 par(mar = rep(0, 4),
     oma = rep(0, 4))
 
+xlim <- c(0, 10)
+ylim <-c(5.05, 10.25)
+
 plot(0, type = "n", axes = FALSE,
      xlab = "", ylab = "",
-     xlim = c(0, 10),
-     ylim = c(5.75, 10.25))
+     xlim = xlim,    
+     ylim = ylim)
 
 y <- 10
 
@@ -101,6 +104,52 @@ for (i in 1:length(prot)) {
 }
 y <- y - .75
 
+## concat protein
+## center
+x <- mean(xlim)
+protlen <- sum(sapply(prot, diff))
+X0 <- x0 <- x - protlen/2 ## left start
+
+abline(h = y, lty = "dotted")
+text(0-0.26, y, expression(P), pos = 3)
+
+for (i in 1:length(prot)) {
+    pr <- prot[[i]]
+    .pr1 <- x0
+    .pr2 <- x0 + (pr[2] - pr[1])
+    rect(.pr1, y - 0.25,
+         .pr2, y + 0.25,
+         col = "steelblue")
+    segments(.pr1, y + 0.25, pr[1], y + .75 - .25, lty = "dotted")
+    segments(.pr2, y + 0.25, pr[2], y + .75 - .25, lty = "dotted")
+    text(mean(c(.pr1,.pr2)), y, paste0("j = ", i), cex = .7)
+    x0 <- .pr2
+}
+
+text(X0, y, expression(1), pos = 2)
+text(X0 + protlen, y, expression(L[P]), pos = 4)
+
+## pos and length
+relpeps <- list(c(0.5, 0.29),
+                ## 1.% is length of exon 1
+                c(1.5 + 0.1, 0.2),
+                c(1.5 + 0.85, 0.15),
+                ## 1.1 is length of exon 2
+                c(1.5 + 1.1 + 0.1, 0.15))
+
+for (i in 1:length(relpeps)) {
+    rp <- relpeps[[i]]
+    pep <- peps[[i]]
+    rect(X0 + rp[1], y - 0.25,
+         X0 + rp[1] + rp[2], y + 0.25,
+         col = "#FFA50450", lwd = 0)
+    segments(X0 + rp[1], y - 0.25,
+             pep[1], y - .75 + .25, lty = "dotted")
+    segments(X0 + rp[1] + rp[2], y - 0.25,
+             pep[2], y - .75 + .25, lty = "dotted")
+}
+y <- y - .75
+
 
 abline(h = y, lty = "dotted")
 text(0-0.26, y, expression(Pi), pos = 3)
@@ -108,7 +157,7 @@ for (i in 1:length(peps)) {
     pep <- peps[[i]]
     rect(pep[1], y - 0.25,
          pep[2], y + 0.25,
-         col = "blue")
+         col = "#FFA504FF")
     text(pep[1], y + 0.25, expression(pi[s]^k), pos = 3, cex = .7)
     text(pep[2], y + 0.25, expression(pi[e]^k), pos = 3, cex = .7)
     text(mean(c(pep[1], pep[2])), y-0.35, paste0("k = ", i), cex = .8)
