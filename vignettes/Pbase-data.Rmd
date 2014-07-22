@@ -1,3 +1,8 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Pbase-data}
+-->
+
 ---
 title: "Pbase example data"
 author: "Laurent Gatto - <lg390@cam.ac.uk>"
