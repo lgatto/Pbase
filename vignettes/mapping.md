@@ -507,7 +507,7 @@ writePairwiseAlignments(pairwiseAlignment(pp[[1]], pptr))
 ```
 ## ########################################
 ## # Program: Biostrings (version 2.33.12), a Bioconductor package
-## # Rundate: Thu Jul 17 02:36:52 2014
+## # Rundate: Mon Jul 21 01:49:06 2014
 ## ########################################
 ## #=======================================
 ## #
@@ -731,7 +731,7 @@ sessionInfo()
 ## [37] limma_3.21.10             MALDIquant_1.10          
 ## [39] MASS_7.3-33               matrixStats_0.10.0       
 ## [41] MSnbase_1.13.12           munsell_0.4.2            
-## [43] mzID_1.3.2                mzR_1.11.7               
+## [43] mzID_1.3.2                mzR_1.11.10              
 ## [45] pcaMethods_1.55.0         plyr_1.8.1               
 ## [47] preprocessCore_1.27.1     proto_0.3-10             
 ## [49] Pviz_0.99.0               R.methodsS3_1.6.1        
