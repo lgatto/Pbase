@@ -18,6 +18,7 @@ License: GPL-3
 Author: Laurent Gatto [aut], Sebastian Gibb [aut, cre]
 Maintainer: Sebastian Gibb <mail@sebastiangibb.de>, 
 	    Laurent Gatto <lg390@cam.ac.uk>
+VignetteBuilder: knitr
 URL: https://github.com/ComputationalProteomicsUnit/Pbase
 BugReports: https://github.com/ComputationalProteomicsUnit/Pbase/issues
 biocViews: Infrastructure, Proteomics, MassSpectrometry,

@@ -1,3 +1,8 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{mapping}
+-->
+
 ---
 title: "Mapping proteins to their genomic coordinates"
 author: "Laurent Gatto - <lg390@cam.ac.uk>"
@@ -258,6 +263,9 @@ bmTrack <- BiomartGeneRegionTrack(start = min(bm$start_position),
                                   end = max(bm$end_position),
                                   chromosome = "chrX",
                                   genome = "hg19")
+
+## see also the filters param and getBM to
+## filter on biotype == "protein_coding"
 
 bmTracks <- split(bmTrack, transcript(bmTrack))
 
