@@ -1,6 +1,11 @@
+CHANGES IN VERSION 0.1.8
+------------------------
+ o Using knit2html instead of rmarkdown::render since it is not yet
+   available on the Bioc build servers [2014-07-24 Thu]
+
 CHANGES IN VERSION 0.1.7
 ------------------------
- o 
+ o export vignettes [2014-07-22 Tue]
 
 CHANGES IN VERSION 0.1.6
 ------------------------
