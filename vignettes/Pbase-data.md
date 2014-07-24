@@ -1,11 +1,22 @@
----
-title: "Pbase example data"
-author: "Laurent Gatto - <lg390@cam.ac.uk>"
-output:
-  html_document:
-    toc: true
-    theme: united
----
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Pbase-data}
+-->
+
+<!-- --- -->
+<!-- title: "Pbase example data" -->
+<!-- author: "Laurent Gatto - <lg390@cam.ac.uk>" -->
+<!-- output: -->
+<!--   html_document: -->
+<!--     toc: true -->
+<!--     theme: united -->
+<!-- --- -->
+
+Pbase example data
+==================
+
+Laurent Gatto - <lg390@cam.ac.uk>
+
 
 
 
@@ -525,46 +536,44 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] Pbase_0.1.5           Gviz_1.9.10           GenomicRanges_1.17.23
-##  [4] GenomeInfoDb_1.1.12   IRanges_1.99.22       S4Vectors_0.1.2      
-##  [7] Rcpp_0.11.2           BiocGenerics_0.11.3   rmarkdown_0.2.46     
-## [10] knitr_1.6            
+## [1] Pbase_0.1.7           Gviz_1.9.10           GenomicRanges_1.17.23
+## [4] GenomeInfoDb_1.1.12   IRanges_1.99.23       S4Vectors_0.1.2      
+## [7] Rcpp_0.11.2           BiocGenerics_0.11.3   knitr_1.6            
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] affy_1.43.3               affyio_1.33.0            
 ##  [3] AnnotationDbi_1.27.8      BatchJobs_1.3            
 ##  [5] BBmisc_1.7                Biobase_2.25.0           
-##  [7] BiocInstaller_1.15.5      BiocParallel_0.7.7       
+##  [7] BiocInstaller_1.15.5      BiocParallel_0.7.8       
 ##  [9] biomaRt_2.21.1            Biostrings_2.33.12       
 ## [11] biovizBase_1.13.8         bitops_1.0-6             
 ## [13] brew_1.0-6                BSgenome_1.33.8          
-## [15] checkmate_1.1             cleaver_1.3.7            
+## [15] checkmate_1.2             cleaver_1.3.7            
 ## [17] cluster_1.15.2            codetools_0.2-8          
 ## [19] colorspace_1.2-4          data.table_1.9.2         
 ## [21] DBI_0.2-7                 dichromat_2.0-0          
 ## [23] digest_0.6.4              doParallel_1.0.8         
 ## [25] evaluate_0.5.5            fail_1.2                 
 ## [27] foreach_1.4.2             formatR_0.10             
-## [29] Formula_1.1-1             GenomicAlignments_1.1.20 
+## [29] Formula_1.1-2             GenomicAlignments_1.1.20 
 ## [31] GenomicFeatures_1.17.12   ggplot2_1.0.0            
 ## [33] gtable_0.1.2              Hmisc_3.14-4             
-## [35] htmltools_0.2.4           impute_1.39.0            
-## [37] iterators_1.0.7           lattice_0.20-29          
-## [39] latticeExtra_0.6-26       limma_3.21.10            
-## [41] MALDIquant_1.10           MASS_7.3-33              
-## [43] matrixStats_0.10.0        MSnbase_1.13.12          
-## [45] munsell_0.4.2             mzID_1.3.2               
-## [47] mzR_1.11.7                pcaMethods_1.55.0        
-## [49] plyr_1.8.1                preprocessCore_1.27.1    
-## [51] proto_0.3-10              Pviz_0.99.0              
-## [53] R.methodsS3_1.6.1         RColorBrewer_1.0-5       
-## [55] RCurl_1.95-4.1            reshape2_1.4             
-## [57] Rsamtools_1.17.31         RSQLite_0.11.4           
-## [59] rtracklayer_1.25.13       scales_0.2.4             
-## [61] sendmailR_1.1-2           splines_3.2.0            
-## [63] stats4_3.2.0              stringr_0.6.2            
-## [65] survival_2.37-7           tools_3.2.0              
-## [67] VariantAnnotation_1.11.12 vsn_3.33.0               
-## [69] XML_3.98-1.1              XVector_0.5.7            
-## [71] zlibbioc_1.11.1
+## [35] impute_1.39.0             iterators_1.0.7          
+## [37] lattice_0.20-29           latticeExtra_0.6-26      
+## [39] limma_3.21.10             MALDIquant_1.10          
+## [41] MASS_7.3-33               matrixStats_0.10.0       
+## [43] MSnbase_1.13.12           munsell_0.4.2            
+## [45] mzID_1.3.4                mzR_1.11.10              
+## [47] pcaMethods_1.55.0         plyr_1.8.1               
+## [49] preprocessCore_1.27.1     proto_0.3-10             
+## [51] Pviz_0.99.0               R.methodsS3_1.6.1        
+## [53] RColorBrewer_1.0-5        RCurl_1.95-4.1           
+## [55] reshape2_1.4              Rsamtools_1.17.31        
+## [57] RSQLite_0.11.4            rtracklayer_1.25.13      
+## [59] scales_0.2.4              sendmailR_1.1-2          
+## [61] splines_3.2.0             stats4_3.2.0             
+## [63] stringr_0.6.2             survival_2.37-7          
+## [65] tools_3.2.0               VariantAnnotation_1.11.16
+## [67] vsn_3.33.0                XML_3.98-1.1             
+## [69] XVector_0.5.7             zlibbioc_1.11.1
 ```
