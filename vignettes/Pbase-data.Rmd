@@ -3,14 +3,20 @@
 %\VignetteIndexEntry{Pbase-data}
 -->
 
----
-title: "Pbase example data"
-author: "Laurent Gatto - <lg390@cam.ac.uk>"
-output:
-  html_document:
-    toc: true
-    theme: united
----
+<!-- --- -->
+<!-- title: "Pbase example data" -->
+<!-- author: "Laurent Gatto - <lg390@cam.ac.uk>" -->
+<!-- output: -->
+<!--   html_document: -->
+<!--     toc: true -->
+<!--     theme: united -->
+<!-- --- -->
+
+Pbase example data
+==================
+
+Laurent Gatto - <lg390@cam.ac.uk>
+
 
 ```{r, env, echo=FALSE, message=FALSE, warning=FALSE}
 library("Pbase")
