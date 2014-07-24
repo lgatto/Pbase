@@ -3,14 +3,19 @@
 %\VignetteIndexEntry{mapping}
 -->
 
----
-title: "Mapping proteins to their genomic coordinates"
-author: "Laurent Gatto - <lg390@cam.ac.uk>"
-output:
-  html_document:
-    toc: true
-    theme: united
----
+<!-- --- -->
+<!-- title: "Mapping proteins to their genomic coordinates" -->
+<!-- author: "Laurent Gatto - <lg390@cam.ac.uk>" -->
+<!-- output: -->
+<!--   html_document: -->
+<!--     toc: true -->
+<!--     theme: united -->
+<!-- --- -->
+
+Mapping proteins to their genomic coordinates
+=============================================
+
+Laurent Gatto - <lg390@cam.ac.uk>
 
 ```{r, env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("Gviz")

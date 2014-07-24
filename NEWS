@@ -1,6 +1,7 @@
 CHANGES IN VERSION 0.1.8
 ------------------------
- o 
+ o Using knit2html instead of rmarkdown::render since it is not yet
+   available on the Bioc build servers [2014-07-24 Thu]
 
 CHANGES IN VERSION 0.1.7
 ------------------------
