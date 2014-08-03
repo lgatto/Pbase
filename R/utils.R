@@ -55,6 +55,25 @@
   unlist(x)
 }
 
+#' same as base::gregexpr but returns a matrix with 2 columns (start, end) and
+#' supports only fixed patterns and a subject with length 1
+#' @param pattern character; length == 1
+#' @param subject character; length == 1
+#' @return a matrix
+#' @noRd
+.gregexpr <- function(pattern, subject) {
+    m <- gregexpr(pattern = pattern, text = subject, fixed = TRUE)[[1L]]
+    n <- attr(m, "match.length")
+
+    if (n[1L] > 0L) {
+        m <- as.vector(m)
+        return(cbind(start = m, end = m + n - 1L))
+    } else {
+        return(matrix(0L, nrow = 0L, ncol = 2L,
+               dimnames = list(c(), c("start", "end"))))
+    }
+}
+
 #' @param x IRanges
 #' @param f defines the grouping (see ?split)
 #' @param unshift if TRUE the IRanges will shift back to start with 1L

@@ -52,11 +52,14 @@
     .setNames2(valid, x)
 }
 
-#' calculates IRanges for a peptide "pattern" in a protein "subject"
+
+#' calculates IRanges for peptides "pattern" in a protein "subject"
 #' (TODO: this function is too slow!)
 #' @param pattern named character, AAString, AAStringSet, AAStringSetList
 #' @param subject named character, AAString, AAStringSet
 #' @return a named IRangesList
+#' The index of the peptides (PeptideIndex) and the proteins (ProteinIndex) is
+#' stored in IRangesList@elementMetaData as columns of a DataFrame.
 #' @noRd
 .peptidePosition <- function(pattern, subject) {
     if (is.null(names(pattern))) {
@@ -68,32 +71,27 @@
         stop("No duplicated names for ", sQuote("subject"), " allowed!")
     }
 
-    lpat <- split(pattern, names(pattern))
-    ## Caution: this will maybe fail for large AA
-    lpat <- lapply(lpat, function(x)paste0(unlist(x), collapse="|"))
-    lsub <- split(subject, names(subject))
-
-    m <- match(names(lsub), names(lpat))
-
-    r <- mapply(function(p, s, j) {
-        if (!is.null(p)) {
-            rx <- gregexpr(p, s, fixed = TRUE)[[1L]]
-            i <- which(rx > 0L)
-            l <- attr(rx, "match.length")[i]
-            rx <- rx[i]
-            if (length(rx)) {
-                return(matrix(c(rx, rx+l-1, rep.int(j, length(rx))), ncol = 3))
-            }
-        }
-    }, p = lpat[m], s = lsub, j = m, SIMPLIFY = FALSE, USE.NAMES = FALSE)
-
-    if (length(r) && any(elementLengths(r) > 0)) {
-        r <- do.call(rbind, r)
-        ir <- .splitIRanges(IRanges(start = r[, 1L], end = r[, 2L]), f=r[,3L])
-        names(ir) <- names(lpat)[unique(r[, 3L])]
-    } else {
-        ir <- IRanges()
+    if (is(pattern, "AAStringSetList")) {
+        pattern <- unlist(pattern)
     }
-    ir
+
+    proteinIndex <- match(names(pattern), names(subject))
+
+    l <- vector(mode = "list", length = length(pattern))
+
+    for (i in seq(along = l)) {
+        l[[i]] <- .gregexpr(pattern = pattern[i],
+                            subject = subject[proteinIndex[i]])
+    }
+
+    nrows <- vapply(l, nrow, integer(1L), USE.NAMES = FALSE)
+    r <- do.call(rbind, l)
+
+    ir <- IRanges(start = r[, 1L], end = r[, 2L])
+
+    mcols(ir) <-
+        DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern), nrows)),
+                  ProteinIndex = Rle(rep.int(proteinIndex, nrows)))
+    .splitIRanges(ir, f = names(subject)[as.integer(mcols(ir)$ProteinIndex)])
 }
 
