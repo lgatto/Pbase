@@ -52,6 +52,9 @@
     .setNames2(valid, x)
 }
 
+
+## doesn't work for multiple peptides per protein - see issue #5
+##
 #' calculates IRanges for a peptide "pattern" in a protein "subject"
 #' (TODO: this function is too slow!)
 #' @param pattern named character, AAString, AAStringSet, AAStringSetList
