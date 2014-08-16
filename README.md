@@ -25,7 +25,7 @@ See the `DESCRIPTION` file for a complete list.
 ## Getting started
 
 Currently, the best way to get started is `?Proteins` and the
-[`Pbase-data`](https://github.com/ComputationalProteomicsUnit/Pbase/blob/master/vignettes/Pbase-data.md)
+[`Pbase-data`](http://bioconductor.org/packages/devel/bioc/vignettes/Pbase/inst/doc/Pbase-data.html)
 vignette. More documentation is on its way.
 
 ## Development
@@ -141,7 +141,7 @@ Maybe support for the annotation of detection of protein domains.
 
 ### Mapping a Protein Sequence to a Genome Sequence
 
-See the [`mapping`](https://github.com/ComputationalProteomicsUnit/Pbase/blob/master/vignettes/mapping.md) vignette.
+See the [`mapping`](http://bioconductor.org/packages/devel/bioc/vignettes/Pbase/inst/doc/mapping.html) vignette.
 
 ## Interoperability
 
