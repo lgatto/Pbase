@@ -1,3 +1,7 @@
+CHANGES IN VERSION 0.1.9
+------------------------
+ o 
+
 CHANGES IN VERSION 0.1.8
 ------------------------
  o Using knit2html instead of rmarkdown::render since it is not yet

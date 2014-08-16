@@ -3,6 +3,10 @@
 %\VignetteIndexEntry{Pbase-data}
 -->
 
+```{r style, echo = FALSE}
+BiocStyle::markdown()
+```
+
 <!-- --- -->
 <!-- title: "Pbase example data" -->
 <!-- author: "Laurent Gatto - <lg390@cam.ac.uk>" -->
@@ -15,7 +19,7 @@
 Pbase example data
 ==================
 
-Laurent Gatto - <lg390@cam.ac.uk>
+[Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
 
 
 ```{r, env, echo=FALSE, message=FALSE, warning=FALSE}
