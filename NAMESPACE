@@ -12,6 +12,10 @@ importFrom(Biobase, classVersion, isCurrent, validMsg)
 
 importFrom(cleaver, cleave, cleavageRanges)
 
+
+importClassesFrom(mzR, mzRident)
+importFrom(mzR, openIDfile, psms)
+
 importClassesFrom(mzID, mzID)
 importFrom(mzID, mzID, flatten)
 

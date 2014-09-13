@@ -193,7 +193,8 @@
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
 
     \item{addIdentificationData}{\code{signature(object = "Proteins",
-	filenames = "character", rmEmptyRanges = "logical")}: ... }
+	filenames = "character", rmEmptyRanges = "logical", par =
+	"Pparams")}: ... }
     
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the
