@@ -21,7 +21,8 @@ importFrom(mzID, mzID, flatten)
 
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
 
-exportClasses(Proteins)
+exportClasses(Proteins,
+              Pparams)
 
 exportMethods(
     ## class methods
@@ -50,4 +51,5 @@ exportMethods(
     proteotypic
     )
 
-export(rmEmptyRanges)
+export(rmEmptyRanges,
+       Pparams)
