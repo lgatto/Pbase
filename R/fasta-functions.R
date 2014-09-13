@@ -29,7 +29,7 @@
     ## OrganismName, e.g. Escherichia coli
     "OS=(?<OS>[^=]+)",
     ## GeneName, e.g. nlpB
-    "(?:\\s+GN=(?<GN>[^= ]+))?",
+    "(?:\\s+GN=(?<GN>[^=]+))?",
     ## ProteinExistence, e.g. 4
     "(?:\\s+PE=(?<PE>[^= ]+))?",
     ## SequenceVersion, e.g. 1
