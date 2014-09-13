@@ -1,10 +1,10 @@
 CHANGES IN VERSION 0.1.10
 -------------------------
- o 
+ o Allow spaces in GeneNames (GN) of fasta comments; fixes #7 [2014-09-13 Sat]
 
 CHANGES IN VERSION 0.1.9
 ------------------------
- o Use BioStyle 
+ o Use BioStyle
 
 CHANGES IN VERSION 0.1.8
 ------------------------
