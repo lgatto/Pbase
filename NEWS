@@ -7,7 +7,7 @@ CHANGES IN VERSION 0.2.0
 
 CHANGES IN VERSION 0.1.10
 -------------------------
-  o Allow spaces in GeneNames (GN) of fasta comments; fixes #7 [2014-09-13 Sat]
+ o Allow spaces in GeneNames (GN) of fasta comments; fixes #7 [2014-09-13 Sat]
 
 CHANGES IN VERSION 0.1.9
 ------------------------

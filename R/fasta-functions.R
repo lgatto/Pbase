@@ -52,12 +52,8 @@
   grepl("^Pb[0-9]+$", x)
 }
 
-## .isValidAccessionNumber <- function(x) {
-##   .isUniProtAccessionNumber(x) | .isPbaseAccessionNumber(x)
-## }
-
 .isValidAccessionNumber <- function(x) {
-  .isUniProtAccessionNumber(x) | .isPbaseAccessionNumber(x) | .isRefSeqAccessionNumber(x)
+  .isUniProtAccessionNumber(x) | .isPbaseAccessionNumber(x)
 }
 
 #' these AccessionNumbers replace missing UniProt AccessionNumbers
@@ -78,11 +74,7 @@
 }
 
 .fastaComments2DataFrame <- function(x) {
-    if (myDB == "RefSeq") {
-        m <- .fastaCommentParser_refseq(x)
-    } else {
-        m <- .fastaCommentParser(x)
-    }
+  m <- .fastaCommentParser(x)
   comments <- rep(NA_character_, nrow(m))
 
   ## any missing AccessionNumber?
@@ -92,30 +84,24 @@
     comments[isNA] <- gsub("^>", "", x[isNA])
   }
 
-    if (myDB == "RefSeq") {
-        DataFrame(GI = Rle(factor(m[, 1L])),
-                  AccessionNumber = m[, 2L],
-                  Protein = m[, 3L])
-    } else {        
-        DataFrame(DB = Rle(factor(m[, 1L])),
-                  AccessionNumber = m[, 2L],
-                  EntryName = m[, 3L],
-                  IsoformName = Rle(m[, 4L]),
-                  ProteinName = m[, 5L],
-                  OrganismName = Rle(factor(m[, 6L])),
-                  GeneName = Rle(factor(m[, 7L])),
-                  ## Levels of evidence:
-                  ## http://www.uniprot.org/manual/protein_existence
-                  ProteinExistence = Rle(factor(m[, 8L],
-                      labels = c("Evidence at protein level",
-                          "Evidence at transcript level",
-                          "Inferred from homology",
-                          "Predicted",
-                          "Uncertain"),
-                      levels = 1L:5L)),
-                  SequenceVersion = Rle(m[, 9L]),
-                  Comment = Rle(comments))
-    }
+  DataFrame(DB = Rle(factor(m[, 1L])),
+            AccessionNumber = m[, 2L],
+            EntryName = m[, 3L],
+            IsoformName = Rle(m[, 4L]),
+            ProteinName = m[, 5L],
+            OrganismName = Rle(factor(m[, 6L])),
+            GeneName = Rle(factor(m[, 7L])),
+            ## Levels of evidence:
+            ## http://www.uniprot.org/manual/protein_existence
+            ProteinExistence = Rle(factor(m[, 8L],
+                labels = c("Evidence at protein level",
+                    "Evidence at transcript level",
+                    "Inferred from homology",
+                    "Predicted",
+                    "Uncertain"),
+                levels = 1L:5L)),
+            SequenceVersion = Rle(m[, 9L]),
+            Comment = Rle(comments))
 }
 
 .addFastaInformation2mcol <- function(x, fastacomments, filenames) {
