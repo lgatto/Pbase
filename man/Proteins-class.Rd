@@ -95,12 +95,19 @@
 
 \section{Developement notes}{
 
-  The current decision is to avoid \code{pranges} from multiple origins,
-  i.e. it is not possible to call `addIdentificationData` multiple
-  times. It is probably easier to manage this situation using different
-  \code{Proteins} instances. We can then think about \emph{comparing}
-  \code{Proteins} instances (that have \code{identical(p1@aa, p2@aa)}) 
-  and easily return \emph{common} sequences.
+  %% The current decision is to avoid \code{pranges} from multiple origins,
+  %% i.e. it is not possible to call `addIdentificationData` multiple
+  %% times. It is probably easier to manage this situation using different
+  %% \code{Proteins} instances. We can then think about \emph{comparing}
+  %% \code{Proteins} instances (that have \code{identical(p1@aa, p2@aa)}) 
+  %% and easily return \emph{common} sequences.
+  
+  Since version 0.2.0, \code{addIdentificationData} supports multiple
+  identification file names to be added to a \code{Proteins} instance
+  (argument renamed \code{filenames}) using either \code{mzID} or
+  \code{mzR}. Added new \code{Pparams} parametrisation infrastructure.
+
+  See \code{news(package = "Pbase")} for a description of all changes.
 
   Other possible metadata fields: \code{Uniprot.SW}, \code{biomaRt}
   instances.
@@ -186,7 +193,7 @@
     \item{cleave}{\code{signature(x = "Proteins")}: ... }
 
     \item{addIdentificationData}{\code{signature(object = "Proteins",
-	filename = "character", rmEmptyRanges = "logical")}: ... }
+	filenames = "character", rmEmptyRanges = "logical")}: ... }
     
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the
@@ -235,6 +242,16 @@ plot(pp[1:2], from = 20, to = 30)
 pp <- proteinCoverage(pp)
 avarLabels(pp)
 pp
+
+idfile <- system.file("extdata/Thermo_Hela_PRTC_1_selected.mzid",
+                      package = "Pbase")
+p <- addIdentificationData(p, idfile)
+pranges(p)
+pfeatures(p)
+
+plot(p[1])
+## the first protein has 36 peptides
+plot(p[1], fill = c(rep("orange", 13), rep("steelblue", 13)))
 }
 
 
