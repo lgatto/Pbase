@@ -24,10 +24,30 @@
 
 \section{Slots}{
   \describe{
-    \item{\code{DbFormat}:}{Object of class \code{"character"} ~~ }
-    \item{\code{IdFormat}:}{Object of class \code{"character"} ~~ }
-    \item{\code{IdReader}:}{Object of class \code{"character"} ~~ }
-    \item{\code{verbose}:}{Object of class \code{"logical"} ~~ }
+
+    \item{\code{DbFormat}:}{The format of the protein sequence fasta
+      database used to generate the \code{Proteins} object. Currently
+      only \code{"UniProt"} is supported. \code{"RefSeq"} will be added
+      as well as a mechanism to support arbitrary and custom fasta
+      header.
+    }
+
+    \item{\code{IdFormat}:}{The format of the identification data files
+      used to add \code{pfeatures} to \code{Protein}
+      instances. Currently, \code{mzIdentML} is supported. }
+
+    \item{\code{IdReader}:}{Package to be used to load the
+      identification data. Currently one of \code{mzR} (via the
+      \code{openIDfile} and \code{psms} functions) or \code{mzID} (via
+      the \code{mzID} and \code{flatten} functions). Differences between
+      these two architectures include the metadata available in the
+      \code{Proteins}' \code{pfeatures}, speed and stability (\code{mzR}
+      is much faster but less mature and currently susceptible to
+      crashes). }
+
+    \item{\code{verbose}:}{A \code{logical} defining if the various
+      functions display messages (default) or remain silent. }
+    
   }
 }
 
