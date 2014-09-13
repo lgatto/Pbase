@@ -45,23 +45,54 @@
 #' @param filename mzIdentML filename
 #' @return a modified Proteins object
 #' @noRd
-.addIdentificationDataProteins <- function(x, filename, rmEmptyRanges) {
+.addIdentificationDataProteins <- function(x, filenames, rmEmptyRanges, par) {
   if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
          "No ranges and metadata could be added.")
+  }  
+
+  if (par@IdReader == "mzID") {
+      y <- mzID(filenames)
+      n <- sapply(y@data, length)
+      y <- flatten(y)
+
+      an <- y$accession
+      ir <- IRanges(start = y$start, end = y$end)
+      names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
+      fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
+      meta <- as(y[, !colnames(y) %in% c("accession", "description")],
+                 "DataFrame")
+      mcols(ir) <- cbind(fasta, meta)
+      mcols(ir)$filenames <- 
+          mcols(ir)$spectrumFile <- Rle(factor(mcols(ir)$spectrumFile))
+      mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
+  } else { ## mzR
+      v <- par@verbose
+      if (v) message("Reading identification data:")
+      irl <- lapply(filenames, function(f) {
+          if (v) message("  ", f)
+          tmp <- openIDfile(f)
+          y <- psms(tmp)
+          rm(tmp)
+
+          an <- y$DatabaseAccess
+          ir <- IRanges(start = y$start, end = y$end)
+          names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
+
+          fasta <- .fastaComments2DataFrame(paste(an, y$DatabaseDescription))
+          meta <-
+              as(y[, !colnames(y) %in% c("DatabaseAccession", "DatabaseDescription")],
+                 "DataFrame")
+          mcols(ir) <- cbind(fasta, meta)
+          ir
+      })
+      if (v) message("done.")
+  
+      ir <- Reduce(c, irl)
+      ir@elementMetadata$filenames <-
+          Rle(factor(filenames), lengths = sapply(irl, length))
   }
-
-  y <- flatten(mzID(filename))
-
-  an <- y$accession
-  ir <- IRanges(start = y$start, end = y$end)
-  names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
-
-  fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
-  meta <- as(y[, !colnames(y) %in% c("accession", "description")],
-             "DataFrame")
-  mcols(ir) <- cbind(fasta, meta)
-
+  
   if (rmEmptyRanges) {
       x@pranges <- split(ir, names(ir))
       nms <- names(x@pranges)
@@ -70,9 +101,11 @@
       n <- length(x)
       .irl <- IRangesList(replicate(n, IRanges()))
       names(.irl) <- seqnames(x)
-      .irl[names(ir)] <- split(ir, names(ir))     
+      spir <- split(ir, names(ir))
+      .irl[names(spir)] <- spir
       x@pranges <- .irl
   }
+  x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
   x
 }
 
@@ -111,7 +144,8 @@
       ##    bad object found as method (class “function”)
       tracks[[idx + 3L]] <- ATrack(start = start(object@pranges[[i]]),
                                    end = end(object@pranges[[i]]),
-                                   name = "peptides")
+                                   name = "peptides",
+                                   ...)
     }
   }
   ## ProteinAxisTrack returns length == 0L; that's why we are using the

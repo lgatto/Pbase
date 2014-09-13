@@ -1,6 +1,13 @@
+CHANGES IN VERSION 0.2.0
+-------------------------
+ o support for mzID and mzR (new) to extract identification data from
+   mzid files via addIdentificationData [2014-09-12 Fri]
+ o support to add id data from > 1 mzid file [2014-09-12 Fri]
+ o new Pparams parameter infrastructure [2014-09-13 Sat]
+
 CHANGES IN VERSION 0.1.10
 -------------------------
- o Allow spaces in GeneNames (GN) of fasta comments; fixes #7 [2014-09-13 Sat]
+  o Allow spaces in GeneNames (GN) of fasta comments; fixes #7 [2014-09-13 Sat]
 
 CHANGES IN VERSION 0.1.9
 ------------------------
