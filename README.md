@@ -148,6 +148,6 @@ See the [`mapping`](http://bioconductor.org/packages/devel/bioc/vignettes/Pbase/
 The package allows to easily interact with `AAString` and
 `AAStringSet` instances, protein databases such as UniProt (and
 possibly biomaRt in the future) using protein identifiers, protein
-identification results (`mzID` package and, later `mzR`) and possibly
+identification results (`mzID` or (devel) `mzR` packages) and possibly
 also `MSnExp` and `MSnSet` instances.
 

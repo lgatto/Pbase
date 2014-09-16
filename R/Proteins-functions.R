@@ -67,9 +67,7 @@
           mcols(ir)$spectrumFile <- Rle(factor(mcols(ir)$spectrumFile))
       mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
   } else { ## mzR
-      v <- par@verbose
-      if (v) message("Reading identification data:")
-      irl <- lapply(filenames, function(f) {
+      .ir <- function(f) {
           if (v) message("  ", f)
           tmp <- openIDfile(f)
           y <- psms(tmp)
@@ -85,7 +83,10 @@
                  "DataFrame")
           mcols(ir) <- cbind(fasta, meta)
           ir
-      })
+      }
+      v <- par@verbose
+      if (v) message("Reading identification data:")
+      irl <- lapply(filenames, .ir)
       if (v) message("done.")
   
       ir <- Reduce(c, irl)
