@@ -68,7 +68,8 @@
       mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
   } else { ## mzR
       .ir <- function(f) {
-          if (v) message("  ", f)
+          if (v) message("  ", k, ". ", f)
+          k <<- k + 1
           tmp <- openIDfile(f)
           y <- psms(tmp)
           rm(tmp)
@@ -85,7 +86,8 @@
           ir
       }
       v <- par@verbose
-      if (v) message("Reading identification data:")
+      k <- 1
+      if (v) message("Reading ", length(filenames), " identification files:")
       irl <- lapply(filenames, .ir)
       if (v) message("done.")
   

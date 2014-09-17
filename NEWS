@@ -1,5 +1,9 @@
+CHANGES IN VERSION 0.2.1
+------------------------
+ o Counting id files when adding [2014-09-17 Wed]
+
 CHANGES IN VERSION 0.2.0
--------------------------
+------------------------
  o support for mzID and mzR (new) to extract identification data from
    mzid files via addIdentificationData [2014-09-12 Fri]
  o support to add id data from > 1 mzid file [2014-09-12 Fri]
