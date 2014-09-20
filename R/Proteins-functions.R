@@ -67,22 +67,25 @@
           mcols(ir)$spectrumFile <- Rle(factor(mcols(ir)$spectrumFile))
       mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
   } else { ## mzR
+
       .ir <- function(f) {
           if (v) message("  ", k, ". ", f)
           k <<- k + 1
           tmp <- openIDfile(f)
-          y <- psms(tmp)
-          rm(tmp)
+          on.exit(rm(tmp))
+          ir <- IRanges()
+          if (length(tmp) > 0) {
+              y <- psms(tmp)
+              an <- y$DatabaseAccess
+              ir <- IRanges(start = y$start, end = y$end)
+              names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
 
-          an <- y$DatabaseAccess
-          ir <- IRanges(start = y$start, end = y$end)
-          names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
-
-          fasta <- .fastaComments2DataFrame(paste(an, y$DatabaseDescription))
-          meta <-
-              as(y[, !colnames(y) %in% c("DatabaseAccession", "DatabaseDescription")],
-                 "DataFrame")
-          mcols(ir) <- cbind(fasta, meta)
+              fasta <- .fastaComments2DataFrame(paste(an, y$DatabaseDescription))
+              meta <-
+                  as(y[, !colnames(y) %in% c("DatabaseAccession", "DatabaseDescription")],
+                     "DataFrame")
+              mcols(ir) <- cbind(fasta, meta)
+          }
           ir
       }
       v <- par@verbose
@@ -95,7 +98,6 @@
       ir@elementMetadata$filenames <-
           Rle(factor(filenames), lengths = sapply(irl, length))
   }
-  
   if (rmEmptyRanges) {
       x@pranges <- split(ir, names(ir))
       nms <- names(x@pranges)
