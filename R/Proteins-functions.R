@@ -76,7 +76,7 @@
           ir <- IRanges()
           if (length(tmp) > 0) {
               y <- psms(tmp)
-              an <- y$DatabaseAccess
+              an <- as.character(y$DatabaseAccess)
               ir <- IRanges(start = y$start, end = y$end)
               names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
 
