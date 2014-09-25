@@ -74,8 +74,8 @@
           tmp <- openIDfile(f)
           on.exit(rm(tmp))
           ir <- IRanges()
-          if (length(tmp) > 0) {
-              y <- psms(tmp)
+          y <- psms(tmp)
+          if (nrow(y) > 0) {
               an <- as.character(y$DatabaseAccess)
               ir <- IRanges(start = y$start, end = y$end)
               names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
