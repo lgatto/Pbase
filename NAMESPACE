@@ -12,12 +12,15 @@ importFrom(Biobase, classVersion, isCurrent, validMsg)
 
 importFrom(cleaver, cleave, cleavageRanges)
 
+importFrom(mzR, openIDfile, psms)
+
 importClassesFrom(mzID, mzID)
 importFrom(mzID, mzID, flatten)
 
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
 
-exportClasses(Proteins)
+exportClasses(Proteins,
+              Pparams)
 
 exportMethods(
     ## class methods
@@ -46,4 +49,5 @@ exportMethods(
     proteotypic
     )
 
-export(rmEmptyRanges)
+export(rmEmptyRanges,
+       Pparams)
