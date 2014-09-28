@@ -13,24 +13,36 @@ test_that(".fastaCommentParser", {
                 paste0(
     ">sp|Q4R572-2|1433B_MACFA Isoform Short of 14-3-3 protein beta/alpha ",
     "OS=Macaca fascicularis GN=YWHAB"),
-                paste0(
-    ">FOO|NO_ID_HERE|Not a random string."))
+                paste0( # issue 7; spaces in GN
+    ">tr|A9UF05|A9UF05_HUMAN BCR/ABL fusion protein isoform Y3 ",
+    "OS=Homo sapiens GN=BCR/ABL fusion PE=1 SV=1"),
+    ">FOO|NO_ID_HERE|Not a random string.")
   result <- matrix(c(
-    "tr", "sp", "sp", "sp", NA_character_,
-    "B1XC03", "P04439", "P04439", "Q4R572-2", NA_character_,
-    "B1XC03_ECODH", "1A03_HUMAN", "1A03_HUMAN", "1433B_MACFA",
+    ## Database ID
+    "tr", "sp", "sp", "sp", "tr", NA_character_,
+    ## AccessionNumber
+    "B1XC03", "P04439", "P04439", "Q4R572-2", "A9UF05", NA_character_,
+    ## EntryName, e.g. "B1XAE9_ECODH"
+    "B1XC03_ECODH", "1A03_HUMAN", "1A03_HUMAN", "1433B_MACFA", "A9UF05_HUMAN",
     NA_character_,
+    ## optional isoform
     NA_character_, NA_character_, NA_character_, "Short",
-    NA_character_,
+    NA_character_, NA_character_,
+    ## PN
     "HU, DNA-binding transcriptional regulator, alpha subunit",
     "HLA class I histocompatibility antigen, A-3 alpha chain",
     "HLA class I histocompatibility antigen, A-3 alpha chain",
-    "14-3-3 protein beta/alpha", NA_character_,
+    "14-3-3 protein beta/alpha",
+    "BCR/ABL fusion protein isoform Y3", NA_character_,
+    ## ON
     "Escherichia coli (strain K12 / DH10B)", "Homo sapiens", "Homo sapiens",
-    "Macaca fascicularis", NA_character_,
-    "hupA", "HLA-A", NA_character_, "YWHAB", NA_character_,
-    "3", "1", "1", NA_character_, NA_character_,
-    "1", "2", "2", NA_character_, NA_character_), ncol = 9)
+    "Macaca fascicularis", "Homo sapiens", NA_character_,
+    ## GN
+    "hupA", "HLA-A", NA_character_, "YWHAB", "BCR/ABL fusion", NA_character_,
+    ## PE
+    "3", "1", "1", NA_character_, "1", NA_character_,
+    ## SV
+    "1", "2", "2", NA_character_, "1", NA_character_), ncol = 9)
   expect_identical(Pbase:::.fastaCommentParser(fastacmt), result)
 })
 

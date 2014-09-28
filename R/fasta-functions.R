@@ -29,7 +29,7 @@
     ## OrganismName, e.g. Escherichia coli
     "OS=(?<OS>[^=]+)",
     ## GeneName, e.g. nlpB
-    "(?:\\s+GN=(?<GN>[^= ]+))?",
+    "(?:\\s+GN=(?<GN>[^=]+))?",
     ## ProteinExistence, e.g. 4
     "(?:\\s+PE=(?<PE>[^= ]+))?",
     ## SequenceVersion, e.g. 1
@@ -94,12 +94,12 @@
             ## Levels of evidence:
             ## http://www.uniprot.org/manual/protein_existence
             ProteinExistence = Rle(factor(m[, 8L],
-                                      labels = c("Evidence at protein level",
-                                                 "Evidence at transcript level",
-                                                 "Inferred from homology",
-                                                 "Predicted",
-                                                 "Uncertain"),
-                                      levels = 1L:5L)),
+                labels = c("Evidence at protein level",
+                    "Evidence at transcript level",
+                    "Inferred from homology",
+                    "Predicted",
+                    "Uncertain"),
+                levels = 1L:5L)),
             SequenceVersion = Rle(m[, 9L]),
             Comment = Rle(comments))
 }
