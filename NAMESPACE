@@ -14,7 +14,7 @@ importFrom(cleaver, cleave, cleavageRanges)
 
 importFrom(mzR, openIDfile, psms)
 
-importClassesFrom(mzID, mzID)
+## importClassesFrom(mzID, mzID)
 importFrom(mzID, mzID, flatten)
 
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
