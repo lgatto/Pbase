@@ -10,6 +10,7 @@
 \alias{Proteins,missing,character-method}
 
 \alias{[,Proteins,ANY,ANY-method}
+\alias{[,Proteins,ANY,ANY,ANY-method}
 \alias{[[,Proteins,ANY,ANY-method}
 \alias{aa,Proteins-method}
 \alias{aa}
