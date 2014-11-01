@@ -3,6 +3,10 @@
 %\VignetteIndexEntry{mapping}
 -->
 
+```{r style, echo = FALSE}
+BiocStyle::markdown()
+```
+
 <!-- --- -->
 <!-- title: "Mapping proteins to their genomic coordinates" -->
 <!-- author: "Laurent Gatto - <lg390@cam.ac.uk>" -->
@@ -15,7 +19,7 @@
 Mapping proteins to their genomic coordinates
 =============================================
 
-Laurent Gatto - <lg390@cam.ac.uk>
+[Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
 
 ```{r, env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("Gviz")

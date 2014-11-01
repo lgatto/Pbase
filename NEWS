@@ -1,3 +1,31 @@
+CHANGES IN VERSION 0.2.3
+------------------------
+ o 
+
+CHANGES IN VERSION 0.2.2
+------------------------
+ o Fix warning re undocumented '[' and siglist 'Proteins,ANY,ANY,ANY'
+   [2014-10-03 Fri]
+
+CHANGES IN VERSION 0.2.1
+------------------------
+ o Counting id files when adding [2014-09-17 Wed]
+
+CHANGES IN VERSION 0.2.0
+------------------------
+ o support for mzID and mzR (new) to extract identification data from
+   mzid files via addIdentificationData [2014-09-12 Fri]
+ o support to add id data from > 1 mzid file [2014-09-12 Fri]
+ o new Pparams parameter infrastructure [2014-09-13 Sat]
+
+CHANGES IN VERSION 0.1.10
+-------------------------
+ o Allow spaces in GeneNames (GN) of fasta comments; fixes #7 [2014-09-13 Sat]
+
+CHANGES IN VERSION 0.1.9
+------------------------
+ o Use BioStyle
+
 CHANGES IN VERSION 0.1.8
 ------------------------
  o Using knit2html instead of rmarkdown::render since it is not yet
