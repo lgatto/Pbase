@@ -62,6 +62,8 @@
 #' stored in IRangesList@elementMetaData as columns of a DataFrame.
 #' @noRd
 .peptidePosition <- function(pattern, subject) {
+    library("stringi")
+
     if (is.null(names(pattern))) {
         stop("No names for ", sQuote("pattern"), " available!")
     }
@@ -77,25 +79,17 @@
 
     proteinIndex <- match(names(pattern), names(subject))
 
-    l <- vector(mode = "list", length = length(pattern))
+    l <- stri_locate_all_fixed(subject[proteinIndex], pattern)
 
-    for (i in seq(along = l)) {
-        l[[i]] <- as.vector(gregexpr(pattern = pattern[i],
-                                     text = subject[proteinIndex[i]],
-                                     fixed = TRUE)[[1L]])
-    }
-
-    matches <- unlist(l)
+    matches <- do.call(rbind, l)
     nmatches <- elementLengths(l)
-    nchars <- rep.int(nchar(pattern), nmatches)
 
-    isMatch <- matches != -1
-
-    matches <- matches[isMatch]
+    isMatch <- !is.na(matches[, 1L])
     nmatches <- nmatches[isMatch]
-    nchars <- nchars[isMatch]
 
-    ir <- IRanges(start = matches, width = nchars)
+    matches <- matches[isMatch, ]
+
+    ir <- IRanges(start = matches[, 1L], end = matches[, 2L])
 
     mcols(ir) <-
         DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern)[isMatch],
