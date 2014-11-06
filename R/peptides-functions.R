@@ -79,7 +79,7 @@
 
     proteinIndex <- match(names(pattern), names(subject))
 
-    l <- stri_locate_all_fixed(subject[proteinIndex], pattern)
+    l <- stri_locate_all_fixed(as.character(subject)[proteinIndex], pattern)
 
     matches <- do.call(rbind, l)
     nmatches <- elementLengths(l)
