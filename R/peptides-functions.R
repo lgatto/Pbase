@@ -52,9 +52,7 @@
     .setNames2(valid, x)
 }
 
-
 #' calculates IRanges for peptides "pattern" in a protein "subject"
-#' (TODO: this function is too slow!)
 #' @param pattern named character, AAString, AAStringSet, AAStringSetList
 #' @param subject named character, AAString, AAStringSet
 #' @return a named IRangesList
@@ -79,19 +77,35 @@
 
     l <- vector(mode = "list", length = length(pattern))
 
+    ## convert subject from AAStringSet to character;
+    ## This decreases the running time of the for loop dramatically (because it
+    ## avoids a lot of standardGeneric dispatching calls and conversions to
+    ## character).
+    subject <- setNames(as.character(subject), names(subject))
+    pattern <- as.character(pattern)
+
     for (i in seq(along = l)) {
-        l[[i]] <- .gregexpr(pattern = pattern[i],
-                            subject = subject[proteinIndex[i]])
+        l[[i]] <- as.vector(gregexpr(pattern = pattern[i],
+                                     text = subject[proteinIndex[i]],
+                                     fixed = TRUE)[[1L]])
     }
 
-    nrows <- vapply(l, nrow, integer(1L), USE.NAMES = FALSE)
-    r <- do.call(rbind, l)
+    matches <- unlist(l)
+    nmatches <- elementLengths(l)
+    nchars <- rep.int(nchar(pattern), nmatches)
 
-    ir <- IRanges(start = r[, 1L], end = r[, 2L])
+    isMatch <- matches != -1
+
+    matches <- matches[isMatch]
+    nmatches <- nmatches[isMatch]
+    nchars <- nchars[isMatch]
+
+    ir <- IRanges(start = matches, width = nchars)
 
     mcols(ir) <-
-        DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern), nrows)),
-                  ProteinIndex = Rle(rep.int(proteinIndex, nrows)))
+        DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern)[isMatch],
+                                             nmatches)),
+                  ProteinIndex = Rle(rep.int(proteinIndex[isMatch], nmatches)))
     .splitIRanges(ir, f = names(subject)[as.integer(mcols(ir)$ProteinIndex)])
 }
 
