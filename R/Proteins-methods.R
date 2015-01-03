@@ -83,6 +83,15 @@ setMethod("addIdentificationData",
             .addIdentificationDataProteins(object, filenames, rmEmptyRanges, par)
           })
 
+setMethod("calculateHeavyLabels", "Proteins",
+          function(object, peptides,
+                   maxN = 20L, nN = 4L, nC = 3L, endsWith = c("K", "R", "G")) {
+              .calculateHeavyLabels(peptides = peptides,
+                                    proteins = object,
+                                    maxN = maxN, nN = nN, nC = nC,
+                                    endsWith = endsWith)
+          })
+
 setMethod("cleave", "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0, ...) {
             x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
