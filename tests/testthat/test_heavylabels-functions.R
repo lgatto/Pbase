@@ -31,5 +31,9 @@ test_that(".calculateHeavyLabels", {
     cols <- c("Protein", "Peptide", "spikeTideResult", "spikeTide")
 
     expect_equal(r[, cols], heavyLabels[, cols])
+    expect_error(Pbase:::.calculateHeavyLabels(unname(peptides), pc),
+                 paste0("No names for ", sQuote("peptides"), " available!"))
+    expect_error(Pbase:::.calculateHeavyLabels(peptides, p),
+                 paste0("You have to ", sQuote("cleave"), " your proteins first!"))
 })
 

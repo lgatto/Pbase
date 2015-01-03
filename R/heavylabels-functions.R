@@ -16,6 +16,10 @@
         stop("No names for ", sQuote("peptides"), " available!")
     }
 
+    if (!isCleaved(proteins)) {
+        stop("You have to ", sQuote("cleave"), " your proteins first!")
+    }
+
     aa <- aa(proteins)
     pr <- pranges(proteins)
     pos <- .peptidePosition(peptides, aa)
