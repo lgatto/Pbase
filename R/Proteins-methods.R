@@ -96,6 +96,12 @@ setMethod("cleave", "Proteins",
             return(x)
           })
 
+setMethod("isCleaved", "Proteins",
+          function(x, missedCleavages = 0) {
+              return(!isEmpty(pranges(x)) &&
+                     all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
+          })
+
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
           function(x, y, ...) .plotProteins(x, ...))
@@ -126,7 +132,7 @@ setMethod("show", "Proteins",
                           tail(as(classVersion(object), "character"), 1L),
                           object@metadata$created,
                           n)
-              
+
               cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
               sn <- seqnames(object)
               ln <- length(object)
