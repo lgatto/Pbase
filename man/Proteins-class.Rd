@@ -43,6 +43,7 @@
 \alias{proteotypic,Proteins-method}
 \alias{proteotypic}
 \alias{cleave,Proteins-method}
+\alias{isCleaved,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
 
 \alias{rmEmptyRanges}
@@ -56,7 +57,7 @@
   as specific subsets of interest, typically peptides, as ranges. The
   \code{Proteins} instances, the sequence and peptide slots are
   described by their respective metadata attributes.
-  
+
 }
 
 \section{Objects from the Class}{
@@ -65,7 +66,7 @@
   constructor either takes a \code{fasta} file name as first argument
   or, alternatively a named \code{uniprotIds} argument with valid
   UniProt accession numbers (not yet implemented).
-  
+
 }
 
 \section{Details}{
@@ -100,9 +101,9 @@
   %% i.e. it is not possible to call `addIdentificationData` multiple
   %% times. It is probably easier to manage this situation using different
   %% \code{Proteins} instances. We can then think about \emph{comparing}
-  %% \code{Proteins} instances (that have \code{identical(p1@aa, p2@aa)}) 
+  %% \code{Proteins} instances (that have \code{identical(p1@aa, p2@aa)})
   %% and easily return \emph{common} sequences.
-  
+
   Since version 0.2.0, \code{addIdentificationData} supports multiple
   identification file names to be added to a \code{Proteins} instance
   (argument renamed \code{filenames}) using either \code{mzID} or
@@ -112,7 +113,7 @@
 
   Other possible metadata fields: \code{Uniprot.SW}, \code{biomaRt}
   instances.
-  
+
 }
 
 \section{Slots}{
@@ -147,8 +148,8 @@
     \item{aa}{\code{signature(x = "Proteins")}: Returns an
       \code{\linkS4class{AAStringSet}} instance representing the
       sequences of the proteins.}
-    
-    \item{pfeatures}{\code{signature(x = "Proteins")}: ... }    
+
+    \item{pfeatures}{\code{signature(x = "Proteins")}: ... }
     \item{pranges}{\code{signature(x = "Proteins")}: ... }
 
     \item{metadata}{\code{signature(x = "Proteins")}: Returns a
@@ -156,54 +157,63 @@
       data of instance creation or, if created from a set of UnitProt
       identifiers (see constructors above), the UniProt version and
       \code{UnitProt.WS} version number. }
-    
+
     \item{ametadata}{\code{signature(x = "Proteins")}: Returns a
-      \code{\linkS4class{DataFrame}} of protein metadata. }    
+      \code{\linkS4class{DataFrame}} of protein metadata. }
     \item{acols}{\code{signature(x = "Proteins")}: See
-      \code{ametadata}. }    
+      \code{ametadata}. }
     \item{pmetadata}{\code{signature(x = "Proteins")}: Returns a
-      \code{list} of feature metadata. }    
+      \code{list} of feature metadata. }
     \item{pcols}{\code{signature(x = "Proteins")}: See
-      \code{pmetadata}. } 
+      \code{pmetadata}. }
 
     \item{avarLabels}{\code{signature(x = "Proteins")}: Returns the
       names of the sequences metadata. }
     \item{pvarLabels}{\code{signature(x = "Proteins")}: Returns the
       names of the peptide feature metadata. }
-    
+
     \item{seqnames}{\code{signature(x = "Proteins")}: Returns the
       protein sequence names defined as UniProt accession numbers. }
 
     \item{length}{\code{signature(x = "Proteins")}: Returns the number
       of proteins. }
-    
+
     \item{[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
       Creates a subset of the \code{Proteins} insance.}
-      
+
     \item{[[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
       Returns an \code{\linkS4class{AAString}} instance representing the
       sequence of the selected protein.}
 
     \item{pfilter}{\code{signature(x = "Proteins", mass = "numeric", len
 	= "numeric", ...)}: ... }
-    
+
     \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
 
     \item{proteotypic}{\code{signature(x = "Proteins")}: ... }
-    
-    \item{cleave}{\code{signature(x = "Proteins")}: ... }
+
+    \item{cleave}{\code{signature(x = "Proteins", enzym = "character",
+            missedCleavages = "numeric")}:
+        Cleaves all proteins using the \code{enzym} rule while allowing
+        \code{missedCleavages} missing cleavages. Please see
+        \code{\link[cleaver]{cleave}} for details.}
+
+    \item{isCleaver}{\code{signature(x = "Proteins",
+            missedCleavages = "numeric")}:
+        Tests whether a Protein object was cleaved already.
+    }
 
     \item{addIdentificationData}{\code{signature(object = "Proteins",
 	filenames = "character", rmEmptyRanges = "logical", par =
 	"Pparams")}: ... }
-    
+
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the
       \code{Gviz}/\code{Pviz} infrastructure. }
 
     \item{show}{\code{signature(object = "Proteins")}: Displays object
       summary as text. }
-      
+
   }
 }
 

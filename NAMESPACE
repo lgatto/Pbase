@@ -4,8 +4,8 @@ import(BiocGenerics)
 import(Biostrings)
 import(IRanges)
 import(S4Vectors)
-import(Gviz) 
-import(Pviz) 
+import(Gviz)
+import(Pviz)
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
@@ -42,6 +42,7 @@ exportMethods(
     show,
     ## action methods
     cleave,
+    isCleaved,
     plot,
     addIdentificationData,
     pfilter,
