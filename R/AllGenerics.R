@@ -30,6 +30,8 @@ if (is.null(getGeneric("seqnames")))
 ## replacement
 
 ## methods
+if (is.null(getGeneric("calculateHeavyLabels")))
+  setGeneric("calculateHeavyLabels", function(object, ...) standardGeneric("calculateHeavyLabels"))
 if (is.null(getGeneric("cleave")))
   setGeneric("cleave", function(x, ...) standardGeneric("cleave"))
 if (is.null(getGeneric("isCleaved")))
