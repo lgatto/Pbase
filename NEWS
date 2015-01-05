@@ -1,9 +1,11 @@
 CHANGES IN VERSION 0.5.1
 ------------------------
-o Update vignette since TxDb's UCSC coordinates differ from those
-  fetched from Ensembl via biomaRt [2015-01-05 Mon]
+ o Update vignette since TxDb's UCSC coordinates differ from those
+   fetched from Ensembl via biomaRt. [2015-01-05 Mon]
+ o Add `isCleaved` method. [2015-01-03 Sat]
+ o Add `calculateHeavyLabels`; closes #6 and cleaver#5. [2015-01-03 Sat]
 
-CHANGES IN VERSION 0.5.1
+CHANGES IN VERSION 0.5.0
 ------------------------
  o Bump version for new Bioc release.
 

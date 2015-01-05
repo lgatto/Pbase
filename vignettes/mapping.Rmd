@@ -209,7 +209,7 @@ peptides positions along the protein. The first step is to map the
 protein accession number to a gene identifier (here, we will use
 Ensembl) and to obtain genome coordinates.
 
-Multiple solutiona are offered to use. Below, we use the `biomaRt`
+Multiple solutions are offered to use. Below, we use the `biomaRt`
 Bioconductor package.
 
 ```{r bm, cache=TRUE, message=FALSE}
@@ -306,7 +306,7 @@ plotTracks(list(ideoTrack, axisTrack, grTrack),
 
 ### Using `TranscriptDb` instances
 
-Finally, on could also use `TranscriptDb` objects to create the
+Finally, one could also use `TranscriptDb` objects to create the
 `GeneRegionTrack`. Below, we use the UCSC annotation (which is
 directly available from Bioconductor; Ensembl TranscriptDb instances
 could be generated manually - **TODO** document this) to extract our
