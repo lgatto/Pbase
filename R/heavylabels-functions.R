@@ -33,7 +33,8 @@
             l[[i]] <- cbind(Protein = names(aa)[i],
                             .addOverhangs(sequence = unlist(aa[[i]]),
                                           pindex = pindex,
-                                          pranges = pr[[i]], ...))
+                                          pranges = pr[[i]], ...),
+                            stringsAsFactors = FALSE)
         }
     }
 
