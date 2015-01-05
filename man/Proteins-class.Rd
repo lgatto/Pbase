@@ -43,6 +43,7 @@
 \alias{proteotypic,Proteins-method}
 \alias{proteotypic}
 \alias{cleave,Proteins-method}
+\alias{isCleaved}
 \alias{isCleaved,Proteins-method}
 \alias{addIdentificationData,Proteins-method}
 
