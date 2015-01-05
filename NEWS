@@ -1,6 +1,7 @@
 CHANGES IN VERSION 0.5.1
 ------------------------
  o Add `isCleaved` method. [2015-01-03 Sat]
+ o Add `calculateHeavyLabels`; closes #6 and cleaver#5. [2015-01-03 Sat]
 
 CHANGES IN VERSION 0.2.2
 ------------------------
