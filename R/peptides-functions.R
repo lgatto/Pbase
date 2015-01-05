@@ -52,9 +52,7 @@
     .setNames2(valid, x)
 }
 
-
 #' calculates IRanges for peptides "pattern" in a protein "subject"
-#' (TODO: this function is too slow!)
 #' @param pattern named character, AAString, AAStringSet, AAStringSetList
 #' @param subject named character, AAString, AAStringSet
 #' @return a named IRangesList
@@ -78,6 +76,13 @@
     proteinIndex <- match(names(pattern), names(subject))
 
     l <- vector(mode = "list", length = length(pattern))
+
+    ## convert subject from AAStringSet to character;
+    ## This decreases the running time of the for loop dramatically (because it
+    ## avoids a lot of standardGeneric dispatching calls and conversions to
+    ## character).
+    subject <- setNames(as.character(subject), names(subject))
+    pattern <- as.character(pattern)
 
     for (i in seq(along = l)) {
         l[[i]] <- as.vector(gregexpr(pattern = pattern[i],
