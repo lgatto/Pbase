@@ -209,7 +209,7 @@ peptides positions along the protein. The first step is to map the
 protein accession number to a gene identifier (here, we will use
 Ensembl) and to obtain genome coordinates.
 
-Multiple solutiona are offered to use. Below, we use the `biomaRt`
+Multiple solutions are offered to use. Below, we use the `biomaRt`
 Bioconductor package.
 
 ```{r bm, cache=TRUE, message=FALSE}
@@ -306,19 +306,43 @@ plotTracks(list(ideoTrack, axisTrack, grTrack),
 
 ### Using `TranscriptDb` instances
 
-Finally, on could also use `TranscriptDb` objects to create the
+Finally, one could also use `TranscriptDb` objects to create the
 `GeneRegionTrack`. Below, we use the UCSC annotation (which is
 directly available from Bioconductor; Ensembl TranscriptDb instances
 could be generated manually - **TODO** document this) to extract our
 regions of interest.
 
-```{r, txdb, cache=TRUE, message=FALSE}
+```{r, txdb, cache=FALSE, message=FALSE, eval=FALSE}
 library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 txTr <- GeneRegionTrack(txdb, chromosome = "chrX",
                         start = bm$start_position[1],
                         end = bm$end_position[1])
+```
 
+```{r txdb0, echo=FALSE}
+library("TxDb.Hsapiens.UCSC.hg19.knownGene")
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+txTr <- GeneRegionTrack(txdb, chromosome = "chrX")
+tmp <- as(txTr, "data.frame")
+s1 <- min(tmp[which(tmp$gene == "5230"), "X.start"])
+s2 <- max(tmp[which(tmp$gene == "5230"), "X.end"])
+```
+
+Note however that the `biomart` (from Ensembl) and `TranscriptDb`
+(from USSC) start and end positions might not match (above, for
+example worked up to Bioconductor release 3.0). Below, we use
+positions `s1` `r s1` and `s2` `r s2`, directly extracted for the
+`uc004ecz.4` transcript from `txdb` (see below to query the UCSC
+transcript identifier).
+
+
+```{r, txdb2, cache=TRUE, message=FALSE}
+library("TxDb.Hsapiens.UCSC.hg19.knownGene")
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+txTr <- GeneRegionTrack(txdb, chromosome = "chrX",
+                        start = s1, end = s2)
+txTr <- txTr[transcript(txTr) %in% "uc004ecz.4"]
 head(as(txTr, "data.frame"))
 ```
 
@@ -380,13 +404,14 @@ seq <- extractAt(chrx[[1]], ranges(prng))
 pptr <- translate(unlist(seq))
 ```
 
-It is also possible to use readily package genomes to do this. Above,
-we have use the `TxDb.Hsapiens.UCSC.hg19.knownGene` package defining
+It is also possible to use package genomes to do this. Above, we have
+used the `TxDb.Hsapiens.UCSC.hg19.knownGene` package defining
 transcripts. There is a similar package for the human UCSC genome
 build, namely `BSgenome.Hsapiens.UCSC.hg19`. However, as we have
 focused on Ensembl data annotation, we will first need to convert our
 Ensembl transcript (or protein) identifier `r tr` (`r pr`) into the
-UCSC equivalent. (**TODO** Use also `Homo.sapiens` annotation package.)
+UCSC equivalent. (**TODO** Use also `Homo.sapiens` annotation
+package.)
 
 ```{r, protfromgenome}
 ucsc <- select(ens, key = pr,
@@ -403,6 +428,8 @@ pptr <- translate(unlist(seq))
 ## remove stop codon
 pptr <- pptr[1:417]
 ```
+
+It would be possible to use the 
 
 ```{r, align}
 writePairwiseAlignments(pairwiseAlignment(pp[[1]], pptr))
@@ -468,7 +495,7 @@ pepTr <- AnnotationTrack(start = start(peptides_on_genome),
                          col = "steelblue")
 
 
-plotTracks(list(ideoTrack, axisTrack, grTrack, pepTr),
+plotTracks(list(ideoTrack, axisTrack, txTr, pepTr),
            groupAnnotation = "id",
            just.group = "below",
            fontsize.group = 9,
@@ -502,7 +529,7 @@ deTrack <- AnnotationTrack(start = start(peptides_on_genome),
                            name = "MS2 spectra",
                            stacking = "squish", fun = details)
 
-plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
+plotTracks(list(ideoTrack, axisTrack, deTrack, txTr),
            add53 = TRUE, add35 = TRUE)
 ```
 
