@@ -80,18 +80,27 @@
     l <- vector(mode = "list", length = length(pattern))
 
     for (i in seq(along = l)) {
-        l[[i]] <- .gregexpr(pattern = pattern[i],
-                            subject = subject[proteinIndex[i]])
+        l[[i]] <- as.vector(gregexpr(pattern = pattern[i],
+                                     text = subject[proteinIndex[i]],
+                                     fixed = TRUE)[[1L]])
     }
 
-    nrows <- vapply(l, nrow, integer(1L), USE.NAMES = FALSE)
-    r <- do.call(rbind, l)
+    matches <- unlist(l)
+    nmatches <- elementLengths(l)
+    nchars <- rep.int(nchar(pattern), nmatches)
 
-    ir <- IRanges(start = r[, 1L], end = r[, 2L])
+    isMatch <- matches != -1
+
+    matches <- matches[isMatch]
+    nmatches <- nmatches[isMatch]
+    nchars <- nchars[isMatch]
+
+    ir <- IRanges(start = matches, width = nchars)
 
     mcols(ir) <-
-        DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern), nrows)),
-                  ProteinIndex = Rle(rep.int(proteinIndex, nrows)))
+        DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern)[isMatch],
+                                             nmatches)),
+                  ProteinIndex = Rle(rep.int(proteinIndex[isMatch], nmatches)))
     .splitIRanges(ir, f = names(subject)[as.integer(mcols(ir)$ProteinIndex)])
 }
 
