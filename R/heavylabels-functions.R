@@ -4,20 +4,30 @@
 #' automatically.
 #' @noRd
 #'
-dummyAddOverhang <- function(peptide, proteins, ...) {
-    ## TODO: remove this ugly not vectorized function and replace it by a nice
-    ## method
-    stopifnot(is(peptide, "character"))
+dummyAddOverhang <- function(peptides, proteins, ...) {
+    stopifnot(is(peptides, "character"))
     stopifnot(is(proteins, "Proteins"))
-    p <- proteins[names(peptide)]
-    sequence <- aa(p)
-    pr <- pranges(p)[[1L]]
-    .addOverhang(sequence,
-                 ## TODO: use .peptidePosition here (but fix
-                 ## https://github.com/ComputationalProteomicsUnit/Pbase/issues/5
-                 ## first)
-                 which(regexpr(peptide, sequence, fixed = TRUE) == start(pr)),
-                 pr, ...)
+
+    if (is.null(names(peptides))) {
+        stop("No names for ", sQuote("peptides"), " available!")
+    }
+
+    proteins <- proteins[unique(names(peptides))]
+
+    pos <- .peptidePosition(peptides, aa(proteins))
+    pr <- pranges(proteins)
+    aa <- aa(proteins)
+
+    shiftBy <- c(0L, cumsum(head(nchar(aa), -1L)))
+    pos <- .flatIRangesList(pos, shift = TRUE, shiftBy = shiftBy)
+    pr <- .flatIRangesList(pr, shift = TRUE, shiftBy = shiftBy)
+
+    pindex <- match(start(pr), start(pos))
+    pindex <- pindex[!is.na(pindex)]
+
+    print(pindex)
+
+    .addOverhang(sequence = unlist(aa), pindex = pindex, pranges = pr, ...)
 }
 
 #' This functions creates peptide sequences for heavy labeled peptides.
