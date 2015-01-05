@@ -1,5 +1,7 @@
 ## load Pbase
 library("devtools")
+library("mzID")
+library("cleaver")
 devtools::load_all(file.path("..", ".."))
 
 p <- Proteins("proteins_of_interest.fasta")
@@ -10,32 +12,22 @@ names(p@aa) <- ametadata(p)$Comment
 p@aa <- aa(p)[order(names(aa(p)))]
 
 ## stupid PLGS rule?
-pc <- cleave(p, custom="[KR](?=[^P])")
+pc <- cleave(p, custom = "[KR](?=[^P])")
 
-cols <- c("Peptide", "N_overhang", "C_overhang", "spikeTideResult", "spikeTide")
+peptides <- setNames(r$Peptide, r$Protein)
+heavyLabels <- .calculateHeavyLabels(peptides, pc, endsWith = NULL)
 
-result <- logical(nrow(r))
+## ensure same order
+i <- match(paste0(r$Protein, r$Peptide),
+           paste0(heavyLabels$Protein, heavyLabels$Peptide))
+heavyLabels <- heavyLabels[i, ]
 
-for (id in seqnames(pc)) {
-    for (i in which(r$Protein == id)) {
-        d <- dummyAddOverhang(setNames(r$Peptide[i], id), pc, endsWith = NULL)
-
-        spikeTide <- paste0(na.omit(c(d$N_overhang, d$Peptide, d$C_overhang)),
-                            collapse=".")
-
-        if (r$spikeTideResult[i] == d$spikeTideResult &&
-            r$spikeTide[i] == spikeTide) {
-            result[i] <- TRUE
-        } else {
-            message("\n ", r$Peptide[i], " NOT equal")
-            message("Pavel's list:")
-            print(r[i, cols])
-            message("Pbase result:")
-            print(d)
-            print(spikeTide)
-        }
-    }
-}
+result <- heavyLabels$spikeTide == r$spikeTide
 
 message("Overlap: ", round(mean(result), 2),
         " (", sum(result), "/", length(result), ")")
+
+verified <- c("FVTTDTR", "IDLVIAK", "VLTAYLK", "YFNPAFYLR", "IGGGGEGSWFR")
+
+message("All mismatches verified as correct? : ",
+        all(heavyLabels$Peptide[!result] %in% verified))
