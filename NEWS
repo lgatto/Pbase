@@ -1,6 +1,11 @@
 CHANGES IN VERSION 0.5.1
 ------------------------
- o 
+o Update vignette since TxDb's UCSC coordinates differ from those
+  fetched from Ensembl via biomaRt [2015-01-05 Mon]
+
+CHANGES IN VERSION 0.5.1
+------------------------
+ o Bump version for new Bioc release.
 
 CHANGES IN VERSION 0.2.2
 ------------------------
