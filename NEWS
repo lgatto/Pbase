@@ -1,8 +1,3 @@
-CHANGES IN VERSION 0.2.3
-------------------------
- o Add `isCleaved` method. [2015-01-03 Sat]
- o Add `calculateHeavyLabels`; closes #6 and cleaver#5. [2015-01-03 Sat]
-
 CHANGES IN VERSION 0.2.2
 ------------------------
  o Fix warning re undocumented '[' and siglist 'Proteins,ANY,ANY,ANY'
