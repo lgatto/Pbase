@@ -52,9 +52,7 @@
     .setNames2(valid, x)
 }
 
-
 #' calculates IRanges for peptides "pattern" in a protein "subject"
-#' (TODO: this function is too slow!)
 #' @param pattern named character, AAString, AAStringSet, AAStringSetList
 #' @param subject named character, AAString, AAStringSet
 #' @return a named IRangesList
@@ -77,25 +75,21 @@
 
     proteinIndex <- match(names(pattern), names(subject))
 
-    l <- vector(mode = "list", length = length(pattern))
+    l <- mapply(function(pat, sub) {
+        r <- gregexpr(pattern = pat, text = sub, fixed = TRUE)[[1L]]
+        cbind(start = as.vector(r), width = attr(r, "match.length"))
+    }, pat = pattern, sub = as.character(subject)[proteinIndex],
+    SIMPLIFY = FALSE, USE.NAMES = FALSE)
 
-    for (i in seq(along = l)) {
-        l[[i]] <- as.vector(gregexpr(pattern = pattern[i],
-                                     text = subject[proteinIndex[i]],
-                                     fixed = TRUE)[[1L]])
-    }
-
-    matches <- unlist(l)
     nmatches <- elementLengths(l)
-    nchars <- rep.int(nchar(pattern), nmatches)
+    matches <- do.call(rbind, l)
 
-    isMatch <- matches != -1
+    isMatch <- matches[, 1L] != -1
 
-    matches <- matches[isMatch]
     nmatches <- nmatches[isMatch]
-    nchars <- nchars[isMatch]
+    matches <- matches[isMatch, ]
 
-    ir <- IRanges(start = matches, width = nchars)
+    ir <- IRanges(start = matches[, 1L], width = matches[, 2L])
 
     mcols(ir) <-
         DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern)[isMatch],
