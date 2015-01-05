@@ -21,6 +21,7 @@ test_that(".isValidPeptide", {
 })
 
 test_that(".peptidePosition", {
+    ## one peptide per protein
     pattern <- c(P1 = "ACE", P2 = "IL", P3 = "KR")
     subject <- c(P1 = "ACEDE", P3 = "JKLMN", P2 = "FGHIL")
     result <- IRangesList(c(P1 = IRanges(1, 3),
@@ -33,6 +34,15 @@ test_that(".peptidePosition", {
                                           setNames(subject, c(rep("P1", 3)))),
                  "No duplicated names for .*subject.* allowed!")
 
+    expect_equal(Pbase:::.peptidePosition(pattern, subject), result)
+
+    ## multiple peptides per protein
+    ## see https://github.com/ComputationalProteomicsUnit/Pbase/issues/5
+    pattern <- c(P1 = "DE", P2 = "IL", P3 = "KR", P1 = "ABC", P3 = "LMN")
+    subject <- c(P1 = "ACEDE", P3 = "JKLMN", P2 = "FGHIL")
+    result <- IRangesList(c(P1 = IRanges(c(4, 1), c(5, 3)),
+                            P2 = IRanges(4, 5),
+                            P3 = IRanges(3, 5)))
     expect_equal(Pbase:::.peptidePosition(pattern, subject), result)
 })
 
