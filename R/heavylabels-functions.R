@@ -115,8 +115,16 @@
                                               all.inside = FALSE) + 1L]
 
     ## extend N- and C-terminus
-    s <- pmax(end(pranges)[before] - (nN - 1L), 1L)
-    e <- pmin(start(pranges)[after] + (nC - 1L), tail(end(pranges), 1L))
+    if (length(before)) {
+        s <- pmax(end(pranges)[before] - (nN - 1L), 1L)
+    } else {
+        s <- 1L
+    }
+    if (length(after)) {
+        e <- pmin(start(pranges)[after] + (nC - 1L), tail(end(pranges), 1L))
+    } else {
+        e <- tail(end(pranges), 1L)
+    }
 
     ## test correct ending
     if (!is.null(endsWith)) {
