@@ -7,6 +7,7 @@ r <- read.csv("result_26_09_13.csv", stringsAsFactors = FALSE)
 
 ## the fasta file has invalid comments
 names(p@aa) <- ametadata(p)$Comment
+p@aa <- aa(p)[order(names(aa(p)))]
 
 ## stupid PLGS rule?
 pc <- cleave(p, custom="[KR](?=[^P])")
