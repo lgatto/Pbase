@@ -239,15 +239,16 @@ bm
 
 ```
 
-We will only consider the gene located on the X chromosome and ignore
-the
-[sequence](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/info/patches.shtml)
-[patch](http://www.ncbi.nlm.nih.gov/nuccore/NW_003871101.3?report=genbank)
-and conveniently store the transcript and protein identifiers for
-later use.
+<!-- We will only consider the gene located on the X chromosome and ignore -->
+<!-- the -->
+<!-- [sequence](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/info/patches.shtml) -->
+<!-- [patch](http://www.ncbi.nlm.nih.gov/nuccore/NW_003871101.3?report=genbank) -->
+<!-- and conveniently store the transcript and protein identifiers for -->
+<!-- later use. -->
+
+Below, we store the transcripts and protein identifiers for later use.
 
 ```{r}
-bm <- bm[bm$chromosome_name == "X", ]
 tr <- unique(bm$ensembl_transcript_id)
 pr <- unique(bm$ensembl_peptide_id)
 ```
@@ -268,18 +269,26 @@ specialised `Gviz` infrastructure.
 library("Gviz")
 options(ucscChromosomeNames=FALSE)
 
-bmTrack <- BiomartGeneRegionTrack(start = min(bm$start_position),
-                                  end = max(bm$end_position),
-                                  chromosome = "chrX",
+## the following does not recover the expected gene anymore,
+## possible due to differences in coordinates between Ensembl and USCS
+## bmTrack <- BiomartGeneRegionTrack(start = min(bm$start_position),
+##                                   end = max(bm$end_position),
+##                                   chromosome = "X",
+##                                   genome = "hg19")
+
+## setting start/end positions manually for now
+bmTrack <- BiomartGeneRegionTrack(start = 77359666,
+                                  end = 77382324,
+                                  chromosome = "X",
                                   genome = "hg19")
 
 ## see also the filters param and getBM to
 ## filter on biotype == "protein_coding"
-
 bmTracks <- split(bmTrack, transcript(bmTrack))
 
 grTrack <- bmTracks[[which(names(bmTracks) == tr)]]
 names(grTrack) <- tr
+
 ```
 
 We can convince ourselves that the manual retrieved data in `bm` and
@@ -297,6 +306,7 @@ visualisation of our genomic coordinates of interest.
 ideoTrack <- IdeogramTrack(genome = "hg19",
                            chromosome = "chrX")
 axisTrack <- GenomeAxisTrack()
+
 seqlevels(ranges(grTrack)) <- 
     chromosome(grTrack) <-
         chromosome(ideoTrack)
@@ -305,6 +315,11 @@ plotTracks(list(ideoTrack, axisTrack, grTrack),
 ```
 
 ### Using `TranscriptDb` instances
+
+
+
+
+
 
 Finally, one could also use `TranscriptDb` objects to create the
 `GeneRegionTrack`. Below, we use the UCSC annotation (which is
