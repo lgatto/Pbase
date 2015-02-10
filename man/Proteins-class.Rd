@@ -45,7 +45,7 @@
 \alias{cleave,Proteins-method}
 \alias{isCleaved}
 \alias{isCleaved,Proteins-method}
-\alias{addIdentificationData,Proteins-method}
+\alias{addIdentificationData,Proteins,character-method}
 
 \alias{rmEmptyRanges}
 
@@ -205,7 +205,7 @@
     }
 
     \item{addIdentificationData}{\code{signature(object = "Proteins",
-	filenames = "character", rmEmptyRanges = "logical", par =
+	id = "character", rmEmptyRanges = "logical", par =
 	"Pparams")}: ... }
 
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
