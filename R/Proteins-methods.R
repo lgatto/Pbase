@@ -78,9 +78,12 @@ setMethod("aa", "Proteins", function(x) x@aa)
 
 ## Methods
 setMethod("addIdentificationData",
-          "Proteins",
-          function(object, filenames, rmEmptyRanges=TRUE, par = Pparams()) {
-            .addIdentificationDataProteins(object, filenames, rmEmptyRanges, par)
+          c("Proteins", "character"),
+          function(object, id, rmEmptyRanges = TRUE, par = Pparams()) {
+              print(id)
+            .addIdentificationDataProteins(object, filenames = id,
+                                           rmEmptyRanges = rmEmptyRanges,
+                                           par = par)
           })
 
 setMethod("calculateHeavyLabels", "Proteins",

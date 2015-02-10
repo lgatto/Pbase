@@ -1,6 +1,7 @@
 CHANGES IN VERSION 0.5.2
 ------------------------
- o 
+ o Adapt to new `addIdentification` signature in MSnbase >= 1.15.5.
+   [2015-02-10 Tue]
 
 CHANGES IN VERSION 0.5.1
 ------------------------
