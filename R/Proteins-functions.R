@@ -41,15 +41,15 @@
   irl
 }
 
-#' @param x 
-#' @param filename mzIdentML filename
+#' @param x
+#' @param filenames mzIdentML filenames
 #' @return a modified Proteins object
 #' @noRd
 .addIdentificationDataProteins <- function(x, filenames, rmEmptyRanges, par) {
   if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
          "No ranges and metadata could be added.")
-  }  
+  }
 
   if (par@IdReader == "mzID") {
       y <- mzID(filenames)
@@ -63,7 +63,7 @@
       meta <- as(y[, !colnames(y) %in% c("accession", "description")],
                  "DataFrame")
       mcols(ir) <- cbind(fasta, meta)
-      mcols(ir)$filenames <- 
+      mcols(ir)$filenames <-
           mcols(ir)$spectrumFile <- Rle(factor(mcols(ir)$spectrumFile))
       mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
   } else { ## mzR
@@ -93,7 +93,7 @@
       if (v) message("Reading ", length(filenames), " identification files:")
       irl <- lapply(filenames, .ir)
       if (v) message("done.")
-  
+
       ir <- Reduce(c, irl)
       ir@elementMetadata$filenames <-
           Rle(factor(filenames), lengths = sapply(irl, length))
@@ -134,12 +134,12 @@
   nTracks <- 3L
   tracks <- vector(mode="list", length=length(object) * nTracks)
   snms <- seqnames(object)
-  
+
   for (i in seq(along = object@aa)) {
     idx <- (i - 1L) * nTracks
     tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE,
                                            name = paste0("axis-", snms[i]))
-  
+
     tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
                                                name = snms[i])
 
@@ -195,7 +195,7 @@
 
 ## might become a method
 rmEmptyRanges <- function(x) {
-    lns <- elementLengths(pranges(x)); 
+    lns <- elementLengths(pranges(x));
     em <- lns == 0
     x[!em]
 }
