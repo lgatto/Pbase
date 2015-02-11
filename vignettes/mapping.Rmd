@@ -300,7 +300,7 @@ One can also use `TranscriptDb` objects to create the
 regions of interest.
 
 
-```{r txdb0, echo=FALSE}
+```{r txdb0}
 library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 txTrack <- GeneRegionTrack(txdb, chromosome = "chrX")
