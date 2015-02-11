@@ -10,7 +10,8 @@ Depends: R (>= 2.10), methods, BiocGenerics, Rcpp, Gviz
 Imports: cleaver (>= 1.3.6), Biobase, Biostrings, IRanges, S4Vectors,
 	 mzID, mzR (>= 1.99.1), MSnbase (>= 1.15.5), Pviz
 Suggests: testthat (>= 0.8), ggplot2, BSgenome.Hsapiens.UCSC.hg19,
-	  biomaRt, TxDb.Hsapiens.UCSC.hg19.knownGene, knitr, BiocStyle
+	  biomaRt, TxDb.Hsapiens.UCSC.hg19.knownGene, knitr,
+	  rtracklayer, AnnotationHub, BiocStyle
 Description: A set of classes and functions to investigate and
              understand protein sequence data in the context of a
              proteomics experiment.
