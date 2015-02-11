@@ -1,0 +1,116 @@
+---
+title: "Mapping between Ensembl and UCSC"
+output:
+  BiocStyle::html_document:
+    toc: true
+---
+
+
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Ensembl and UCSC mapping}
+%\VignettePackage{Pbase}
+-->
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+<hr />
+
+Author: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
+
+Compilation date: `r Sys.Date()`
+
+<hr />
+
+
+This vignette described how to convert coordinates between Ensembl
+release 78 (based on GRCh38) and the UCSC (based on GRCh37). We will
+use transcript `ENST00000373316` as working example.
+
+```{r bm} 
+tr <- "ENST00000373316"
+``` 
+
+## Ensembl (GRCh38)
+
+Here is use `r Biocpkg("Gviz")` to query the latest Ensembl biomart
+and extract the transcript of interest.
+
+```{r, ens}
+suppressMessages(library("Gviz"))
+suppressMessages(library("biomaRt"))
+
+ens <- useMart("ensembl", "hsapiens_gene_ensembl")
+etr <- BiomartGeneRegionTrack(biomart = ens,
+                              transcript = tr,
+                              genome = "hg19")
+etr <- split(etr, transcript(etr))
+etr <- etr[[tr]]
+etr <- ranges(etr)
+```
+
+Note the starting position of the transcript is `r min(start(etr))`.
+
+## UCSC (GRCh37)
+
+Below, I repeat the same operation without using my own ens Mart
+instance. As far as I understand, Gviz queries the UCSC genome
+reference by default. 
+
+```{r ucsc}
+utr <- BiomartGeneRegionTrack(transcript = tr,
+                              genome = "hg19")
+utr <- split(utr, transcript(utr))
+utr <- utr[[tr]]
+utr <- ranges(utr)
+```
+
+Note the starting position of the transcript is `r min(start(utr))`.
+
+These differences seem to stem from different genome builds. **Ensembl
+release 78** uses **GRCh38**, while **UCSC** uses **GRCh37**. Indeed,
+`r Biocpkg("Gviz")` sets the Ensembl biomart server to `Feb.2014`
+`GRCh37.p13`.
+
+## Coordinates conversion
+
+We will use the coordinate mapping infrastructure described in the
+[January 2015 Bioconductor Newletter](http://www.bioconductor.org/help/newsletters/2015_January/#coordinate-mapping)
+and the
+[Changing genomic coordinate systems with rtracklayer::liftOver](http://bioconductor.org/help/workflows/liftOver/)
+workflow.
+
+First, we query `r Biocpkg("AnnotationHub")` for a chain file to
+perform the operation we want.
+
+```{r chain}
+library("AnnotationHub")
+hub <- AnnotationHub()
+query(hub, 'hg19ToHg38')
+chain <- query(hub, 'hg19ToHg38')[[1]]
+```
+
+The `liftOver` function from the `r Biocpkg("rtracklayer")` package
+will use the chain and translate the coordinates of a `GRanges` object
+into a new `GRangesList` object.
+
+```{r}
+library("rtracklayer")
+
+res <- liftOver(utr, chain)
+res <- unlist(res)
+
+## set annotation
+genome(res) <- "hg19"
+names(res) <- NULL
+
+identical(res, etr)
+```
+
+## Session information
+
+```{r si}
+sessionInfo()
+```
