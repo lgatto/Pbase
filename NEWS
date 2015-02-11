@@ -1,8 +1,11 @@
+CHANGES IN VERSION 0.5.4
+------------------------
+ o Ensembl - UCSC mapping vignette [2015-02-11 Wed]
+  
 CHANGES IN VERSION 0.5.3
 ------------------------
  o Render vignettes with rmarkdown [2015-02-11 Wed]
  o Improve mapping vignette [2015-02-11 Wed]
- o Ensembl - UCSC mapping vignette [2015-02-11 Wed]
  
 CHANGES IN VERSION 0.5.2
 ------------------------
