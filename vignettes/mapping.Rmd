@@ -1,25 +1,32 @@
+---
+title: "Mapping experimental MS data to genomic coordinates"
+output:
+  BiocStyle::html_document:
+    toc: true
+---
+
+
 <!--
 %\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{mapping}
+%\VignettePackage{Pbase}
 -->
 
-```{r style, echo = FALSE}
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
 BiocStyle::markdown()
 ```
 
-<!-- --- -->
-<!-- title: "Mapping proteins to their genomic coordinates" -->
-<!-- author: "Laurent Gatto - <lg390@cam.ac.uk>" -->
-<!-- output: -->
-<!--   html_document: -->
-<!--     toc: true -->
-<!--     theme: united -->
-<!-- --- -->
+<hr />
+
+Author: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
+
+Compilation date: `r Sys.Date()`
+
+<hr />
+
 
 Mapping proteins to their genomic coordinates
 =============================================
-
-[Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
 
 ```{r, env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("Gviz")
@@ -27,14 +34,14 @@ library("Pbase")
 library("Biostrings")
 library("biomaRt")
 library("BSgenome.Hsapiens.UCSC.hg19")
+library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 library("ggplot2")
 ```
 
 ## Introduction
 
-The aim of this document is to document to mapping of proteins and the
-tandem mass spectrometry derived peptides they have been inferred from
-to genomic locations. 
+The aim of this document is to document the mapping of proteins and
+the tandem mass spectrometry derived peptides to genomic locations.
 
 ```{r schema, echo=FALSE, fig.cap='Mapping proteins to a genome reference.', fig.align='center'}
 par(mar = rep(0, 4),
@@ -178,39 +185,36 @@ for (i in 1:length(peps)) {
 }
 ```
 
-## Proteins and genome data
+## Protein and genome data
 
 ```{r, echo=FALSE}
 data(p)
 sp <- seqnames(p)[5]
 ```
 
-We will use a small object from `Pbase` to illustrate how to retrieve
-genome coordinates and map a protein back to genomic coordinates. In
-the remainder of this vignette, we will concentrate on a spectific
-protein, namely `r sp`.
+We will use a small object from the `r Biocpkg("Pbase")` package to
+illustrate how to retrieve genome coordinates and map a peptides back
+to genomic coordinates. In the remainder of this vignette, we will
+concentrate on a specific protein, namely `r sp`. The input
+information consists of a UniProt identifier and a set of peptides
+positions along the protein sequence.
 
 ```{r, p, message=FALSE}
 library("Pbase")
 data(p)
 p
 seqnames(p)
-dat <- data.frame(i = 1:length(p),
-                  npeps = elementLengths(pfeatures(p)),
-                  protln = width(aa(p)))
-dat
-sp <- seqnames(p)[5]
+(sp <- seqnames(p)[5])
 ```
 
-### Querying with `biomaRt`
+```{r startend}
+pcols(p)[sp, c("start", "end")]
+```
 
-The input information consists of a UniProt identifier and a set of
-peptides positions along the protein. The first step is to map the
-protein accession number to a gene identifier (here, we will use
-Ensembl) and to obtain genome coordinates.
-
-Multiple solutions are offered to use. Below, we use the `biomaRt`
-Bioconductor package.
+We will also require an identifier relating the protein feature of
+interest to the genome. Below, we use `r Biocpkg("biomaRt")` to query
+the matching HGNC gene symbol, Ensembl gene, transcript and protein
+identifiers and UCSC identifier.
 
 ```{r bm, cache=TRUE, message=FALSE}
 library("biomaRt")
@@ -219,84 +223,63 @@ ens <- useMart("ensembl", "hsapiens_gene_ensembl")
 bm <- select(ens, keys = sp,
              keytype = "uniprot_swissprot_accession",
              columns = c(
+                 "hgnc_symbol",
                  "ensembl_gene_id",
                  "ensembl_transcript_id",
                  "ensembl_peptide_id",
-                 "ensembl_exon_id",  
-                 "description",     
-                 "chromosome_name",
-                 "strand",
-                 "exon_chrom_start",
-                 "exon_chrom_end",
-                 "5_utr_start",
-                 "5_utr_end",
-                 "3_utr_start",
-                 "3_utr_end",
-                 "start_position",     
-                 "end_position"))
+                 "ucsc"))
 
 bm
-
 ```
 
-<!-- We will only consider the gene located on the X chromosome and ignore -->
-<!-- the -->
-<!-- [sequence](http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/info/patches.shtml) -->
-<!-- [patch](http://www.ncbi.nlm.nih.gov/nuccore/NW_003871101.3?report=genbank) -->
-<!-- and conveniently store the transcript and protein identifiers for -->
-<!-- later use. -->
+Below, we store the Ensembl transcript and UCSC identifiers in their
+own variables `tr` and `ucsc` for convenience.
 
-Below, we store the transcripts and protein identifiers for later use.
-
-```{r}
-tr <- unique(bm$ensembl_transcript_id)
-pr <- unique(bm$ensembl_peptide_id)
+```{r tr}
+tr <- bm$ensembl_transcript_id
+ucsc <- bm$ucsc
 ```
 
-The information retrieved gives us various information, in particular
-the Ensembl gene identifer `r bm$ensembl_gene_id[1]` and its starting
-and ending position `r bm$start_position[1]` and `r bm$end_position[1]`
-on chromosome `r bm$chromosome_name[1]`.
+## Genome visualisation with `r Biocpkg("Gviz")`
 
-### Genome visualisation with `Gviz`
+We will now make use of the `r Biocpkg("Gviz")` infrastructure to
+fetch the genomic coordinates of our transcript of interest
+(using `r Biocpkg("biomaRt")` under the hood), extract the specific track of
+interest and plot it.
 
-While the above defines all necessary genomic coordinates, and as we
-will make use of the `Gviz` plotting infrastructure, it is more
-straightforward to fetch the above information via `biomaRt` using
-specialised `Gviz` infrastructure.
+Instead of providing the specific start and end coordinates of our
+transcript `tr`, we will provide the identifier and the genomic locus
+of the gene model will be fetched from Biomart. 
 
-```{r gviz, cache=TRUE, message=FALSE}
+```{r gviz0, cache=TRUE, message=FALSE}
 library("Gviz")
-options(ucscChromosomeNames=FALSE)
-
-## the following does not recover the expected gene anymore,
-## possible due to differences in coordinates between Ensembl and USCS
-## bmTrack <- BiomartGeneRegionTrack(start = min(bm$start_position),
-##                                   end = max(bm$end_position),
-##                                   chromosome = "X",
-##                                   genome = "hg19")
-
-## setting start/end positions manually for now
-bmTrack <- BiomartGeneRegionTrack(start = 77359666,
-                                  end = 77382324,
-                                  chromosome = "X",
+bmTrack <- BiomartGeneRegionTrack(transcript = tr,
                                   genome = "hg19")
-
-## see also the filters param and getBM to
-## filter on biotype == "protein_coding"
-bmTracks <- split(bmTrack, transcript(bmTrack))
-
-grTrack <- bmTracks[[which(names(bmTracks) == tr)]]
-names(grTrack) <- tr
-
 ```
 
-We can convince ourselves that the manual retrieved data in `bm` and
-the data in the `BiomartRegionTrack` subsequently subset into a
-`GeneRegionTrack` match.
+The above query results in `length(bmTrack)` annotation features for
+`length(unique(transcript(bmTrack)))` transcripts, including `tr`
 
-```{r gvizdfr}
-as(grTrack, "data.frame")
+
+```{r annottab}
+table(transcript(bmTrack))
+stopifnot(tr %in% transcript(bmTrack))
+```
+
+We now extract the transcript of interest from all transcript that
+exists along the gene model coordinates and coerce the Biomart query
+track into a named `GeneRegionTrack`.
+
+```{r gviz1}
+bmTracks <- split(bmTrack, transcript(bmTrack))
+grTrack <- as(bmTracks[[tr]], "GeneRegionTrack")
+names(grTrack) <- tr
+```
+
+We can retrieve the exact gene coordinates as a `Granges` object:
+
+```{r bmrng}
+ranges(grTrack)
 ```
 
 Below, we create additional ideogram and axis tracks and produce a
@@ -306,59 +289,60 @@ visualisation of our genomic coordinates of interest.
 ideoTrack <- IdeogramTrack(genome = "hg19",
                            chromosome = "chrX")
 axisTrack <- GenomeAxisTrack()
-
-seqlevels(ranges(grTrack)) <- 
-    chromosome(grTrack) <-
-        chromosome(ideoTrack)
 plotTracks(list(ideoTrack, axisTrack, grTrack),
            add53 = TRUE, add35 = TRUE)
 ```
 
-### Using `TranscriptDb` instances
+## Using `TranscriptDb` instances
 
-
-
-
-
-
-Finally, one could also use `TranscriptDb` objects to create the
-`GeneRegionTrack`. Below, we use the UCSC annotation (which is
-directly available from Bioconductor; Ensembl TranscriptDb instances
-could be generated manually - **TODO** document this) to extract our
+One can also use `TranscriptDb` objects to create the
+`GeneRegionTrack`. Below, we use the UCSC annotation to extract our
 regions of interest.
 
-```{r, txdb, cache=FALSE, message=FALSE, eval=FALSE}
-library("TxDb.Hsapiens.UCSC.hg19.knownGene")
-txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-txTr <- GeneRegionTrack(txdb, chromosome = "chrX",
-                        start = bm$start_position[1],
-                        end = bm$end_position[1])
-```
 
 ```{r txdb0, echo=FALSE}
 library("TxDb.Hsapiens.UCSC.hg19.knownGene")
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-txTr <- GeneRegionTrack(txdb, chromosome = "chrX")
-tmp <- as(txTr, "data.frame")
-s1 <- min(tmp[which(tmp$gene == "5230"), "X.start"])
-s2 <- max(tmp[which(tmp$gene == "5230"), "X.end"])
+txTrack <- GeneRegionTrack(txdb, chromosome = "chrX")
+txTracks <- split(txTrack, transcript(txTrack))
+grTrack2 <- as(txTracks[[ucsc]], "GeneRegionTrack")
+names(grTrack2) <- ucsc
 ```
 
-Note however that the `biomart` (from Ensembl) and `TranscriptDb`
-(from USSC) start and end positions might not match (above, for
-example worked up to Bioconductor release 3.0). Below, we use
-positions `s1` `r s1` and `s2` `r s2`, directly extracted for the
-`uc004ecz.4` transcript from `txdb` (see below to query the UCSC
-transcript identifier).
+and the genomics coordinates as `Granges` object:
 
+```{r txrng}
+ranges(grTrack2)
+```
 
-```{r, txdb2, cache=TRUE, message=FALSE}
-library("TxDb.Hsapiens.UCSC.hg19.knownGene")
-txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-txTr <- GeneRegionTrack(txdb, chromosome = "chrX",
-                        start = s1, end = s2)
-txTr <- txTr[transcript(txTr) %in% "uc004ecz.4"]
-head(as(txTr, "data.frame"))
+## Notable differences 
+
+Note that there exist differences in the 5' and 3' UTR regions between
+the two Gene track objects.
+
+```{r compgr}
+feature(grTrack)
+start(grTrack) - start(grTrack2)
+end(grTrack) - end(grTrack2)
+```
+
+More substantial differences may arise of one queries UCSC or
+Ensembl. Indeed, these two resources might not refer to the same
+Genome reference and report different coordinates.
+
+Below, we show how to use the Ensembl Biomart server to retrieve the
+genomic coordinates by passing the `ens` Ensembl `Mart` object
+(created above when querying for the genomics identifiers) when
+creating the Biomart gene region track.
+
+```{r ensgviz}
+ens
+bmTrack <- BiomartGeneRegionTrack(biomart = ens,
+                                  transcript = tr,
+                                  genome = "hg19")
+bmTracks <- split(bmTrack, transcript(bmTrack))
+grTrack3 <- as(bmTracks[[tr]], "GeneRegionTrack")
+ranges(grTrack3)
 ```
 
 ## Peptide features
@@ -371,8 +355,8 @@ pepstring <- paste(unique(pcols(pp)[[1]]$pepseq), collapse = ", ")
 
 The peptides that have been experimentally observed are available as
 ranges (coordinates) along the protein sequences. For example, below,
-we see `r n` peptides (`r pepstring`) have been identified for our
-protein of interest `r sp`.
+we isolate and visualise the `r n` peptides (`r pepstring`) have been
+identified for our protein of interest `r sp`.
 
 ```{r, pepsfig, fig.align='center'}
 pp <- p[sp]
@@ -395,59 +379,33 @@ be constructed as shown below.
 
 The first check that we want to implement is to verify that we can
 regenerate the protein amino acid sequence from the genome regions
-that we have extracted. We start by subsetting only the actual protein
+that we have extracted. We start by sub-setting only the actual protein
 coding regions, i.e ignoring the 5' and 3' untranslated regions of our
 Genome Region track.
 
 ```{r, protranges}
-(prng <- ranges(grTrack[feature(grTrack) == "protein_coding",]))
+prng <- ranges(grTrack2)
+prng <- prng[prng$feature == "CDS"]
 ```
 
 We also need the actual genome sequence (so far, we have only dealt
-with regions and features). There are multiple ways to obtain genome
-sequences with R and Bioconductor. As we have been working with the
-Ensembl reference genome, we could simply
-[download](ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/dna/)
-the whole genome of only the chromosome X and load it as an
-`AAStringSet` and extract the protein coding regions of interest at
-the coordinates defined by the ranges in `prng`.
-
-```{r, extractat, eval=FALSE}
-library("Biostrings")
-chrx <- readDNAStringSet("./Homo_sapiens.GRCh37.75.dna.chromosome.X.fa.gz")
-seq <- extractAt(chrx[[1]], ranges(prng))
-pptr <- translate(unlist(seq))
-```
-
-It is also possible to use package genomes to do this. Above, we have
-used the `TxDb.Hsapiens.UCSC.hg19.knownGene` package defining
-transcripts. There is a similar package for the human UCSC genome
-build, namely `BSgenome.Hsapiens.UCSC.hg19`. However, as we have
-focused on Ensembl data annotation, we will first need to convert our
-Ensembl transcript (or protein) identifier `r tr` (`r pr`) into the
-UCSC equivalent. (**TODO** Use also `Homo.sapiens` annotation
-package.)
+with regions and features). As above, we have used the
+`r Biocannopkg("TxDb.Hsapiens.UCSC.hg19.knownGene")` package to identify
+genomic coordinates, we want to use the corresponding sequence data,
+namely `r Biocannopkg("BSgenome.Hsapiens.UCSC.hg19")`.
 
 ```{r, protfromgenome}
-ucsc <- select(ens, key = pr,
-               keytype = "ensembl_peptide_id",
-               columns = "ucsc")
-ucsc
-
 library("BSgenome.Hsapiens.UCSC.hg19")
-prng2 <- ranges(txTr[transcript(txTr) %in% ucsc])
-prng2 <- prng2[prng2$feature == "CDS"]
-
-seq <- getSeq(BSgenome.Hsapiens.UCSC.hg19, prng2)
-pptr <- translate(unlist(seq))
-## remove stop codon
-pptr <- pptr[1:417]
+s <- getSeq(BSgenome.Hsapiens.UCSC.hg19, prng)
+pptr <- translate(unlist(s))
 ```
 
-It would be possible to use the 
+And we align the peptide sequence derived from the genome sequence
+`pptr` and the the protein sequence from our original data `pp` (using
+the `aa` accessor):
 
 ```{r, align}
-writePairwiseAlignments(pairwiseAlignment(pp[[1]], pptr))
+writePairwiseAlignments(pairwiseAlignment(aa(pp), pptr))
 ```
 
 ### Calculating new coordinates
@@ -457,7 +415,7 @@ To calculate the genomic coordinates of peptides we
 1) Calculate the contiguous exon coordinates on the cDNA sequence
    `prex`.
 
-2) Calculate the peptide corrdinates on the cDNA sequence `peprgn2`
+2) Calculate the peptide coordinates on the cDNA sequence `peprgn2`
    from the original peptide ranges along the protein sequence.
 
 3) We calculate the indices of the exons in which all the peptides
@@ -470,8 +428,8 @@ To calculate the genomic coordinates of peptides we
 
 ```{r, mapping}
 ## exons ranges along the protein
-j <- cumsum(width(seq))
-i <- cumsum(c(1, width(seq)))[1:length(j)]
+j <- cumsum(width(s))
+i <- cumsum(c(1, width(s)))[1:length(j)]
 prex <- IRanges(start = i, end = j)
 
 peprng <- pranges(pp)[[1]]
@@ -483,10 +441,10 @@ peprng2 <- IRanges(start = 1 + (start(peprng)-1) * 3,
 start_ex <- subjectHits(findOverlaps(start(peprng2), prex))
 end_ex <- subjectHits(findOverlaps(end(peprng2), prex))
 
-getPos <- function(p, i, prtex = prex, nclex = prng2) {
+getPos <- function(p, i, prtex = prex, nclex = prng) {
     ## position in cdna
     ## exon index
-    start(prng2[i]) + (p - start(prtex[i]))
+    start(prng[i]) + (p - start(prtex[i]))
 }
 
 peptides_on_genome <- IRanges(start = getPos(start(peprng2), start_ex),
@@ -510,7 +468,7 @@ pepTr <- AnnotationTrack(start = start(peptides_on_genome),
                          col = "steelblue")
 
 
-plotTracks(list(ideoTrack, axisTrack, txTr, pepTr),
+plotTracks(list(ideoTrack, axisTrack, grTrack, pepTr),
            groupAnnotation = "id",
            just.group = "below",
            fontsize.group = 9,
@@ -533,7 +491,6 @@ details <- function(identifier, ...) {
     p <- p + theme_bw() + theme(axis.text.y = element_blank(),
                                 axis.text.x = element_blank()) + 
                                 labs(x = NULL, y = NULL)
-                                        
     print(p, newpage=FALSE)
 }
 
@@ -544,13 +501,15 @@ deTrack <- AnnotationTrack(start = start(peptides_on_genome),
                            name = "MS2 spectra",
                            stacking = "squish", fun = details)
 
-plotTracks(list(ideoTrack, axisTrack, deTrack, txTr),
+plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
            add53 = TRUE, add35 = TRUE)
 ```
 
-**TODO** Check spectra. Describe how data tracks can be used to
-  overlay additional information, such as quantitation data,
-  identification scores, coverage, ...
+#### TODO
+
+Check spectra. Describe how data tracks can be used to overlay
+additional information, such as quantitation data, identification
+scores, coverage, ...
 
 ## Session information
 
