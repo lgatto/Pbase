@@ -25,11 +25,8 @@ Compilation date: `r Sys.Date()`
 
 <hr />
 
-Pbase example data
-==================
 
-
-```{r, env, echo=FALSE, message=FALSE, warning=FALSE}
+```{r env, echo=FALSE, message=FALSE, warning=FALSE}
 library("Pbase")
 ```
 
@@ -41,7 +38,7 @@ from the UniProt release 2014_06 were searched using the MSGF+ engine.
 
 ## The fasta database
 
-```{r, fa, cache=TRUE}
+```{r fa, cache=TRUE}
 library("Biostrings")
 fafile <- system.file("extdata/HUMAN_2014_06-09prots.fasta", package = "Pbase")
 fa <- readAAStringSet(fafile)
@@ -50,7 +47,7 @@ fa
 
 ## The PSM data
 
-```{r, psm, cache=TRUE}
+```{r psm, cache=TRUE}
 library("mzID")
 idfile <- system.file("extdata/Thermo_Hela_PRTC_1_selected.mzid", package = "Pbase")
 id <- flatten(mzID(idfile))
@@ -60,7 +57,7 @@ head(id)
 
 ## The Proteins object
 
-```{r, p, cache=TRUE}
+```{r p, cache=TRUE}
 library("Pbase")
 p <- Proteins(fafile)
 p <- addIdentificationData(p, idfile)
@@ -73,7 +70,7 @@ peptides features that are mapped as coordinates along the proteins,
 available with `pranges`. The actual peptide sequences can be extraced
 with `pfeatures`.
 
-```{r, paccess}
+```{r paccess}
 aa(p)
 pranges(p)
 pfeatures(p)
@@ -84,7 +81,7 @@ A Proteins instance is further described by general
 accessed with `ametadata` and `pmetadata` (or `acols` and `pcols`)
 respectively.
 
-```{r, metadata}
+```{r metadata}
 metadata(p)
 head(acols(p))
 head(pcols(p))
@@ -94,7 +91,7 @@ Specific proteins can be extracted by index of name using
 `[` and proteins and their peptide features can be plotted
 with the default plot method.
 
-```{r, pplot, fig.align='center', cache=TRUE}
+```{r pplot, fig.align='center', cache=TRUE}
 seqnames(p)
 plot(p[c(1,9)])
 ```
@@ -104,6 +101,6 @@ is also directly available as `data(p)`.
 
 ## Session information
 
-```{r, si}
+```{r si}
 sessionInfo()
 ```
