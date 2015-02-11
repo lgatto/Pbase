@@ -25,10 +25,7 @@ Compilation date: `r Sys.Date()`
 <hr />
 
 
-Mapping proteins to their genomic coordinates
-=============================================
-
-```{r, env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
+```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("Gviz")
 library("Pbase")
 library("Biostrings")
@@ -187,7 +184,7 @@ for (i in 1:length(peps)) {
 
 ## Protein and genome data
 
-```{r, echo=FALSE}
+```{r echo=FALSE}
 data(p)
 sp <- seqnames(p)[5]
 ```
@@ -199,7 +196,7 @@ concentrate on a specific protein, namely `r sp`. The input
 information consists of a UniProt identifier and a set of peptides
 positions along the protein sequence.
 
-```{r, p, message=FALSE}
+```{r p, message=FALSE}
 library("Pbase")
 data(p)
 p
@@ -338,16 +335,22 @@ creating the Biomart gene region track.
 ```{r ensgviz}
 ens
 bmTrack <- BiomartGeneRegionTrack(biomart = ens,
-                                  transcript = tr,
-                                  genome = "hg19")
+                                  transcript = tr)
 bmTracks <- split(bmTrack, transcript(bmTrack))
 grTrack3 <- as(bmTracks[[tr]], "GeneRegionTrack")
 ranges(grTrack3)
 ```
 
+See the `Mapping between Ensembl and UCSC` vignette in `Pbase` for
+details:
+
+```{r eval=FALSE}
+vignette("ensucsc", package = "Pbase")
+```
+
 ## Peptide features
 
-```{r, pp0, echo=FALSE}
+```{r pp0, echo=FALSE}
 pp <- p[sp]
 n <- elementLengths(pranges(pp))
 pepstring <- paste(unique(pcols(pp)[[1]]$pepseq), collapse = ", ")
@@ -358,7 +361,7 @@ ranges (coordinates) along the protein sequences. For example, below,
 we isolate and visualise the `r n` peptides (`r pepstring`) have been
 identified for our protein of interest `r sp`.
 
-```{r, pepsfig, fig.align='center'}
+```{r pepsfig, fig.align='center'}
 pp <- p[sp]
 pranges(pp)
 plot(pp)
@@ -383,7 +386,7 @@ that we have extracted. We start by sub-setting only the actual protein
 coding regions, i.e ignoring the 5' and 3' untranslated regions of our
 Genome Region track.
 
-```{r, protranges}
+```{r protranges}
 prng <- ranges(grTrack2)
 prng <- prng[prng$feature == "CDS"]
 ```
@@ -394,7 +397,7 @@ with regions and features). As above, we have used the
 genomic coordinates, we want to use the corresponding sequence data,
 namely `r Biocannopkg("BSgenome.Hsapiens.UCSC.hg19")`.
 
-```{r, protfromgenome}
+```{r protfromgenome}
 library("BSgenome.Hsapiens.UCSC.hg19")
 s <- getSeq(BSgenome.Hsapiens.UCSC.hg19, prng)
 pptr <- translate(unlist(s))
@@ -404,7 +407,7 @@ And we align the peptide sequence derived from the genome sequence
 `pptr` and the the protein sequence from our original data `pp` (using
 the `aa` accessor):
 
-```{r, align}
+```{r align}
 writePairwiseAlignments(pairwiseAlignment(aa(pp), pptr))
 ```
 
@@ -426,7 +429,7 @@ To calculate the genomic coordinates of peptides we
    exons coordinates on the cDNA sequences and the matching exons
    coordinates on the genome and store these in an `IRanges` object.
 
-```{r, mapping}
+```{r mapping}
 ## exons ranges along the protein
 j <- cumsum(width(s))
 i <- cumsum(c(1, width(s)))[1:length(j)]
@@ -458,7 +461,7 @@ Based on the new peptide genomic coordinates, it is now
 straightforward to create a new `AnnotationTrack` and add it the the
 track visualisation.
 
-```{r, pepcoords, fig.align='center'}
+```{r pepcoords, fig.align='center'}
 pepTr <- AnnotationTrack(start = start(peptides_on_genome),
                          end = end(peptides_on_genome),
                          chr = "chrX", genome = "hg19",
@@ -482,7 +485,7 @@ Finally, we customise the figure by adding a track with the $MS^2$
 spectra. The raw data used to search the protein database an create
 `p` are available as an `MSnExp` object. 
 
-```{r, msmsspectra, fig.align='center'}
+```{r msmsspectra, fig.align='center'}
 data(pms)
 
 library("ggplot2")
@@ -513,6 +516,6 @@ scores, coverage, ...
 
 ## Session information
 
-```{r, si}
+```{r si}
 sessionInfo()
 ```
