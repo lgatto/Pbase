@@ -1,12 +1,9 @@
-
 all:
 	make Pbase-data.html
 	make mapping.html
 	make ensucsc.html
 
 R_HOME = `R RHOME`
-
-.PHONY = ensucsc
 
 Pbase-data.html: Pbase-data.Rmd
 	"$(R_HOME)/bin/Rscript" -e 'library("knitr"); library("rmarkdown"); knit("Pbase-data.Rmd"); render("Pbase-data.md")'

@@ -1,13 +1,12 @@
 ---
-title: "Pbase example data"
+title: "`Pbase` example data"
 output:
   BiocStyle::html_document:
     toc: true
 ---
 
-
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Pbase-data}
 %\VignettePackage{Pbase}
 -->
