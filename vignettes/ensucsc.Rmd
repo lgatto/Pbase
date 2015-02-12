@@ -1,13 +1,12 @@
 ---
-title: "Mapping between Ensembl and UCSC"
+title: "Mapping between different Genome references"
 output:
   BiocStyle::html_document:
     toc: true
 ---
 
-
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{Ensembl and UCSC mapping}
 %\VignettePackage{Pbase}
 -->
@@ -16,7 +15,102 @@ output:
 BiocStyle::markdown()
 ```
 
-This is a stub. We don't want the real `ensucsc.Rmd` to be compiled to
-demonstrate conversion betweem GRCh37 to GRCh38, as happening with
-Bioconductor 3.1 (Feb 2015).
+<hr />
 
+Author: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
+
+Compilation date: `r Sys.Date()`
+
+<hr />
+
+
+This vignette described how to convert coordinates between different
+genome references. We will use transcript `ENST00000373316` and GRCh38
+and GRCh37 as working example.
+
+```{r bm} 
+tr <- "ENST00000373316"
+``` 
+
+## GRCh38
+
+Here is use `r Biocpkg("Gviz")` to query the latest Ensembl biomart
+and extract the transcript of interest.
+
+```{r h38}
+suppressMessages(library("Gviz"))
+suppressMessages(library("biomaRt"))
+
+h38 <- useMart("ensembl", "hsapiens_gene_ensembl")
+tr38 <- BiomartGeneRegionTrack(biomart = h38,
+                               transcript = tr)
+tr38 <- split(tr38, transcript(tr38))
+tr38 <- ranges(tr38[[tr]])
+tr38
+```
+
+Note the starting position of the transcript is `r min(start(tr38))`.
+
+## GRCh37
+
+Below, I repeat the same operation without using my own ens Mart
+instance. As far as I understand, Gviz queries the UCSC genome
+reference by default. 
+
+```{r h37}
+h37 <- useMart(host = "feb2014.archive.ensembl.org",
+                biomart = "ENSEMBL_MART_ENSEMBL",
+                dataset = "hsapiens_gene_ensembl")
+tr37 <- BiomartGeneRegionTrack(biomart = h37,
+                               transcript = tr)
+tr37 <- split(tr37, transcript(tr37))
+tr37 <- ranges(tr37[[tr]])
+tr37
+```
+
+Note the starting position of the transcript is `r min(start(tr37))`.
+
+These differences seem to stem from different genome builds. **Ensembl
+release 78** uses **GRCh38**, while **UCSC** uses **GRCh37**. Indeed,
+`r Biocpkg("Gviz")` sets the Ensembl biomart server to `Feb.2014`
+`GRCh37.p13`.
+
+## Coordinates conversion
+
+We will use the coordinate mapping infrastructure described in the
+[January 2015 Bioconductor Newletter](http://www.bioconductor.org/help/newsletters/2015_January/#coordinate-mapping)
+and the
+[Changing genomic coordinate systems with rtracklayer::liftOver](http://bioconductor.org/help/workflows/liftOver/)
+workflow.
+
+First, we query `r Biocpkg("AnnotationHub")` for a chain file to
+perform the operation we want.
+
+```{r chain}
+library("AnnotationHub")
+hub <- AnnotationHub()
+query(hub, 'hg19ToHg38')
+chain <- query(hub, 'hg19ToHg38')[[1]]
+```
+
+The `liftOver` function from the `r Biocpkg("rtracklayer")` package
+will use the chain and translate the coordinates of a `GRanges` object
+into a new `GRangesList` object.
+
+```{r}
+library("rtracklayer")
+res <- liftOver(tr37, chain)
+res <- unlist(res)
+
+## set annotation
+names(res) <- NULL
+genome(res) <- "hsapiens_gene_ensembl"
+
+all.equal(res, tr38)
+```
+
+## Session information
+
+```{r si}
+sessionInfo()
+```
