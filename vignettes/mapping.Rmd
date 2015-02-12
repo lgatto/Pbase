@@ -15,13 +15,9 @@ output:
 BiocStyle::markdown()
 ```
 
-<hr />
-
-Author: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
-
-Compilation date: `r Sys.Date()`
-
-<hr />
+**Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
+**Author:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) <br />
+**Compilation date:** `r Sys.Date()` <br />
 
 
 ```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
@@ -212,9 +208,13 @@ interest to the genome. Below, we use `r Biocpkg("biomaRt")` to query
 the matching HGNC gene symbol, Ensembl gene, transcript and protein
 identifiers and UCSC identifier.
 
+Below, we create a `Mart` object that stores the connection details to
+the latest human Ensembl biomart server.
+
 ```{r bm, cache=TRUE, message=FALSE}
 library("biomaRt")
 ens <- useMart("ensembl", "hsapiens_gene_ensembl")
+ens
 
 bm <- select(ens, keys = sp,
              keytype = "uniprot_swissprot_accession",
@@ -371,13 +371,15 @@ Genome Region track.
 ```{r protranges}
 prng <- ranges(grTrack2)
 prng <- prng[prng$feature == "CDS"]
+prng
 ```
 
 We also need the actual genome sequence (so far, we have only dealt
-with regions and features). As above, we have used the
-`r Biocannopkg("TxDb.Hsapiens.UCSC.hg38.knownGene")` package to identify
-genomic coordinates, we want to use the a genome package that is based on the same refernece genome,
-namely `r Biocannopkg("BSgenome.Hsapiens.NCBI.GRCh38")`.
+with regions and features). As above, we have used the `r
+Biocannopkg("TxDb.Hsapiens.UCSC.hg38.knownGene")` package to identify
+genomic coordinates, we want to use a genome package that is based on
+the same reference genome, namely `r
+Biocannopkg("BSgenome.Hsapiens.NCBI.GRCh38")`.
 
 ```{r protfromgenome}
 library("BSgenome.Hsapiens.NCBI.GRCh38")
@@ -402,7 +404,7 @@ To calculate the genomic coordinates of peptides we
 1) Calculate the contiguous exon coordinates on the cDNA sequence
    `prex`.
 
-2) Calculate the peptide coordinates on the cDNA sequence `peprgn2`
+2) Calculate the peptide coordinates on the cDNA sequence `peprng2`
    from the original peptide ranges along the protein sequence.
 
 3) We calculate the indices of the exons in which all the peptides

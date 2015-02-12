@@ -15,14 +15,10 @@ output:
 BiocStyle::markdown()
 ```
 
-<hr />
-
-Authors: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) and
-[Sebastian Gibb](http://sebastiangibb.de/research.html)
-
-Compilation date: `r Sys.Date()`
-
-<hr />
+**Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
+**Authors:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) and
+[Sebastian Gibb](http://sebastiangibb.de/research.html)<br />
+**Compilation date:** `r Sys.Date()`<br />
 
 
 ```{r env, echo=FALSE, message=FALSE, warning=FALSE}
