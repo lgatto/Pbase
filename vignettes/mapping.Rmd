@@ -283,7 +283,7 @@ Below, we create additional ideogram and axis tracks and produce a
 visualisation of our genomic coordinates of interest.
 
 ```{r gvizfig, fig.align='center', cache=TRUE}
-ideoTrack <- IdeogramTrack(genome = "hg19",
+ideoTrack <- IdeogramTrack(genome = "hg38",
                            chromosome = "chrX")
 axisTrack <- GenomeAxisTrack()
 plotTracks(list(ideoTrack, axisTrack, grTrack),
@@ -317,10 +317,10 @@ ranges(grTrack2)
 Note that there exist differences in the 5' and 3' UTR regions between
 the two Gene track objects.
 
-```{r compgr}
-feature(grTrack)
-start(grTrack) - start(grTrack2)
-end(grTrack) - end(grTrack2)
+```{r compgr, echo=FALSE}
+data.frame(feature = feature(grTrack),
+           start = start(grTrack) - start(grTrack2),
+           end = end(grTrack) - end(grTrack2))
 ```
 
 More substantial differences may arise if UCSC or Ensembl are based on
@@ -381,8 +381,10 @@ genomic coordinates, we want to use the corresponding sequence data,
 namely `r Biocannopkg("BSgenome.Hsapiens.UCSC.hg19")`.
 
 ```{r protfromgenome}
-library("BSgenome.Hsapiens.UCSC.hg19")
-s <- getSeq(BSgenome.Hsapiens.UCSC.hg19, prng)
+library("BSgenome.Hsapiens.NCBI.GRCh38")
+seqlevels(prng) <- "X"
+genome(prng) <- "GRCh38"
+s <- getSeq(BSgenome.Hsapiens.NCBI.GRCh38, prng)
 pptr <- translate(unlist(s))
 ```
 
@@ -459,7 +461,6 @@ plotTracks(list(ideoTrack, axisTrack, grTrack, pepTr),
            just.group = "below",
            fontsize.group = 9,
            add53 = TRUE, add35 = TRUE)
-
 ```
 
 ### DetailsAnnotationTrack
