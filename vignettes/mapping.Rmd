@@ -250,8 +250,8 @@ of the gene model will be fetched from Biomart.
 
 ```{r gviz0, cache=TRUE, message=FALSE}
 library("Gviz")
-bmTrack <- BiomartGeneRegionTrack(transcript = tr,
-                                  genome = "hg19")
+bmTrack <- BiomartGeneRegionTrack(biomart = ens,
+                                  transcript = tr)
 ```
 
 The above query results in `length(bmTrack)` annotation features for
@@ -298,8 +298,8 @@ regions of interest.
 
 
 ```{r txdb0}
-library("TxDb.Hsapiens.UCSC.hg19.knownGene")
-txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+txdb <- TxDb.Hsapiens.UCSC.hg38.knownGene
 txTrack <- GeneRegionTrack(txdb, chromosome = "chrX")
 txTracks <- split(txTrack, transcript(txTrack))
 grTrack2 <- as(txTracks[[ucsc]], "GeneRegionTrack")
@@ -323,26 +323,9 @@ start(grTrack) - start(grTrack2)
 end(grTrack) - end(grTrack2)
 ```
 
-More substantial differences may arise of one queries UCSC or
-Ensembl. Indeed, these two resources might not refer to the same
-Genome reference and report different coordinates.
-
-Below, we show how to use the Ensembl Biomart server to retrieve the
-genomic coordinates by passing the `ens` Ensembl `Mart` object
-(created above when querying for the genomics identifiers) when
-creating the Biomart gene region track.
-
-```{r ensgviz}
-ens
-bmTrack <- BiomartGeneRegionTrack(biomart = ens,
-                                  transcript = tr)
-bmTracks <- split(bmTrack, transcript(bmTrack))
-grTrack3 <- as(bmTracks[[tr]], "GeneRegionTrack")
-ranges(grTrack3)
-```
-
-See the `Mapping between Ensembl and UCSC` vignette in `Pbase` for
-details:
+More substantial differences may arise if UCSC or Ensembl are based on
+different genome references. See the `Mapping between Ensembl and
+UCSC` vignette in `Pbase` for details:
 
 ```{r eval=FALSE}
 vignette("ensucsc", package = "Pbase")

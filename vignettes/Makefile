@@ -2,7 +2,7 @@
 all:
 	make Pbase-data.html
 	make mapping.html
-	make ensucsc
+	make ensucsc.html
 
 R_HOME = `R RHOME`
 
@@ -14,9 +14,8 @@ Pbase-data.html: Pbase-data.Rmd
 mapping.html: mapping.Rmd
 	"$(R_HOME)/bin/Rscript" -e 'library("knitr"); library("rmarkdown"); knit("mapping.Rmd"); render("mapping.md")'
 
-ensucsc:
-	cp vigsrc/ensucsc.html .
-	cp vigsrc/ensucsc.R .
+ensucsc.html: ensucsc.Rmd
+	"$(R_HOME)/bin/Rscript" -e 'library("knitr"); library("rmarkdown"); knit("ensucsc.Rmd"); render("ensucsc.md")'
 
 clean:
 	rm -f *~
@@ -24,8 +23,8 @@ clean:
 	rm -f .Rhistory
 
 allclean: clean
-	rm -rf cache figure mapping_cache
-	rm -f Pbase-data.R mapping.R
+	rm -rf cache figure 
+	rm -f Pbase-data.R mapping.R ensucsc.R
 	rm -f *html
 	rm -f *.md
 
