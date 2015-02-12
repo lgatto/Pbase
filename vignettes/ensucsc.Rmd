@@ -68,7 +68,7 @@ tr37 <- ranges(tr37[[tr]])
 tr37
 ```
 
-Note the starting position of the transcript is `r min(start(utr))`.
+Note the starting position of the transcript is `r min(start(tr37))`.
 
 These differences seem to stem from different genome builds. **Ensembl
 release 78** uses **GRCh38**, while **UCSC** uses **GRCh37**. Indeed,
