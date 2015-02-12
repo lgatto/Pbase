@@ -29,8 +29,8 @@ library("Gviz")
 library("Pbase")
 library("Biostrings")
 library("biomaRt")
-library("BSgenome.Hsapiens.UCSC.hg19")
-library("TxDb.Hsapiens.UCSC.hg19.knownGene")
+library("BSgenome.Hsapiens.NCBI.GRCh38")
+library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 library("ggplot2")
 ```
 
@@ -376,7 +376,8 @@ prng <- prng[prng$feature == "CDS"]
 We also need the actual genome sequence (so far, we have only dealt
 with regions and features). As above, we have used the
 `r Biocannopkg("TxDb.Hsapiens.UCSC.hg38.knownGene")` package to identify
-genomic coordinates, we want to use the a genome package that is based on the same refernece genome, namely `r Biocannopkg("BSgenome.Hsapiens.NCBI.GRCh38")`.
+genomic coordinates, we want to use the a genome package that is based on the same refernece genome,
+namely `r Biocannopkg("BSgenome.Hsapiens.NCBI.GRCh38")`.
 
 ```{r protfromgenome}
 library("BSgenome.Hsapiens.NCBI.GRCh38")
