@@ -15,14 +15,11 @@ output:
 BiocStyle::markdown()
 ```
 
-<hr />
-
-Authors: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) and
-[Sebastian Gibb](http://sebastiangibb.de/research.html)
-
-Compilation date: `r Sys.Date()`
-
-<hr />
+**Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
+**Authors:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) and
+[Sebastian Gibb](http://sebastiangibb.de/research.html)<br />
+**Last compiled:** `r date()`<br />
+**Last modified:** `r file.info("Pbase-data.Rmd")$mtime`
 
 
 ```{r env, echo=FALSE, message=FALSE, warning=FALSE}
@@ -33,13 +30,15 @@ The original data is a 10 fmol
 [Peptide Retention Time Calibration Mixture](http://www.piercenet.com/product/peptide-retention-time-calibration-mixture)
 spiked into 50 ng HeLa background acquired on a Thermo Orbitrap Q
 Exactive instrument. A restricted set of high scoring human proteins
-from the UniProt release 2014_06 were searched using the MSGF+ engine.
+from the UniProt release `2015_02` were searched using the `MSGF+`
+search engine.
 
 ## The fasta database
 
 ```{r fa, cache=TRUE}
 library("Biostrings")
-fafile <- system.file("extdata/HUMAN_2014_06-09prots.fasta", package = "Pbase")
+fafile <- system.file("extdata/HUMAN_2015_02_selected.fasta",
+                      package = "Pbase")
 fa <- readAAStringSet(fafile)
 fa
 ```
@@ -48,7 +47,8 @@ fa
 
 ```{r psm, cache=TRUE}
 library("mzID")
-idfile <- system.file("extdata/Thermo_Hela_PRTC_1_selected.mzid", package = "Pbase")
+idfile <- system.file("extdata/Thermo_Hela_PRTC_selected.mzid",
+                      package = "Pbase")
 id <- flatten(mzID(idfile))
 dim(id)
 head(id)

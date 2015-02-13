@@ -15,14 +15,10 @@ output:
 BiocStyle::markdown()
 ```
 
-<hr />
-
-Author: [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)
-
-Compilation date: `r Sys.Date()`
-
-<hr />
-
+**Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
+**Author:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/)<br />
+**Last compiled:** `r date()`<br />
+**Last modified:** `r file.info("ensucsc.Rmd")$mtime`
 
 This vignette described how to convert coordinates between different
 genome references. We will use transcript `ENST00000373316` and GRCh38

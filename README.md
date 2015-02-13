@@ -143,10 +143,6 @@ Maybe support for the annotation of detection of protein domains.
 
 See the [`mapping`](http://bioconductor.org/packages/devel/bioc/vignettes/Pbase/inst/doc/mapping.html) vignette.
 
-See `GenomicRanges::mapCoords` for a method for translating
-ranges. Ideally, we want to follow that API.
-
-
 ## Interoperability
 
 The package allows to easily interact with `AAString` and
