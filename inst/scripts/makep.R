@@ -36,13 +36,15 @@ mcols(p@aa)$ENST <- ENST
 ## Saving to extdata and data
 file.rename(mzid,
             file.path("../extdata", mzid))
-save(p, file = "../../data/p.rda")
 
+save(p, file = "../../data/p.rda",
+     compress = "xz", compression_level = 9)
 
 library("MSnbase")
 pms <- readMgfData(mgf)
 stopifnot(validObject(pms))
-save(pms, file = "../../data/pms.rda")
+save(pms, file = "../../data/pms.rda",
+     compress = "xz", compression_level = 9)
 
 ## gzip mgf file
 R.utils::gzip(mgf)
