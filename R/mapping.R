@@ -87,3 +87,76 @@ etrid2gr <- function(etrid, ens) {
                      phase=as.integer(bm$phase))
     sort(range)
 }
+
+
+setGeneric("proteinCoding",
+           function(object, ...) standardGeneric("proteinCoding"))
+
+setMethod("proteinCoding", "GRanges",
+          function(object, mcol = "feature",
+                   coding = "protein_coding") {
+              sel <- mcols(object)[, mcol] == coding
+              object[sel, ]
+          })
+
+setMethod("proteinCoding", "GRangesList",
+          function(object, mcol = "feature", coding = "protein_coding")
+              endoapply(object, proteinCoding))
+
+##' TODO
+##'
+##' @title Map peptides on genomic coordinates
+##' @param pObj An \code{Proteins} instance of length 1, contain
+##' \code{pfeatures} and \code{pranges}.
+##' @param grObj A \code{GRanges} object containing the exon positions
+##' of the protein in \code{pObj}, as created by
+##' \code{\link{etrid2gr}}.
+##' @return A \code{Granges} object with the peptide coordinates on
+##' the genome.
+##' @author Laurent Gatto
+mapToGenome <- function(pObj, grObj) {
+    ## exons ranges along the protein
+    j <- cumsum(width(grObj))
+    i <- cumsum(c(1, width(grObj)))[1:length(j)]
+    prex <- IRanges(start = i, end = j)
+
+    ## peptide position on protein
+    peprngProt <- pranges(pObj)[[1]]
+    ## peptide positions on cdna
+    peprngCdna <- IRanges(start = 1 + (start(peprngProt)-1) * 3,
+                          width = width(peprngProt) * 3)
+
+
+    ## find exon and position in prex 
+    start_ex <- subjectHits(findOverlaps(start(peprngCdna), prex))
+    end_ex <- subjectHits(findOverlaps(end(peprngCdna), prex))
+
+    if (any(junc <- start_ex != end_ex))
+        message("Peptide(s) ", paste(which(junc), collapse = ", "),
+                " overlap(s) exon junctions.")
+    
+
+    getPos <- function(pos, idx, nclex, prtex) {
+        ## position in cdna
+        ## exon index
+        start(nclex[idx]) + (pos - start(prtex[idx]))
+    }
+
+    peptides_on_genome <-
+        IRanges(start = getPos(start(peprngCdna), start_ex, grObj, prex),
+                end = getPos(end(peprngCdna), end_ex, grObj, prex))
+
+    chr <- as.character(seqnames(grObj)@values)
+    
+    GRanges(seqnames = rep(chr, length(peptides_on_genome)),
+            ranges = peptides_on_genome,
+            strand = strand(grObj)@values,
+            pepseq = as.character(pfeatures(pObj)[[1]]),
+            accession = seqnames(pObj),
+            gene = mcols(grObj)$gene[1],
+            transcript = mcols(grObj)$transcript[1],
+            symbol = mcols(grObj)$symbol[1],
+            exonJunctions = junc)
+    
+}    
+
