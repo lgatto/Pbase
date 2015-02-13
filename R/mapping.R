@@ -22,7 +22,8 @@
 etrid2gr <- function(etrid, ens) {    
     if (missing(ens))
         ens <- useMart("ensembl", "hsapiens_gene_ensembl")
-    
+    if (!validObject(ens))
+        stop("The Mart instance is not valid.")
     bm <- select(ens, keys = etrid,
                  keytype = "ensembl_transcript_id",
                  columns = c(
