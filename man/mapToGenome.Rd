@@ -12,7 +12,7 @@ mapToGenome(pObj, grObj)
 
 \item{grObj}{A \code{GRanges} object containing the exon positions
 of the protein in \code{pObj}, as created by
-\code{\link{etrid2gr}}.}
+\code{\link{etrid2grl}}.}
 }
 \value{
 A \code{Granges} object with the peptide coordinates on
