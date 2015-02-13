@@ -21,7 +21,25 @@ the genome.
 \description{
 TODO
 }
+\details{
+To calculate the genomic coordinates of peptides we
+
+1) Calculate the contiguous exon coordinates on the cDNA sequence.
+2) Calculate the peptide coordinates on the cDNA sequence from the
+   original peptide ranges along the protein sequence.
+3) We calculate the indices of the exons in which all the peptides
+   start and end on the cDNA sequence.
+4) We infer the coordinates on the genome from the actual peptide
+   starting/ending position and exon index on the cDNA sequence, the
+   exons coordinates on the cDNA sequences and the matching exons
+   coordinates on the genome.
+}
 \author{
 Laurent Gatto
+}
+\seealso{
+The \code{\link{proteinCoding}} function to remove
+non-protein coding ranges before maping peptides to their genomic
+coordinates.
 }
 

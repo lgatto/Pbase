@@ -143,8 +143,15 @@ htcat <- function(x, n = 3) {
 }
 
 
+##' @title Are all the ranges on the same strand
+##' @param gr A \code{GRanges} object.
+##' @return A logical if \emph{all} the ranges in the \code{gr} object
+##' are on the \code{"-"} (or \code{"+"} for code{isForward}) strand.
+##' @author Laurent Gatto
+##' @aliases isForward
 isReverse <- function(gr) 
     isTRUE(all(strand(gr) == "-"))
 
+##' @rdname isReverse
 isForward <- function(gr) 
     isTRUE(all(strand(gr) == "+"))

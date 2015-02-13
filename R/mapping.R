@@ -15,9 +15,9 @@
 ##' @author Laurent Gatto
 ##' @examples
 ##' id <- c("ENST00000612959", "ENST00000317091")
-##' grl1 <- etrid2gr(id[1])
+##' grl1 <- etrid2grl(id[1])
 ##' grl1
-##' grl <- etrid2gr(id)
+##' grl <- etrid2grl(id)
 ##' stopifnot(all.equal(id, names(grl)))
 etrid2grl <- function(etrid, ens) {    
     if (missing(ens))
@@ -127,6 +127,9 @@ setMethod("proteinCoding", "GRangesList",
 ##' \code{\link{etrid2grl}}.
 ##' @return A \code{Granges} object with the peptide coordinates on
 ##' the genome.
+##' @seealso The \code{\link{proteinCoding}} function to remove
+##' non-protein coding ranges before maping peptides to their genomic
+##' coordinates.
 ##' @author Laurent Gatto
 mapToGenome <- function(pObj, grObj) {
     ## exons ranges along the protein (1)

@@ -27,9 +27,9 @@ validate chromosome names).
 }
 \examples{
 id <- c("ENST00000612959", "ENST00000317091")
-grl1 <- etrid2gr(id[1])
+grl1 <- etrid2grl(id[1])
 grl1
-grl <- etrid2gr(id)
+grl <- etrid2grl(id)
 stopifnot(all.equal(id, names(grl)))
 }
 \author{
