@@ -54,5 +54,6 @@ exportMethods(
 
 export(rmEmptyRanges,
        Pparams,
-       etrid2gr,
+       etrid2grl,
+       proteinCoding,
        mapToGenome)

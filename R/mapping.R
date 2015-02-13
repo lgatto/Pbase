@@ -1,25 +1,25 @@
 ##' This function takes on or more Ensembl transcript identifiers,
-##' queries Biomart and constructs a \code{GRanges} object as would
-##' \code{Gviz::BiomartGeneRegionTrack} for a genomic region (in fact,
-##' currently most of the code has been taken from
+##' queries Biomart and constructs a \code{GRangesList} object as
+##' would \code{Gviz::BiomartGeneRegionTrack} for a genomic region (in
+##' fact, currently most of the code has been taken from
 ##' \code{Gviz::.fetchBMData} and \code{GViz::.chrName} is used to
 ##' validate chromosome names).
-##' 
 ##'
 ##' @title From a transcript identifier to \code{GRanges} object
 ##' @param etrid A vector of Ensembl transcript identifiers.
 ##' @param ens A instance of class \code{Mart} from biomaRt. If
 ##' missing, \code{useMart("ensembl", "hsapiens_gene_ensembl")} is
 ##' used.
-##' @return A \code{Granges} object.
+##' @return A \code{GRangesList} object of length
+##' \code{length(etrid)}.
 ##' @author Laurent Gatto
 ##' @examples
 ##' id <- c("ENST00000612959", "ENST00000317091")
-##' etrid2gr(id[1])
-##' (gr <- etrid2gr(id))
-##' ## make it a GRangesList
-##' (grl <- split(gr, mcols(gr)$transcript))
-etrid2gr <- function(etrid, ens) {    
+##' grl1 <- etrid2gr(id[1])
+##' grl1
+##' grl <- etrid2gr(id)
+##' stopifnot(all.equal(id, names(grl)))
+etrid2grl <- function(etrid, ens) {    
     if (missing(ens))
         ens <- useMart("ensembl", "hsapiens_gene_ensembl")
     if (!validObject(ens))
@@ -73,19 +73,21 @@ etrid2gr <- function(etrid, ens) {
     bm <- rbind(bm[!hasUtr,keep, drop=FALSE], utrFinal[,keep])
     bm$chromosome <- Gviz:::.chrName(bm$chromosome, force=TRUE)
 
-    range <- GRanges(seqnames=bm$chromosome,
-                     ranges=IRanges(
-                         start=bm$'exon_chrom_start',
-                         end=bm$'exon_chrom_end'),
-                     strand=bm$strand,
-                     feature=as.character(bm$feature),
-                     gene=as.character(bm$'ensembl_gene_id'),
-                     exon=as.character(bm$'ensembl_exon_id'),
-                     transcript=as.character(bm$'ensembl_transcript_id'),
-                     symbol=as.character(bm$'external_gene_name'),
-                     rank=as.numeric(bm$rank),
-                     phase=as.integer(bm$phase))
-    sort(range)
+    gr <- GRanges(seqnames=bm$chromosome,
+                  ranges=IRanges(
+                      start=bm$'exon_chrom_start',
+                      end=bm$'exon_chrom_end'),
+                  strand=bm$strand,
+                  feature=as.character(bm$feature),
+                  gene=as.character(bm$'ensembl_gene_id'),
+                  exon=as.character(bm$'ensembl_exon_id'),
+                  transcript=as.character(bm$'ensembl_transcript_id'),
+                  symbol=as.character(bm$'external_gene_name'),
+                  rank=as.numeric(bm$rank),
+                  phase=as.integer(bm$phase))
+    gr <- sort(gr)
+    grl <- split(gr, mcols(gr)$transcript)
+    grl[etrid] ## same order as input ids
 }
 
 

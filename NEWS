@@ -1,8 +1,8 @@
 CHANGES IN VERSION 0.6.0
 ------------------------
  o fixed typos in vigs [2015-02-12 Thu]
- o new etrid2gr function to convert Ensembl transcript identifiers to
-   GRanges objects [2015-02-13 Fri]
+ o new etrid2grl function to convert Ensembl transcript identifiers to
+   GRangesList objects [2015-02-13 Fri]
  o initial mapToGenome function [2015-02-13 Fri]
  
 CHANGES IN VERSION 0.5.5
