@@ -56,11 +56,11 @@
   .isUniProtAccessionNumber(x) | .isPbaseAccessionNumber(x)
 }
 
-#' these AccessionNumbers replace missing UniProt AccessionNumbers
-#' format: Pb[0-9]+
-#' @param x numbers
-#' @return character, ID
-#' @noRd
+##' these AccessionNumbers replace missing UniProt AccessionNumbers
+##' format: Pb[0-9]+
+##' @param x numbers
+##' @return character, ID
+##' @noRd
 .createPbaseAccessionNumbers <- function(x) {
   paste0("Pb", x)
 }

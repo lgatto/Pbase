@@ -6,6 +6,7 @@ import(IRanges)
 import(S4Vectors)
 import(Gviz)
 import(Pviz)
+import(biomaRt)
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
@@ -52,4 +53,5 @@ exportMethods(
     )
 
 export(rmEmptyRanges,
-       Pparams)
+       Pparams,
+       etrid2gr)

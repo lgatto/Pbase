@@ -18,7 +18,8 @@ BiocStyle::markdown()
 **Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
 **Authors:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) and
 [Sebastian Gibb](http://sebastiangibb.de/research.html)<br />
-**Compilation date:** `r Sys.Date()`<br />
+**Last compiled:** `r date()`<br />
+**Last modified:** `r file.info("Pbase-data.Rmd")$mtime`
 
 
 ```{r env, echo=FALSE, message=FALSE, warning=FALSE}

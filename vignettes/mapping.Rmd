@@ -17,8 +17,8 @@ BiocStyle::markdown()
 
 **Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
 **Author:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) <br />
-**Compilation date:** `r Sys.Date()` <br />
-
+**Last compiled:** `r date()` <br />
+**Last modified:** `r file.info("mapping.Rmd")$mtime`
 
 ```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("Gviz")
