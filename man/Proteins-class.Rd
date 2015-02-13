@@ -256,7 +256,7 @@ pp <- proteinCoverage(pp)
 avarLabels(pp)
 pp
 
-idfile <- system.file("extdata/Thermo_Hela_PRTC_1_selected.mzid",
+idfile <- system.file("extdata/Thermo_Hela_PRTC_selected.mzid",
                       package = "Pbase")
 p <- addIdentificationData(p, idfile)
 pranges(p)

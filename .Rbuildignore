@@ -10,6 +10,7 @@
 .*.out$
 .*.tex$
 sandbox
+sandbox2
 vignettes/Pbase-data.md
 vignettes/Pbase-data.html
 vignettes/figure

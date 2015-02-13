@@ -1,13 +1,13 @@
-#' Function to create heavy labeled peptides,
-#' see https://github.com/sgibb/cleaver/issues/5 for details.
-#' TODO: There should be a function to find the best labels for a given protein
-#' automatically.
-#' @param peptides a named character vector of peptides (names must correspond
-#' to the protein accession numbers)
-#' @param proteins a cleaved Proteins object
-#' @param ... further arguments passed to .addOverhangs
-#' @noRd
-#'
+##' Function to create heavy labeled peptides,
+##' see https://github.com/sgibb/cleaver/issues/5 for details.
+##' TODO: There should be a function to find the best labels for a given protein
+##' automatically.
+##' @param peptides a named character vector of peptides (names must correspond
+##' to the protein accession numbers)
+##' @param proteins a cleaved Proteins object
+##' @param ... further arguments passed to .addOverhangs
+##' @noRd
+##'
 .calculateHeavyLabels <- function(peptides, proteins, ...) {
     stopifnot(is(peptides, "character"))
     stopifnot(is(proteins, "Proteins"))
@@ -53,21 +53,21 @@
     return(d)
 }
 
-#' This functions creates peptide sequences for heavy labeled peptides. Sadly
-#' this function is not completely vectorized yet.
-#' TODO: implement method != "both"
-#' See https://github.com/sgibb/cleaver/issues/5 for details.
-#' @param sequence character/AAString/AAStringSet, protein sequence(s)
-#' @param pindex index (position) of the peptide(s) in the cleaved protein(s)
-#' @param pranges IRangesList, cleaved protein(s)
-#' @param maxN integer, maximal length of the heavy labeled peptide
-#' @param nN integer, minimal number of AA at the N terminus
-#' @param nC integer, minimal number of AA at the C terminus
-#' @param endsWith character, accepted ending AA (every peptide that doesn't end
-#' with these AA has to be one AA shorter).
-#' @param method character, should the N/C terminus prefered or should they
-#' treated equaly; not implemented yet
-#' @noRd
+##' This functions creates peptide sequences for heavy labeled peptides. Sadly
+##' this function is not completely vectorized yet.
+##' TODO: implement method != "both"
+##' See https://github.com/sgibb/cleaver/issues/5 for details.
+##' @param sequence character/AAString/AAStringSet, protein sequence(s)
+##' @param pindex index (position) of the peptide(s) in the cleaved protein(s)
+##' @param pranges IRangesList, cleaved protein(s)
+##' @param maxN integer, maximal length of the heavy labeled peptide
+##' @param nN integer, minimal number of AA at the N terminus
+##' @param nC integer, minimal number of AA at the C terminus
+##' @param endsWith character, accepted ending AA (every peptide that doesn't end
+##' with these AA has to be one AA shorter).
+##' @param method character, should the N/C terminus prefered or should they
+##' treated equaly; not implemented yet
+##' @noRd
 .addOverhangs <- function(sequence, pindex, pranges, maxN = 20L,
                           nN = 4L, nC = 3L, endsWith = c("K", "R", "G"),
                           method = c("both", "N", "C")) {
