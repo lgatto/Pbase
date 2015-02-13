@@ -1,12 +1,12 @@
-#' Calculates the coverage of patterns in subjects based on the width of the
-#' patterns. This method assumes that all patterns lie within a subject and the
-#' the names of patterns and subjects containing the correct accession.
-#' Caution: This is based purley on IRanges. No sequence based checks are
-#' involved! You have to make sure that you compare compareable sequences.
-#' @param pattern IRangesList of interest (from mzID, ...)
-#' @param subject IRangesList to compare against (mostly from Proteins)
-#' @return double, NA for patterns that are outside of subjects.
-#' @noRd
+##' Calculates the coverage of patterns in subjects based on the width of the
+##' patterns. This method assumes that all patterns lie within a subject and the
+##' the names of patterns and subjects containing the correct accession.
+##' Caution: This is based purley on IRanges. No sequence based checks are
+##' involved! You have to make sure that you compare compareable sequences.
+##' @param pattern IRangesList of interest (from mzID, ...)
+##' @param subject IRangesList to compare against (mostly from Proteins)
+##' @return double, NA for patterns that are outside of subjects.
+##' @noRd
 .proteinCoverage <- function(pattern, subject) {
   stopifnot(is(pattern, "IRangesList"))
   stopifnot(is(subject, "IRangesList"))

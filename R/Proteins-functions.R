@@ -29,11 +29,12 @@
   p <- new("Proteins", aa = aa, pranges = pranges, metadata = metadata)
 }
 
-#' @param x Proteins object
-#' @param unshift if TRUE the IRanges will shift back to start with 1L
-#' @return named IRangesList, length == length(x@aa), each element is an IRanges
-#' object starting at 1 and ending at length(x@aa[i]).
-#' @noRd
+##' @param x Proteins object
+##' @param unshift if TRUE the IRanges will shift back to start with 1L
+##' @return named \code{IRangesList}, \code{length == length(x@@aa)},
+##' each element is an \code{IRanges} object starting at 1 and ending
+##' at \code{length(x@@aa[i])}.
+##' @noRd
 .aarangesProteins <- function(x, unshift = FALSE) {
   r <- unname(as(aa(x)@ranges, "IRanges"))
   irl <- .splitIRanges(r, unshift = unshift)
@@ -41,10 +42,10 @@
   irl
 }
 
-#' @param x
-#' @param filenames mzIdentML filenames
-#' @return a modified Proteins object
-#' @noRd
+##' @param x
+##' @param filenames mzIdentML filenames
+##' @return a modified Proteins object
+##' @noRd
 .addIdentificationDataProteins <- function(x, filenames, rmEmptyRanges, par) {
   if (!isEmpty(x@pranges)) {
     stop("The ", sQuote("pranges"), " slot is not empty! ",
@@ -114,11 +115,11 @@
   x
 }
 
-#' @param x Proteins object
-#' @param mass numeric, length == 2, mass range
-#' @param length numeric, length == 2, length range
-#' @return modified Proteins object (pcols(x) gains a new "Filtered" column)
-#' @noRd
+##' @param x Proteins object
+##' @param mass numeric, length == 2, mass range
+##' @param length numeric, length == 2, length range
+##' @return modified Proteins object (pcols(x) gains a new "Filtered" column)
+##' @noRd
 .pfilterProteins <- function(x, mass = NULL, len = NULL) {
     if (isEmpty(x@pranges)) {
         stop("The ", sQuote("pranges"), " slot is empty!")
@@ -160,18 +161,18 @@
   plotTracks(tracks, from = from, to = to)
 }
 
-#' @param x Proteins object
-#' @return a modified Proteins object
-#' @noRd
+##' @param x Proteins object
+##' @return a modified Proteins object
+##' @noRd
 .proteinCoverageProteins <- function(x, ...) {
   .proteinCoverageProteinsRanges(x, ranges = pranges(x), ...)
 }
 
-#' @param x Proteins object
-#' @param ranges IRanges object containing the ranges of the peptides
-#' fData)
-#' @return a modified Proteins object
-#' @noRd
+##' @param x Proteins object
+##' @param ranges IRanges object containing the ranges of the peptides
+##' fData)
+##' @return a modified Proteins object
+##' @noRd
 .proteinCoverageProteinsRanges <- function(x, ranges, ...) {
     subject <- aaranges(x, unshift = TRUE)
     coverage <- .proteinCoverage(pattern = ranges, subject = subject)
@@ -179,9 +180,9 @@
     addacol(x, "Coverage", coverage)
 }
 
-#' @param x Proteins object
-#' @return a modified Proteins object (pcols(x) gains a "Proteotypic" column)
-#' @noRd
+##' @param x Proteins object
+##' @return a modified Proteins object (pcols(x) gains a "Proteotypic" column)
+##' @noRd
 .proteotypicProteins <- function(x) {
     if (isEmpty(x@pranges)) {
         stop("The ", sQuote("pranges"), " slot is empty!")

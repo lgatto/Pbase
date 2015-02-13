@@ -1,7 +1,7 @@
-#' calculates the monoisotopic mass for peptide sequences
-#' @param a character vector
-#' @return a named doubled vector
-#' @noRd
+##' calculates the monoisotopic mass for peptide sequences
+##' @param a character vector
+##' @return a named doubled vector
+##' @noRd
 .calculateMolecularWeight <- function(x) {
     water <- sum(.get.atomic.mass()[c("H", "H", "O")])
 
@@ -16,26 +16,25 @@
     .setNames2(ppmass, x)
 }
 
-#' calculates the isoelectric point
-#' @param a character vector
-#' @return a named doubled vector
-#' @references
-#' Moore, Dexter S.
-#' "Amino acid and peptide net charges: a simple calculational procedure."
-#' Biochemical Education 13.1 (1985): 10-11.
-#' http://dx.doi.org/10.1016/0307-4412(85)90114-1
-#' @noRd
-#.calculateIsoelectricPoint <- function(x) {
-#}
-#
+##' calculates the isoelectric point
+##' @param a character vector
+##' @return a named doubled vector
+##' @references
+##' Moore, Dexter S.
+##' "Amino acid and peptide net charges: a simple calculational procedure."
+##' Biochemical Education 13.1 (1985): 10-11.
+##' http://dx.doi.org/10.1016/0307-4412(85)90114-1
+##' @noRd
+## .calculateIsoelectricPoint <- function(x) {
+## }
 
-#' test peptides for some properties
-#' @param x character, AAString, AAStringSet: sequence
-#' @param mass double, length == 2, mass range [Da]
-#' @param len double, length == 2, length range
-#' @return logical vector, TRUE if the peptides fulfills all criteria otherwise
-#' FALSE
-#' @noRd
+##' test peptides for some properties
+##' @param x character, AAString, AAStringSet: sequence
+##' @param mass double, length == 2, mass range [Da]
+##' @param len double, length == 2, length range
+##' @return logical vector, TRUE if the peptides fulfills all criteria otherwise
+##' FALSE
+##' @noRd
 .isValidPeptide <- function(x, mass = NULL, len = NULL
                             ## to be extended (isoelectric point, ...)
                             ) {
@@ -52,13 +51,13 @@
     .setNames2(valid, x)
 }
 
-#' calculates IRanges for peptides "pattern" in a protein "subject"
-#' @param pattern named character, AAString, AAStringSet, AAStringSetList
-#' @param subject named character, AAString, AAStringSet
-#' @return a named IRangesList
-#' The index of the peptides (PeptideIndex) and the proteins (ProteinIndex) is
-#' stored in IRangesList@elementMetaData as columns of a DataFrame.
-#' @noRd
+##' calculates IRanges for peptides "pattern" in a protein "subject"
+##' @param pattern named character, AAString, AAStringSet, AAStringSetList
+##' @param subject named character, AAString, AAStringSet
+##' @return a named IRangesList The index of the peptides
+##' (PeptideIndex) and the proteins (ProteinIndex) is stored in
+##' \code{IRangesList@@elementMetaData} as columns of a DataFrame.
+##' @noRd
 .peptidePosition <- function(pattern, subject) {
     if (is.null(names(pattern))) {
         stop("No names for ", sQuote("pattern"), " available!")
