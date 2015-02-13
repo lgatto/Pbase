@@ -142,3 +142,9 @@ htcat <- function(x, n = 3) {
     cat("\n")
 }
 
+
+isReverse <- function(gr) 
+    isTRUE(all(strand(gr) == "-"))
+
+isForward <- function(gr) 
+    isTRUE(all(strand(gr) == "+"))

@@ -56,4 +56,6 @@ export(rmEmptyRanges,
        Pparams,
        etrid2grl,
        proteinCoding,
-       mapToGenome)
+       mapToGenome,
+       isReverse,
+       isForward)
