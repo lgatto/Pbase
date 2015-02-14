@@ -96,6 +96,8 @@
   of missed cleavages, ... available with the \code{pmetadata} or
   \code{pcols} methods.
 
+  See also the \code{Pbase-data} vignette.
+
 }
 
 \section{Developement notes}{

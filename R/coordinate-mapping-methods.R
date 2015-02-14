@@ -27,8 +27,7 @@ setGeneric("pmapToGenome",
 
 ### 'pObj' is a Proteins of length 1
 ### 'grObj' is a GRanges
-###  Returns a GRanges with positions of pranges(pObj)[[1]]
-### mapped to grObj
+### Returns a GRanges with positions of pranges(pObj)[[1]] mapped to grObj
 .mapToGenome <- function(pObj, grObj, ...) {
     if (length(pObj) > 1) {
         warning("Only considering first protein in the Proteins object.")
@@ -91,11 +90,8 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
               names(l) <- names(genome)
               for (i in seq_len(length(x))) 
                   l[[i]] <- .mapToGenome(x[i], genome[[i]])
-
-              res <- GRangesList(l)
-              ## check the next assignment
-              ## seqinfo(res) <- seqinfo(genome)
-              if (validObject(res))
-                  return(res)
+              ans <- GRangesList(l)
+              if (validObject(ans))
+                  return(ans)
           })
 
