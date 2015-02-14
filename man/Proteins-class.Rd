@@ -19,6 +19,7 @@
 \alias{ametadata}
 \alias{acols}
 \alias{metadata,Proteins-method}
+\alias{metadata<-,Proteins-method}
 \alias{pfeatures,Proteins-method}
 \alias{pfeatures}
 \alias{plot,Proteins,missing-method}
@@ -243,8 +244,10 @@ fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
 p <- Proteins(fastaFiles)
 p
 
-plot(p[1:5], from = 1, to = 30)
+metadata(p, "Comment") <- "I love R"
+metadata(p)
 
+plot(p[1:5], from = 1, to = 30)
 
 pp <- cleave(p[1:100])
 pp <- proteotypic(pp)

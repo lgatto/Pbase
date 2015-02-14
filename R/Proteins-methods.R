@@ -57,6 +57,15 @@ setMethod("length", "Proteins",
 setMethod("metadata", "Proteins",
           function(x) x@metadata)
 
+## signature is (x, ..., value)
+setReplaceMethod("metadata", "Proteins",
+                 function(x, name, value) {
+                     if (name == "created")
+                         stop("Creation date can't be modified.")
+                   x@metadata[[name]] <- value
+                   return(x)
+               })
+
 setMethod("pmetadata", "Proteins",
           function(x) {
               if (!is.null(x@pranges@unlistData@elementMetadata)) {

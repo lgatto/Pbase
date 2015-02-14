@@ -1,6 +1,7 @@
 CHANGES IN VERSION 0.6.2
 ------------------------
  o Add uniprot release to p metadata [2015-02-14 Sat]
+ o added a metadata update method [2015-02-14 Sat]
  
 CHANGES IN VERSION 0.6.1
 ------------------------
