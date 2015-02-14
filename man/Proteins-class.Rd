@@ -19,6 +19,7 @@
 \alias{ametadata}
 \alias{acols}
 \alias{metadata,Proteins-method}
+\alias{metadata<-,Proteins-method}
 \alias{pfeatures,Proteins-method}
 \alias{pfeatures}
 \alias{plot,Proteins,missing-method}
@@ -73,7 +74,7 @@
 
 \section{Details}{
 
-  An instance of class \code{Proteins} is characterised by one of
+  An instance of class \code{Proteins} is characterised by one or
   multiple protein sequences that can be accessed as \code{AAStringSet}
   with the \code{aa} accessor. Sequence-specific annotation, such as
   accession numbers, protein and gene names, ... is available with the
@@ -238,14 +239,22 @@
 }
 
 \examples{
+
+## Create a Protein object reading all proteins from a fasta file.
 fastaFiles <- list.files(system.file("extdata", package = "Pbase"),
                          pattern = "fasta", full.names = TRUE)
 p <- Proteins(fastaFiles)
 p
+metadata(p)
 
+## Adding custom metadata
+metadata(p, "Comment") <- "I love R"
+metadata(p)
+
+## Plotting
 plot(p[1:5], from = 1, to = 30)
 
-
+## Cleaving
 pp <- cleave(p[1:100])
 pp <- proteotypic(pp)
 pp
@@ -253,10 +262,14 @@ pcols(pp[1:2])
 
 plot(pp[1:2], from = 20, to = 30)
 
+## Protein coverage
 pp <- proteinCoverage(pp)
 avarLabels(pp)
+acols(pp)$Coverage
 pp
 
+
+## Add indentification data
 idfile <- system.file("extdata/Thermo_Hela_PRTC_selected.mzid",
                       package = "Pbase")
 p <- addIdentificationData(p, idfile)
@@ -264,8 +277,8 @@ pranges(p)
 pfeatures(p)
 
 plot(p[1])
-## the first protein has 36 peptides
-plot(p[1], fill = c(rep("orange", 13), rep("steelblue", 13)))
+plot(p[1], # the first protein has 36 peptides
+     fill = c(rep("orange", 13), rep("steelblue", 13)))
 }
 
 
