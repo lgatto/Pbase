@@ -26,7 +26,25 @@ BiocStyle::markdown()
 library("Pbase")
 ```
 
-The original data is a 10 fmol
+## Introduction
+
+This vignette briefly introduces the central data object of the
+`Pbase` package, namely `Proteins` instances, as depicted below. They
+contain a set of protein sequences (10 in the figure below), composed
+of the protein sequences (grey boxes) and annotation data (table on
+the left). Each protein links to a set of experimentally observed
+peptides (also in grey) that are also decorated with their own
+annotation data.
+
+```{r pplot, echo=FALSE, fig.cap='Proteins data structure.', fig.align='center'}
+Pbase:::pplot()
+```
+
+`Proteins` objects are populated by protein sequences
+stemming from a fasta file and the peptides originate from an LC-MSMS
+experiment.
+
+The original data used below is a 10 fmol
 [Peptide Retention Time Calibration Mixture](http://www.piercenet.com/product/peptide-retention-time-calibration-mixture)
 spiked into 50 ng HeLa background acquired on a Thermo Orbitrap Q
 Exactive instrument. A restricted set of high scoring human proteins
@@ -90,7 +108,7 @@ Specific proteins can be extracted by index of name using
 `[` and proteins and their peptide features can be plotted
 with the default plot method.
 
-```{r pplot, fig.align='center', cache=TRUE}
+```{r plot, fig.align='center', cache=TRUE}
 seqnames(p)
 plot(p[c(1,9)])
 ```
