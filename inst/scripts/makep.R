@@ -12,7 +12,6 @@ system(msgfrun)
 library("Pbase")
 p <- Proteins(fas)
 p <- addIdentificationData(p, mzid)
-stopifnot(validObject(p))
 
 ## We also want ENST for the mapping vignette.  Adding manually
 ## here.
@@ -32,6 +31,9 @@ ENST <- c(A4UGR9 = "ENST00000409195",
           P60709 = "ENST00000331789")
 stopifnot(identical(seqnames(p), names(ENST)))
 mcols(p@aa)$ENST <- ENST
+p@metadata$UniProtRelease <- "2015_02"
+
+stopifnot(validObject(p))
 
 ## Saving to extdata and data
 file.rename(mzid,
