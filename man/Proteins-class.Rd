@@ -73,7 +73,7 @@
 
 \section{Details}{
 
-  An instance of class \code{Proteins} is characterised by one of
+  An instance of class \code{Proteins} is characterised by one or
   multiple protein sequences that can be accessed as \code{AAStringSet}
   with the \code{aa} accessor. Sequence-specific annotation, such as
   accession numbers, protein and gene names, ... is available with the
