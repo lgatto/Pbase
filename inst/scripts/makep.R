@@ -31,7 +31,9 @@ ENST <- c(A4UGR9 = "ENST00000409195",
           P60709 = "ENST00000331789")
 stopifnot(identical(seqnames(p), names(ENST)))
 mcols(p@aa)$ENST <- ENST
-p@metadata$UniProtRelease <- "2015_02"
+metadata(p, "Species") <- "Homo sapiens"
+metadata(p, "UniProtRelease") <- "2015_02"
+metadata(p, "Genome") <- "GRCh38"
 
 stopifnot(validObject(p))
 
