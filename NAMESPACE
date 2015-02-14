@@ -54,6 +54,7 @@ exportMethods(
     proteotypic,
     ## mapping
     mapToGenome,
+    pmapToGenome,
     ## ranges
     proteinCoding)
 
