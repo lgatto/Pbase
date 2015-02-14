@@ -1,5 +1,7 @@
 ### TODO:
 ### - what happens when there is no mapping
+### - consider a mapToGenome,Proteins,GRangesList where
+###   all proteins are mapped against all ranges.
 
 setGeneric("mapToGenome",
            function(x, genome, ...) standardGeneric("mapToGenome"))
@@ -94,3 +96,4 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
               if (validObject(res))
                   return(res)
           })
+
