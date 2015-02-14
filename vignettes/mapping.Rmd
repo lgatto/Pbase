@@ -290,8 +290,8 @@ the `r length(pcgrl)` ranges calculated with `etrid2grl`. The `pmapToGenome`
 will map the peptides of i-th protein to the i-th genomic location of `pcgrl`.
 
 ```{r pmap}
-res <- mapToGenome(p, pcgrl)
-res
+pres <- pmapToGenome(p, pcgrl)
+pres
 ```
 
 #### TODO
