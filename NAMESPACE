@@ -8,7 +8,7 @@ import(Gviz)
 import(Pviz)
 import(biomaRt)
 
-importFrom(GenomicRanges, GRanges)
+importFrom(GenomicRanges, GRanges, GRangesList)
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)

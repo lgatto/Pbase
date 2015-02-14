@@ -8,8 +8,8 @@
 
 \alias{pmapToGenome}
 \alias{pmapToGenome-methods}
-\alias{mapToGenome,ANY,ANY-method}
-\alias{mapToGenome,Proteins,GRangesList-method}
+\alias{pmapToGenome,ANY,ANY-method}
+\alias{pmapToGenome,Proteins,GRangesList-method}
 
 
 \title{Map range coordinates between proteins and genome space}
@@ -80,8 +80,7 @@
   An object of the same class as \code{genome}.
 
   When \code{genome} is a named \code{GrangesList}, then the retruned
-  instance will be given the same names. Similarly, \code{seqinfo} will
-  be propagated to the output.
+  instance will be given the same names. 
 
 }
 

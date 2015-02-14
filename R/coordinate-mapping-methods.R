@@ -92,7 +92,8 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
                   l[[i]] <- .mapToGenome(x[i], genome[[i]])
 
               res <- GRangesList(l)
-              seqinfo(res) <- seqinfo(genome)
+              ## check the next assignment
+              ## seqinfo(res) <- seqinfo(genome)
               if (validObject(res))
                   return(res)
           })
