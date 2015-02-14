@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.6.3
+------------------------
+ o new fig in Pbase-data vignette [2015-02-14 Sat]
+ o new section for pmapToGenome in mapping vignette [2015-02-14 Sat]
+
 CHANGES IN VERSION 0.6.2
 ------------------------
  o Add uniprot release to p metadata [2015-02-14 Sat]
