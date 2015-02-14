@@ -90,7 +90,7 @@ setMethod("aa", "Proteins", function(x) x@aa)
 setMethod("addIdentificationData",
           c("Proteins", "character"),
           function(object, id, rmEmptyRanges = TRUE, par = Pparams()) {
-              print(id)
+              message(id)
               .addIdentificationDataProteins(object, filenames = id,
                                              rmEmptyRanges = rmEmptyRanges,
                                              par = par)
