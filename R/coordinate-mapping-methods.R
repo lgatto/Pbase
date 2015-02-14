@@ -2,6 +2,7 @@
 ### - what happens when there is no mapping
 ### - consider a mapToGenome,Proteins,GRangesList where
 ###   all proteins are mapped against all ranges.
+### - unit tests
 
 setGeneric("mapToGenome",
            function(x, genome, ...) standardGeneric("mapToGenome"))

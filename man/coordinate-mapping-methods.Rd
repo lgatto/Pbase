@@ -23,7 +23,7 @@
 
 \usage{
 \S4method{mapToGenome}{Proteins,GenomicRanges}(x, genome, ...)
-\S4method{pmapToAlignments}{Proteins,GRangesList}(x, genome, ...)
+\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome, ...)
 }
 
 
