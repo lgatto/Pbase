@@ -221,7 +221,7 @@ position of the peptides along the protein (in `p`) and the position
 of the exons of the protein's transcript along the genome (in `pcgrl`)
 using the `mapToGenome` function.
 
-```{r}
+```{r map}
 res <- mapToGenome(p[5], pcgrl[[5]])
 res
 ```
@@ -279,6 +279,19 @@ deTrack <- AnnotationTrack(start = start(res),
 
 plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
            add53 = TRUE, add35 = TRUE)
+```
+
+### Mapping all peptide sets in the `Proteins` object
+
+Above, we have demonstrated the `mapToGenome` functionality on one
+protein only. The same operation can be performed on all the `r length(p)`
+of the `p` object using the `pmapToGenome` equivalent using
+the `r length(pcgrl)` ranges calculated with `etrid2grl`. The `pmapToGenome`
+will map the peptides of i-th protein to the i-th genomic location of `pcgrl`.
+
+```{r pmap}
+res <- mapToGenome(p, pcgrl)
+res
 ```
 
 #### TODO
