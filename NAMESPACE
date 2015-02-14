@@ -52,12 +52,13 @@ exportMethods(
     pfilter,
     proteinCoverage,
     proteotypic
-    )
+    ## mapping
+    mapToGenome,
+    ## ranges
+    proteinCoding)
 
 export(rmEmptyRanges,
        Pparams,
        etrid2grl,
-       proteinCoding,
-       mapToGenome,
        isReverse,
        isForward)

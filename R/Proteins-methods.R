@@ -1,3 +1,13 @@
+setMethod("Proteins", c("missing", "missing"),
+          function(file, uniprotIds, ...){
+              aa <- new("AAStringSet")
+              aa@elementMetadata <- DataFrame()
+              new("Proteins",
+                  metadata = list(created = date()),
+                  aa = aa,
+                  pranges = IRangesList())
+          })
+
 setMethod("Proteins",
           signature(file = "character", uniprotIds = "missing"),
           function(file, uniprotIds, ...) {
@@ -81,9 +91,9 @@ setMethod("addIdentificationData",
           c("Proteins", "character"),
           function(object, id, rmEmptyRanges = TRUE, par = Pparams()) {
               print(id)
-            .addIdentificationDataProteins(object, filenames = id,
-                                           rmEmptyRanges = rmEmptyRanges,
-                                           par = par)
+              .addIdentificationDataProteins(object, filenames = id,
+                                             rmEmptyRanges = rmEmptyRanges,
+                                             par = par)
           })
 
 setMethod("calculateHeavyLabels", "Proteins",
@@ -97,21 +107,21 @@ setMethod("calculateHeavyLabels", "Proteins",
 
 setMethod("cleave", "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0, ...) {
-            x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
-                                        missedCleavages = missedCleavages,
-                                        ...)
-            x@pranges <- IRangesList(lapply(x@pranges, function(r) {
-              mc <- missedCleavages[cumsum(start(r) == 1L)]
-              mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
-              r
-            }))
-            return(x)
+              x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
+                                          missedCleavages = missedCleavages,
+                                          ...)
+              x@pranges <- IRangesList(lapply(x@pranges, function(r) {
+                  mc <- missedCleavages[cumsum(start(r) == 1L)]
+                  mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
+                  r
+              }))
+              return(x)
           })
 
 setMethod("isCleaved", "Proteins",
           function(x, missedCleavages = 0) {
               return(!isEmpty(pranges(x)) &&
-                     all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
+                         all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
           })
 
 setMethod("plot",
@@ -146,15 +156,17 @@ setMethod("show", "Proteins",
                           n)
 
               cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
-              sn <- seqnames(object)
-              ln <- length(object)
-              cat("Sequences:\n  "); htcat(sn, n = 2)
-              cat("Sequence features:\n  "); htcat(avarLabels(object), n = 2)
-              cat("Peptide features:")
-              if (isEmpty(pranges(object))) cat(" None\n")
-              else {
-                  cat("\n  ")
-                  htcat(pvarLabels(object), n = 2)
+              if (length(object) > 0) {
+                  sn <- seqnames(object)
+                  ln <- length(object)
+                  cat("Sequences:\n  "); htcat(sn, n = 2)
+                  cat("Sequence features:\n  "); htcat(avarLabels(object), n = 2)
+                  cat("Peptide features:")
+                  if (isEmpty(pranges(object))) cat(" None\n")
+                  else {
+                      cat("\n  ")
+                      htcat(pvarLabels(object), n = 2)
+                  }
               }
           })
 
@@ -164,6 +176,6 @@ setMethod("show", "Proteins",
 setMethod("aaranges",
           "Proteins",
           function(x, unshift = FALSE) {
-            .aarangesProteins(x, unshift = unshift)
+              .aarangesProteins(x, unshift = unshift)
           })
 
