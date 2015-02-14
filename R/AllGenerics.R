@@ -30,10 +30,9 @@ if (is.null(getGeneric("seqnames")))
 ## replacement
 
 ## methods
-if (is.null(getGeneric("addIdentificationData")))
-  setGeneric("addIdentificationData", function(object, id, ...) standardGeneric("addIdentificationData"))
 if (is.null(getGeneric("calculateHeavyLabels")))
-  setGeneric("calculateHeavyLabels", function(object, ...) standardGeneric("calculateHeavyLabels"))
+    setGeneric("calculateHeavyLabels",
+               function(object, ...) standardGeneric("calculateHeavyLabels"))
 if (is.null(getGeneric("cleave")))
   setGeneric("cleave", function(x, ...) standardGeneric("cleave"))
 if (is.null(getGeneric("isCleaved")))
@@ -51,3 +50,7 @@ if (is.null(getGeneric("proteotypic")))
 
 setGeneric("pvarLabels", function(object, ...) standardGeneric("pvarLabels"))
 setGeneric("avarLabels", function(object, ...) standardGeneric("avarLabels"))
+
+## Ranges
+setGeneric("proteinCoding",
+           function(object, ...) standardGeneric("proteinCoding"))
