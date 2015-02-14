@@ -51,7 +51,7 @@ exportMethods(
     addIdentificationData,
     pfilter,
     proteinCoverage,
-    proteotypic
+    proteotypic,
     ## mapping
     mapToGenome,
     ## ranges

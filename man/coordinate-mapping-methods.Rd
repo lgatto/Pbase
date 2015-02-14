@@ -58,19 +58,25 @@
 \seealso{
   \describe{
     
-    \item{See \code{?\link[GenomicAlignments]{mapToAlignments}} in the
+    \item{
+      See \code{?\link[GenomicAlignments]{mapToAlignments}} in the
       \pkg{GenomicAlignments} package for mapping coordinates between
       reads (local) and genome (reference) space using a CIGAR
-      alignment.}
-
-    \item{See \code{?\link[GenomicFeatures]{mapToTranscripts}} in the
+      alignment.
+    }
+    
+    \item{
+      See \code{?\link[GenomicFeatures]{mapToTranscripts}} in the
       \pkg{GenomicRanges} package for mapping coordinates between
-      features in the transcriptome and genome space.}
+      features in the transcriptome and genome space.
+    }
 
-    \item{The \code{\link{proteinCoding}} function to remove non-protein
+    \item{
+      The \code{\link{proteinCoding}} function to remove non-protein
       coding ranges before mapping peptides to their genomic
-      coordinates. }
-  } 
+      coordinates.
+    }
+  }
 }
 
 \value{
