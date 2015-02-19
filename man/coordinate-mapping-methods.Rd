@@ -4,7 +4,7 @@
 \alias{mapToGenome}
 \alias{mapToGenome-methods}
 \alias{mapToGenome,ANY,ANY-method}
-\alias{mapToGenome,Proteins,GenomicRanges-method}
+\alias{mapToGenome,Proteins,GRangesList-method}
 
 \alias{pmapToGenome}
 \alias{pmapToGenome-methods}
@@ -22,36 +22,61 @@
 
 
 \usage{
-\S4method{mapToGenome}{Proteins,GenomicRanges}(x, genome, ...)
-\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome, ...)
+\S4method{mapToGenome}{Proteins,GRangesList}(x, genome, drop.empty.ranges = TRUE, ...)
+\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome, drop.empty.ranges = TRUE, ...)
 }
 
 
 \arguments{
 
-  \item{x}{\code{\linkS4class{Proteins}} object contain peptides
-    \code{pranges} to be mapped. Of length 1 of \code{genome} is a
-    \code{\linkS4class{GenomicRanges}}. }
+  \item{x}{\code{\linkS4class{Proteins}} object containing peptides
+    \code{pranges} to be mapped. }
 
-  \item{genome}{A named \code{\linkS4class{GenomicRanges}} or
-    \code{\linkS4class{GRangesList}} object used to map between \code{x}
-    and the result. The ranges are typically created by the
-    \code{\link{etrid2grl}} function. }
+  \item{genome}{A \code{\linkS4class{GRangesList}} object used to map
+    between \code{x} and the result. The ranges are typically created by
+    the \code{\link{etrid2grl}} function. }
 
+  \item{drop.empty.ranges}{\code{TRUE} (default) or \code{FALSE}. Should
+    empty ranges be dropped?}
+  
   \item{\ldots}{Additional parameters passed to inner
-    functions. Currently ignores.  }
+    functions. Currently ignored.  }
 }
 
 \details{
 
-  \code{mapToGenome} maps the \code{pranges(x)} to the ranges of
-  \code{genome}. \code{x} is expected to be of length 1; any additional
-  items will be ignored with a warning.
+  \itemize{
 
-  \code{pmapToGenome} is the element-wise (aka 'parallel') version of
-  \code{mapToGenome}. The i-th \code{pranges(x)} is mapped to the i-th
-  range in \code{genome}. \code{x} and \code{genome} must have the same
-  length. 
+    \item \code{mapToGenome} maps the \code{pranges(x)} to the ranges of
+    \code{genome}. Unless \code{x} and \code{genome} are of length 1,
+    both must be named and items of \code{x} are matched to items of
+    \code{genome} using their respective names. Names that do not
+    co-occur in \code{x} and \code{genome} are ignored. If we have
+
+    \code{seqnames(x)}: \code{"A"}, \code{"B"} and \code{"C"}
+
+    and
+
+    \code{names(genome)}: \code{"C"}, \code{"A"}, \code{"a"},
+    \code{"z"}, \code{"A"} and \code{"A"}.
+
+    the names of the output will be
+
+    \code{"A"}, \code{"A"}, \code{"A"} and \code{"C"}.
+
+    The output is ordered by (1) \code{seqnames(x)} and (2) the order of
+    the elements in \code{genome}.
+  
+    In case less than \code{length(x)} are mapped, as for \code{p["B"]}
+    above, a message informs the user.
+
+    \item \code{pmapToGenome} is the element-wise (aka 'parallel')
+    version of \code{mapToGenome}. The i-th \code{pranges(x)} is mapped
+    to the i-th range in \code{genome}. \code{x} and \code{genome} must
+    have the same length and do not need to be named (names are
+    ignored).
+    
+  }
 
 }
 
@@ -77,10 +102,9 @@
 
 \value{
 
-  An object of the same class as \code{genome}.
-
-  When \code{genome} is a named \code{GrangesList}, then the retruned
-  instance will be given the same names. 
+  A named \code{GRangesList} object, with names matching
+  \code{names(genome)}. For \code{pmapToGenome}, the return value will
+  have the same length as the inputs.
 
 }
 
@@ -93,7 +117,7 @@ data(p)
 grl <- etrid2grl(acols(p)$ENST)
 pcgrl <- proteinCoding(grl)
     
-mapToGenome(p[4], pcgrl[[4]])
+mapToGenome(p[4], pcgrl[4])
 
 pmapToGenome(p, pcgrl)
 
