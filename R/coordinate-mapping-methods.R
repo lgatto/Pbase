@@ -1,8 +1,3 @@
-### TODO:
-### - what happens when there is no mapping
-### - consider a mapToGenome,Proteins,GRangesList where
-###   all proteins are mapped against all ranges.
-### - unit tests
 
 setGeneric("mapToGenome",
            function(x, genome, ...) standardGeneric("mapToGenome"))
@@ -24,6 +19,13 @@ setGeneric("pmapToGenome",
 ##    coordinates on the genome.
 ##
 
+tryCatchMapToGenome <- function(pObj, grObj, ...)
+    tryCatch(.mapToGenome(pObj, grObj, ...),
+             warning = function() NULL,
+             error = function(e) {
+                 warning("Mapping failed. Returning an empty range.")
+                 GRanges()
+             })
 
 ### 'pObj' is a Proteins of length 1
 ### 'grObj' is a GRanges
@@ -79,48 +81,60 @@ setGeneric("pmapToGenome",
 ##           function(x, genome, ...) .mapToGenome(x, genome, ...))
 
 setMethod("pmapToGenome", c("Proteins", "GRangesList"),
-          function(x, genome, ...) {
+          function(x, genome, drop.empty.ranges = TRUE, ...) {
               if (length(x) != length(genome))
                   stop("'x' and 'genome' must have the same length")
-              
+
               l <- vector("list", length = length(x))
               names(l) <- names(genome)
               for (i in seq_len(length(x))) 
-                  l[[i]] <- .mapToGenome(x[i], genome[[i]])
+                  l[[i]] <- tryCatchMapToGenome(x[i], genome[[i]], ...)
               ans <- GRangesList(l)
+              if (drop.empty.ranges)
+                  ans <- ans[elementLengths(ans) > 0] 
               if (validObject(ans))
                   return(ans)
           })
 
-setMethod("mapToGenome", c("Proteins", "GenomicRangesList"),
-          function(x, genome, ...) {
 
-              if (length(x) == 1 & length(genomes) == 1)
-                  returm(.mapToGenome(x[1], gnome[[1]]))
+setMethod("mapToGenome", c("Proteins", "GRangesList"),
+          function(x, genome, drop.empty.ranges = TRUE, ...) {
+              if (length(x) == 1 & length(genome) == 1) {
+                  ans <- tryCatchMapToGenome(x, genome[[1]], ...)
+                  if (drop.empty.ranges & length(ans) == 1)
+                      ans <- GRangesList()
+                  else {
+                      ans <- GRangesList(ans)
+                      names(ans) <- names(genome)
+                  }
+              } else {              
+                  ## Proteins[n] and genome[m] and mapp all against all
+                  ## WITH matching names. 
 
+                  nmsx0 <- seqnames(x)
+                  nmsg0 <- names(genome)
               
-              ## Proteins[n] and genome[m] and mapp all against all
-              ## WITH matching names. 
+                  if (is.null(nmsx0) | is.null(nmsg0))
+                      stop("'x' and 'genome' must have names.")
 
-              nmsx0 <- seqnames(x)
-              nmsg0 <- names(g)
+                  nmsi <- intersect(nmsx0, nmsg0)
+                  ## update input with common names
+                  x <- x[nmsx0 %in% nmsi]
+                  nmsx <- seqnames(x)
+                  genome <- genome[nmsg0 %in% nmsi]              
               
-              if (is.null(nmsx0) | is.null(nmsg0))
-                  stop("'x' and 'genome' must have names.")
+                  if (!all(nmsx0 %in%nmsi))
+                      message("Mapping ", length(x), " out of ",
+                              length(nmsx0), " peptide ranges.") 
 
-              nmsi <- intersect(nmsx0, nmsg0)
-              ## update input with common names
-              x <- x[nmsx0 %in% nmsi]
-              nmsx <- seqnames(x)
-              genome <- genome[nmsg0 %in% nmsi]              
-              
-              if (!all(nmsx0 %in%nmsi))
-                  message("Mapping ", length(x), " out of ",
-                          length(nmsx0), " peptide ranges.") 
+                  k <- match(names(genome), seqnames(x))
+                  x <- x[k]
+                  ans <- pmapToGenome(x, genome, drop.empty.ranges, ...)
+                  ## get original seqnames order
+                  ans <- ans[order(match(names(ans), nmsx))]                  
+              }
 
-              k <- match(names(genome), seqnames(x))
-              x <- x[k]
-              ans <- pmapToGenome(x, genome)
-              ## get original seqnames order
-              ans[order(match(names(ans), nmsx))]
+              if (validObject(ans))
+                  return(ans)
+
           })

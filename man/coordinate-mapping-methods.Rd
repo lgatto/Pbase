@@ -22,8 +22,8 @@
 
 
 \usage{
-\S4method{mapToGenome}{Proteins,GenomicRanges}(x, genome, ...)
-\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome, ...)
+\S4method{mapToGenome}{Proteins,GRangesList}(x, genome, drop.empty.ranges = TRUE, ...)
+\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome, drop.empty.ranges = TRUE, ...)
 }
 
 
@@ -36,6 +36,9 @@
     between \code{x} and the result. The ranges are typically created by
     the \code{\link{etrid2grl}} function. }
 
+  \item{drop.empty.ranges}{\code{TRUE} (default) or \code{FALSE}. Should
+    empty ranges be dropped?}
+  
   \item{\ldots}{Additional parameters passed to inner
     functions. Currently ignored.  }
 }
@@ -114,7 +117,7 @@ data(p)
 grl <- etrid2grl(acols(p)$ENST)
 pcgrl <- proteinCoding(grl)
     
-mapToGenome(p[4], pcgrl[[4]])
+mapToGenome(p[4], pcgrl[4])
 
 pmapToGenome(p, pcgrl)
 
