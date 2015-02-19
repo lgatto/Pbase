@@ -1,3 +1,10 @@
+CHANGES IN VERSION 0.6.4
+------------------------
+ o typos in man [2015-02-19 Thu]
+ o Added use.names argument ot etrid2gel [2015-02-19 Thu]
+ o mapToGenome,Proteins,GRangesList (remove GRanges) using names for
+   1-to-many mapping and document in mapping vignette [2015-02-19 Thu]
+ 
 CHANGES IN VERSION 0.6.3
 ------------------------
  o new fig in Pbase-data vignette [2015-02-14 Sat]

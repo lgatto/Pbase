@@ -4,7 +4,7 @@
 \alias{etrid2grl}
 \title{From a transcript identifier to \code{GRanges} object}
 \usage{
-etrid2grl(etrid, ens)
+etrid2grl(etrid, ens, use.names = FALSE)
 }
 \arguments{
 \item{etrid}{A vector of Ensembl transcript identifiers.}
@@ -12,6 +12,9 @@ etrid2grl(etrid, ens)
 \item{ens}{A instance of class \code{Mart} from biomaRt. If
 missing, \code{useMart("ensembl", "hsapiens_gene_ensembl")} is
 used.}
+
+\item{use.names}{If set to \code{TRUE} and \code{etrid} has names,
+then the latter are used to name the output.}
 }
 \value{
 A \code{GRangesList} object of length
