@@ -10,6 +10,8 @@
 ##' @param ens A instance of class \code{Mart} from biomaRt. If
 ##' missing, \code{useMart("ensembl", "hsapiens_gene_ensembl")} is
 ##' used.
+##' @param use.names If set to \code{TRUE} and \code{etrid} has names,
+##' then the latter are used to name the output.
 ##' @return A \code{GRangesList} object of length
 ##' \code{length(etrid)}.
 ##' @author Laurent Gatto
@@ -19,7 +21,7 @@
 ##' grl1
 ##' grl <- etrid2grl(id)
 ##' stopifnot(all.equal(id, names(grl)))
-etrid2grl <- function(etrid, ens) {    
+etrid2grl <- function(etrid, ens, use.names = FALSE) {    
     if (missing(ens))
         ens <- useMart("ensembl", "hsapiens_gene_ensembl")
     if (!validObject(ens))
@@ -87,7 +89,14 @@ etrid2grl <- function(etrid, ens) {
                   phase=as.integer(bm$phase))
     gr <- sort(gr)
     grl <- split(gr, mcols(gr)$transcript)
-    grl[etrid] ## same order as input ids
+    grl <- grl[etrid] ## same order as input ids
+
+    if (use.names & !is.null(names(etrid)))
+        names(grl) <- names(etrid)
+
+    if (validObject(grl))
+        return(grl)
+    
 }
 
 
