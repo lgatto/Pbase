@@ -49,10 +49,8 @@ setGeneric("pmapToGenome",
     start_ex <- subjectHits(findOverlaps(start(peprngCdna), prex))
     end_ex <- subjectHits(findOverlaps(end(peprngCdna), prex))
 
-    if (any(junc <- start_ex != end_ex))
-        message("Peptide(s) ", paste(which(junc), collapse = ", "),
-                " overlap(s) exon junctions.")    
-
+    junc <- start_ex != end_ex
+    
     ## (4)
     getPos <- function(pos, idx, nclex, prtex) {
         ## position in cdna
@@ -77,9 +75,8 @@ setGeneric("pmapToGenome",
 }    
 
 
-setMethod("mapToGenome", c("Proteins", "GenomicRanges"),
-          function(x, genome, ...) .mapToGenome(x, genome, ...))
-
+## setMethod("mapToGenome", c("Proteins", "GenomicRanges"),
+##           function(x, genome, ...) .mapToGenome(x, genome, ...))
 
 setMethod("pmapToGenome", c("Proteins", "GRangesList"),
           function(x, genome, ...) {
@@ -95,3 +92,35 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
                   return(ans)
           })
 
+setMethod("mapToGenome", c("Proteins", "GenomicRangesList"),
+          function(x, genome, ...) {
+
+              if (length(x) == 1 & length(genomes) == 1)
+                  returm(.mapToGenome(x[1], gnome[[1]]))
+
+              
+              ## Proteins[n] and genome[m] and mapp all against all
+              ## WITH matching names. 
+
+              nmsx0 <- seqnames(x)
+              nmsg0 <- names(g)
+              
+              if (is.null(nmsx0) | is.null(nmsg0))
+                  stop("'x' and 'genome' must have names.")
+
+              nmsi <- intersect(nmsx0, nmsg0)
+              ## update input with common names
+              x <- x[nmsx0 %in% nmsi]
+              nmsx <- seqnames(x)
+              genome <- genome[nmsg0 %in% nmsi]              
+              
+              if (!all(nmsx0 %in%nmsi))
+                  message("Mapping ", length(x), " out of ",
+                          length(nmsx0), " peptide ranges.") 
+
+              k <- match(names(genome), seqnames(x))
+              x <- x[k]
+              ans <- pmapToGenome(x, genome)
+              ## get original seqnames order
+              ans[order(match(names(ans), nmsx))]
+          })
