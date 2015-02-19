@@ -23,7 +23,8 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
     tryCatch(.mapToGenome(pObj, grObj, ...),
              warning = function() NULL,
              error = function(e) {
-                 warning("Mapping failed. Returning an empty range.")
+                 warning("Mapping failed. Returning an empty range.",
+                         call. = FALSE)
                  GRanges()
              })
 
