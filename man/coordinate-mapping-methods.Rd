@@ -29,17 +29,17 @@
 
 \arguments{
 
-  \item{x}{\code{\linkS4class{Proteins}} object contain peptides
-    \code{pranges} to be mapped. Of length 1 of \code{genome} is a
+  \item{x}{\code{\linkS4class{Proteins}} object containing peptides
+    \code{pranges} to be mapped. Of length 1 if \code{genome} is a
     \code{\linkS4class{GenomicRanges}}. }
 
-  \item{genome}{A named \code{\linkS4class{GenomicRanges}} or
+  \item{genome}{A \code{\linkS4class{GenomicRanges}} or
     \code{\linkS4class{GRangesList}} object used to map between \code{x}
     and the result. The ranges are typically created by the
     \code{\link{etrid2grl}} function. }
 
   \item{\ldots}{Additional parameters passed to inner
-    functions. Currently ignores.  }
+    functions. Currently ignored.  }
 }
 
 \details{
@@ -53,6 +53,8 @@
   range in \code{genome}. \code{x} and \code{genome} must have the same
   length. 
 
+  (A paragraph about names.)
+  
 }
 
 \seealso{
