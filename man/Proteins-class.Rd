@@ -48,7 +48,6 @@
 \alias{isCleaved}
 \alias{isCleaved,Proteins-method}
 \alias{addIdentificationData,Proteins,character-method}
-
 \alias{rmEmptyRanges}
 
 \title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
@@ -235,6 +234,10 @@
   \url{http://www.uniprot.org/help/fasta-headers}
 }
 
+
+\seealso{
+  \code{\link{calculateHeavyLabels}}
+}
 
 \author{
   Laurent Gatto <lg390@cam.ac.uk> and Sebastian Gibb <mail@sebastiangibb.de>

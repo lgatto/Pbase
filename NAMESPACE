@@ -44,7 +44,6 @@ exportMethods(
     seqnames,
     show,
     ## action methods
-    calculateHeavyLabels,
     cleave,
     isCleaved,
     plot,
@@ -62,4 +61,7 @@ export(rmEmptyRanges,
        Pparams,
        etrid2grl,
        isReverse,
-       isForward)
+       isForward,
+       ## actions on Proteins
+       calculateHeavyLabels)
+

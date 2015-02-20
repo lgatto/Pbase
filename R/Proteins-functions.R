@@ -200,3 +200,10 @@ rmEmptyRanges <- function(x) {
     em <- lns == 0
     x[!em]
 }
+
+setMethod("isCleaved", "Proteins",
+          function(x, missedCleavages = 0) {
+              return(!isEmpty(pranges(x)) &&
+                         all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
+          })
+
