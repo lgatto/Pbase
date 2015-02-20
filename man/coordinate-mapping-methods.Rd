@@ -95,6 +95,8 @@
       \item The \code{\link{proteinCoding}} function to remove
       non-protein coding ranges before mapping peptides to their genomic
       coordinates.
+
+      \item The \code{mapping} vignette for examples and visualisations.
     
   }
 }
