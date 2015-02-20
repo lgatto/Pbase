@@ -118,12 +118,6 @@ setMethod("cleave", "Proteins",
               return(x)
           })
 
-setMethod("isCleaved", "Proteins",
-          function(x, missedCleavages = 0) {
-              return(!isEmpty(pranges(x)) &&
-                         all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
-          })
-
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
           function(x, y, ...) .plotProteins(x, ...))

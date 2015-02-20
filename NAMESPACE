@@ -45,7 +45,6 @@ exportMethods(
     show,
     ## action methods
     cleave,
-    isCleaved,
     plot,
     addIdentificationData,
     pfilter,
@@ -61,6 +60,7 @@ export(rmEmptyRanges,
        isReverse,
        isForward,
        ## actions on Proteins
+       isCleaved,
        proteinCoverage,
        proteotypic,
        calculateHeavyLabels)

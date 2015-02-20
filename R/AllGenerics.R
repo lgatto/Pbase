@@ -27,20 +27,17 @@ if (is.null(getGeneric("pranges")))
 if (is.null(getGeneric("seqnames")))
   setGeneric("seqnames", function(x, ...) standardGeneric("seqnames"))
 
+setGeneric("pvarLabels", function(object, ...) standardGeneric("pvarLabels"))
+setGeneric("avarLabels", function(object, ...) standardGeneric("avarLabels"))
+
 ## replacement
 
 ## methods
 if (is.null(getGeneric("cleave")))
   setGeneric("cleave", function(x, ...) standardGeneric("cleave"))
-if (is.null(getGeneric("isCleaved")))
-  setGeneric("isCleaved", function(x, ...) standardGeneric("isCleaved"))
-if (is.null(getGeneric("plot")))
   setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
 if (is.null(getGeneric("pfilter")))
   setGeneric("pfilter", function(x, y, ...) standardGeneric("pfilter"))
-
-setGeneric("pvarLabels", function(object, ...) standardGeneric("pvarLabels"))
-setGeneric("avarLabels", function(object, ...) standardGeneric("avarLabels"))
 
 ## Ranges
 setGeneric("proteinCoding",
