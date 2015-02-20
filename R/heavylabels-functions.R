@@ -26,10 +26,11 @@
 ##' N terminus.
 ##' @param nC An \code{integer}, minimal number of amino acids at the
 ##' C terminus.
-##' @param endsWit A \code{character} vector containing the allowed
+##' @param endsWith A \code{character} vector containing the allowed
 ##' amino acids at the end of the resulting sequence (every peptide
 ##' that doesn't end with one of these amino acids has to be one amino
 ##' acid shorter as \code{maxN}).
+##' @param ... Additional parameters passed to \code{.addOverhangs}.
 ##' @return A \code{data.frame} with 6 columns:
 ##' \itemize{
 ##'   \item{Protein}{The Protein accession number.}
@@ -64,7 +65,8 @@
 calculateHeavyLabels <-
               function(proteins, peptides,
                        maxN = 20L, nN = 4L, nC = 3L,
-                       endsWith = c("K", "R", "G")) {
+                       endsWith = c("K", "R", "G"),
+                       ...) {
     stopifnot(is(peptides, "character"))
     stopifnot(is(proteins, "Proteins"))
 
