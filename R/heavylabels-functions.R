@@ -14,7 +14,7 @@
 ##'
 ##' TODO: There should be a function to find the best labels for a
 ##' given protein automatically.
-##' 
+##'
 ##' @title Calculate heavy labeled peptides
 ##' @param proteins A \code{\linkS4class{Proteins}} object.
 ##' @param peptides A named \code{character} vector containing the
@@ -95,7 +95,12 @@ calculateHeavyLabels <-
             l[[i]] <- cbind(Protein = names(aa)[i],
                             .addOverhangs(sequence = unlist(aa[[i]]),
                                           pindex = pindex,
-                                          pranges = pr[[i]], ...),
+                                          pranges = pr[[i]],
+                                          maxN = maxN,
+                                          nN = nN,
+                                          nC = nC,
+                                          endsWith = endsWith,
+                                          ...),
                             stringsAsFactors = FALSE)
         }
     }

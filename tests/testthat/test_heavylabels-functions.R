@@ -30,7 +30,7 @@ test_that(".calculateHeavyLabels", {
     ## compare only the following columns
     cols <- c("Protein", "Peptide", "spikeTideResult", "spikeTide")
 
-    ## expect_equal(r[, cols], heavyLabels[, cols])
+    expect_equal(r[, cols], heavyLabels[, cols])
     expect_error(calculateHeavyLabels(pc, unname(peptides)),
                  paste0("No names for ", sQuote("peptides"), " available!"))
     expect_error(calculateHeavyLabels(p, peptides),
