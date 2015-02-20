@@ -38,12 +38,6 @@ if (is.null(getGeneric("plot")))
   setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
 if (is.null(getGeneric("pfilter")))
   setGeneric("pfilter", function(x, y, ...) standardGeneric("pfilter"))
-if (is.null(getGeneric("proteinCoverage")))
-  setGeneric("proteinCoverage", function(x, ...)
-             standardGeneric("proteinCoverage"))
-if (is.null(getGeneric("proteotypic")))
-  setGeneric("proteotypic", function(x, y, ...) standardGeneric("proteotypic"))
-
 
 setGeneric("pvarLabels", function(object, ...) standardGeneric("pvarLabels"))
 setGeneric("avarLabels", function(object, ...) standardGeneric("avarLabels"))

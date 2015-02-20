@@ -134,14 +134,6 @@ setMethod("pfilter",
               .pfilterProteins(x, mass = mass, len = len, ...)
           })
 
-setMethod("proteinCoverage",
-          signature(x = "Proteins"),
-          function(x, ...) .proteinCoverageProteins(x, ...))
-
-setMethod("proteotypic",
-          "Proteins",
-          function(x) .proteotypicProteins(x))
-
 setMethod("show", "Proteins",
           function(object) {
               topics <- c("S4 class type",

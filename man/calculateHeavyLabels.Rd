@@ -5,7 +5,7 @@
 \title{Calculate heavy labeled peptides}
 \usage{
 calculateHeavyLabels(proteins, peptides, maxN = 20L, nN = 4L, nC = 3L,
-  endsWith = c("K", "R", "G"))
+  endsWith = c("K", "R", "G"), ...)
 }
 \arguments{
 \item{proteins}{A \code{\linkS4class{Proteins}} object.}
@@ -23,10 +23,12 @@ N terminus.}
 \item{nC}{An \code{integer}, minimal number of amino acids at the
 C terminus.}
 
-\item{endsWit}{A \code{character} vector containing the allowed
+\item{endsWith}{A \code{character} vector containing the allowed
 amino acids at the end of the resulting sequence (every peptide
 that doesn't end with one of these amino acids has to be one amino
 acid shorter as \code{maxN}).}
+
+\item{...}{Additional parameters passed to \code{.addOverhangs}.}
 }
 \value{
 A \code{data.frame} with 6 columns:

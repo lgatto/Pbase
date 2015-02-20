@@ -161,29 +161,8 @@
   plotTracks(tracks, from = from, to = to)
 }
 
-##' @param x Proteins object
-##' @return a modified Proteins object
-##' @noRd
-.proteinCoverageProteins <- function(x, ...) {
-  .proteinCoverageProteinsRanges(x, ranges = pranges(x), ...)
-}
-
-##' @param x Proteins object
-##' @param ranges IRanges object containing the ranges of the peptides
-##' fData)
-##' @return a modified Proteins object
-##' @noRd
-.proteinCoverageProteinsRanges <- function(x, ranges, ...) {
-    subject <- aaranges(x, unshift = TRUE)
-    coverage <- .proteinCoverage(pattern = ranges, subject = subject)
-
-    addacol(x, "Coverage", coverage)
-}
-
-##' @param x Proteins object
-##' @return a modified Proteins object (pcols(x) gains a "Proteotypic" column)
-##' @noRd
-.proteotypicProteins <- function(x) {
+proteotypic <- function(x) {
+    stopifnot(inherits(x, "Proteins"))
     if (isEmpty(x@pranges)) {
         stop("The ", sQuote("pranges"), " slot is empty!")
     }
@@ -194,16 +173,8 @@
 }
 
 
-## might become a method
 rmEmptyRanges <- function(x) {
     lns <- elementLengths(pranges(x));
     em <- lns == 0
     x[!em]
 }
-
-setMethod("isCleaved", "Proteins",
-          function(x, missedCleavages = 0) {
-              return(!isEmpty(pranges(x)) &&
-                         all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
-          })
-

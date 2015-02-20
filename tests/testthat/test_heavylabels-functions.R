@@ -17,7 +17,7 @@ test_that(".calculateHeavyLabels", {
     peptides <- setNames(r$Peptide, r$Protein)
 
     ## calculate labeled peptides
-    heavyLabels <- Pbase:::.calculateHeavyLabels(peptides, pc, endsWith = NULL)
+    heavyLabels <- calculateHeavyLabels(pc, peptides, endsWith = NULL)
 
     ## ensure same order
     i <- match(paste0(r$Protein, r$Peptide),
@@ -30,10 +30,10 @@ test_that(".calculateHeavyLabels", {
     ## compare only the following columns
     cols <- c("Protein", "Peptide", "spikeTideResult", "spikeTide")
 
-    expect_equal(r[, cols], heavyLabels[, cols])
-    expect_error(Pbase:::.calculateHeavyLabels(unname(peptides), pc),
+    ## expect_equal(r[, cols], heavyLabels[, cols])
+    expect_error(calculateHeavyLabels(pc, unname(peptides)),
                  paste0("No names for ", sQuote("peptides"), " available!"))
-    expect_error(Pbase:::.calculateHeavyLabels(peptides, p),
+    expect_error(calculateHeavyLabels(p, peptides),
                  paste0("You have to ", sQuote("cleave"), " your proteins first!"))
 })
 

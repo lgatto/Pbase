@@ -1,7 +1,8 @@
 CHANGES IN VERSION 0.6.5
 ------------------------
  o see also mapping vignette in ?mapToGenome [2015-02-20 Fri]
- o calculateHeavyLabels is now a function [2015-02-20 Fri]
+ o calculateHeavyLabels, proteotypic and proteinCoverage are is now a
+   function [2015-02-20 Fri]
  
 CHANGES IN VERSION 0.6.4
 ------------------------

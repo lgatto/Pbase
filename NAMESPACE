@@ -49,8 +49,6 @@ exportMethods(
     plot,
     addIdentificationData,
     pfilter,
-    proteinCoverage,
-    proteotypic,
     ## mapping
     mapToGenome,
     pmapToGenome,
@@ -63,5 +61,7 @@ export(rmEmptyRanges,
        isReverse,
        isForward,
        ## actions on Proteins
+       proteinCoverage,
+       proteotypic,
        calculateHeavyLabels)
 
