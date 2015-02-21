@@ -140,7 +140,46 @@ mapplot <- function(){
     }
 }
 
-pplot <- function(){
+pplot <- function() {
+    darrow <- function(x1, y1, x2, y2, ...) {
+        points(x1, y1, pch = 19)
+        arrows(x1, y1, x2, y2, ...)
+    }
+
+    addpeps <- function(i, j) {
+        if (missing(j))
+            j <- i + 2
+        ## pranges
+        rect(6.5, i, 8.5, j, col = "lightgrey")
+        for (k in seq((i+.25), (j-.25), 0.25))
+            segments(6.5, k, 8.5, k)
+        text(6.5, k+0.125, expression(peptide~range[1]),
+             pos = 4, cex = .65)
+        text(6.5, k-0.125, expression(peptide~range[2]),
+             pos = 4, cex = .65)
+
+        ## pcols
+        rect(8.7, i, 10, j, lwd = 3)
+        for (k in seq((i+.25), (j-0.25), 0.25))
+            segments(8.7, k, 10, k, lty = "dotted")
+
+        text(mean(c(8.7, 10)),
+             i, "pcols(.)",
+             pos = 1,
+             family = "mono")
+
+        ## pvarLabels
+        rect(8.69, j+0.05, 10.01, j+0.2,
+             col = "#00000010")
+        text(mean(c(8.69, 10.01)),
+             mean(c(j+0.05, j+0.2)),
+             "pvarLabels(.)",
+             family = "mono",
+             cex = .7)
+    
+    }
+
+   
     par(mar = rep(0, 4),
         oma = rep(0, 4))
     ylim <- xlim <- c(0, 10)
@@ -149,23 +188,42 @@ pplot <- function(){
          xlim = xlim,    
          ylim = ylim)
 
+    ## aa
     for (i in 0:9) {
         rect(2, i, 5, i+0.97, col = "lightgrey")
         text(2, i+0.5, paste0("Protein ", 10-i),
+             font = 3,
              pos = 4)
     }
 
-    rect(0, 0, 1.8, 9.97, lwd = 4)
+    rect(1.95, -0.05, 5.1, 10.02)
+    text(mean(c(1.95, 5.1)),
+         0,
+         "aa(.)",
+         family = "mono",
+         pos = 1)
 
+    ## acols
+    rect(0, 0, 1.8, 9.97, lwd = 4)
     for (i in 0:8)
         segments(0, i+0.985, 1.8, i+0.985,
                  lty = "dotted")
+    text(mean(c(0, 1.8)),
+         0,
+         "acols(.)",
+         family = "mono",
+         pos = 1)
 
-    darrow <- function(x1, y1, x2, y2, ...) {
-        points(x1, y1, pch = 19)
-        arrows(x1, y1, x2, y2, ...)
-    }
 
+    ## avarLabels
+    rect(-0.01, 10.03, 1.81, 10.25,
+         col = "#00000010")
+    text(mean(c(-0.01, 1.81)),
+         mean(c(10.03, 10.25)),
+         "avarLabels(.)",
+         family = "mono")
+
+    ## arrows to peptides
     for (i in c(0, 1, 3, 4, 5, 7, 8))
         darrow(3.5, i+.5, 6, i+.5, lty = "dotted")
 
@@ -173,23 +231,15 @@ pplot <- function(){
     darrow(3.5, 6.5, 6.5, 6.5)
     darrow(3.5, 2.5, 6.5, 2.5)
 
-    addpeps <- function(i, j) {
-        if (missing(j))
-            j <- i + 2
-        rect(6.5, i, 8.5, j, col = "lightgrey")
-        for (k in seq((i+.25), (j-.25), 0.25))
-            segments(6.5, k, 8.5, k)
-        text(6.5, k+0.125, expression(peptide[1]), pos = 4, cex = .7)
-        text(6.5, k-0.125, expression(peptide[2]), pos = 4, cex = .7)
-
-        rect(8.7, i, 10, j, lwd = 3)
-        for (k in seq((i+.25), (j-0.25), 0.25))
-            segments(8.7, k, 10, k, lty = "dotted")
-    }
-
     addpeps(7.75)
-
     addpeps(4.75)
-
     addpeps(0.75)
+
+    ## pranges
+    rect(6.45, -0.05, 8.55, 10.03)
+    text(mean(c(6.45, 8.55)),
+         0,
+         "pranges(.)",
+         family = "mono",
+         pos = 1)
 }

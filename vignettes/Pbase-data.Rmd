@@ -34,9 +34,10 @@ contain a set of protein sequences (10 in the figure below), composed
 of the protein sequences (grey boxes) and annotation data (table on
 the left). Each protein links to a set of experimentally observed
 peptides (also in grey) that are also decorated with their own
-annotation data.
+annotation data. The figure also show the accessors for the different
+data slots, that are detailed in `?Proteins`.
 
-```{r pplot, echo=FALSE, fig.cap='Proteins data structure.', fig.align='center'}
+```{r pplot, echo=FALSE, fig.width=8.5, fig.height=8.5}
 Pbase:::pplot()
 ```
 

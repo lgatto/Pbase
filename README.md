@@ -11,7 +11,7 @@ It is advised to install `Pbase` from Bioconductor:
 	biocLite("Pbase")
 
 Note however that you will need the *devel* version of Bioconductor
-for this. See `?useDevel' for details.
+for this. See `?useDevel` for details.
 
 From github using `devtools::install_github`:
 
@@ -40,25 +40,6 @@ for minor contributions and typos. For major contributions, we suggest
 to first get in touch with the package maintainers. 
 
 ## Ideas
-
-### Protein coverage
-
-`proteinCoverage` that return a summary (S4 class) of a protein
-coverage given an experimental set of observed peptides (via an
-`MSnExp`, `MSnSet` with an `fcol` or an `mzId` object) or a
-theoretical set of peptides after in silico digestion (see also next
-point). The return value would have its own `plot` method using
-`Pviz`.
-
-```s
-setGeneric("proteinCoverage", function(x, y, ...), standardGeneric("proteinCoverage"))
-## uses internal IRanges or, if absent, first cleaves the protein
-setMethod("proteinCoverage", c("Proteins", "missing"), function(x, y) { ... } )
-## later
-## setMethod("proteinCoverage", c("Proteins", "MSnSet"), function(x, y, fcol = "pepseq") { ... } )
-## setMethod("proteinCoverage", c("Proteins", "MSnExp"), function(x, y, fcol = "pepseq") { ... } )
-##setMethod("proteinCoverage", c("Proteins", "mzID"), function(x, y) { ... } )
-```
 
 ### Assessing the redundancy of a protein fasta database
 

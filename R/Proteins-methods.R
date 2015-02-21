@@ -105,15 +105,6 @@ setMethod("addIdentificationData",
                                              par = par)
           })
 
-setMethod("calculateHeavyLabels", "Proteins",
-          function(object, peptides,
-                   maxN = 20L, nN = 4L, nC = 3L, endsWith = c("K", "R", "G")) {
-              .calculateHeavyLabels(peptides = peptides,
-                                    proteins = object,
-                                    maxN = maxN, nN = nN, nC = nC,
-                                    endsWith = endsWith)
-          })
-
 setMethod("cleave", "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0, ...) {
               x@pranges <- cleavageRanges(x = x@aa, enzym = enzym,
@@ -127,12 +118,6 @@ setMethod("cleave", "Proteins",
               return(x)
           })
 
-setMethod("isCleaved", "Proteins",
-          function(x, missedCleavages = 0) {
-              return(!isEmpty(pranges(x)) &&
-                         all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
-          })
-
 setMethod("plot",
           signature(x = "Proteins", y = "missing"),
           function(x, y, ...) .plotProteins(x, ...))
@@ -142,14 +127,6 @@ setMethod("pfilter",
           function(x, mass = NULL, len = NULL, ...) {
               .pfilterProteins(x, mass = mass, len = len, ...)
           })
-
-setMethod("proteinCoverage",
-          signature(x = "Proteins"),
-          function(x, ...) .proteinCoverageProteins(x, ...))
-
-setMethod("proteotypic",
-          "Proteins",
-          function(x) .proteotypicProteins(x))
 
 setMethod("show", "Proteins",
           function(object) {
