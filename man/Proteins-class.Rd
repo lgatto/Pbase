@@ -39,17 +39,14 @@
 \alias{seqnames,Proteins-method}
 \alias{show,Proteins-method}
 
-
-\alias{proteinCoverage,Proteins-method}
-\alias{proteinCoverage}
-\alias{proteotypic,Proteins-method}
-\alias{proteotypic}
 \alias{cleave,Proteins-method}
-\alias{isCleaved}
-\alias{isCleaved,Proteins-method}
 \alias{addIdentificationData,Proteins,character-method}
 
 \alias{rmEmptyRanges}
+\alias{proteotypic}
+\alias{proteinCoverage}
+\alias{isCleaved}
+
 
 \title{The \code{Proteins} Class for Proteomics Data And Meta-Data}
 
@@ -193,20 +190,11 @@
     \item{pfilter}{\code{signature(x = "Proteins", mass = "numeric", len
 	= "numeric", ...)}: ... }
 
-    \item{proteinCoverage}{\code{signature(x = "Proteins")}: ... }
-
-    \item{proteotypic}{\code{signature(x = "Proteins")}: ... }
-
     \item{cleave}{\code{signature(x = "Proteins", enzym = "character",
             missedCleavages = "numeric")}:
         Cleaves all proteins using the \code{enzym} rule while allowing
         \code{missedCleavages} missing cleavages. Please see
         \code{\link[cleaver]{cleave}} for details.}
-
-    \item{isCleaver}{\code{signature(x = "Proteins",
-            missedCleavages = "numeric")}:
-        Tests whether a Protein object was cleaved already.
-    }
 
     \item{addIdentificationData}{\code{signature(object = "Proteins",
 	id = "character", rmEmptyRanges = "logical", par =
@@ -225,8 +213,21 @@
 \section{Functions}{
   \describe{
 
-    \item{rmEmptyRanges}{signature(x = "Proteins")}{ ...}
+    \item{rmEmptyRanges}{\code{signature(x = "Proteins")}}:{ removes
+      proteins with empty peptide ranges. }
 
+    \item{proteotypic}{\code{signature(x = "Proteins")}: returns a
+      modified Proteins object. \code{pcols(x)} gains a "Proteotypic"
+      logical column, indicating of the peptide is proteotypic or now. }
+
+    \item{proteinCoverage}{\code{signature(pattern = "Proteins")}:
+      calulates the coverage of proteins. \code{pcols(x)} gains a
+      "Coverage" numeric column. }
+
+    \item{isCleaver}{\code{signature(x = "Proteins", missedCleavages =
+	"numeric")}: Tests whether a Protein object was cleaved
+      already.}
+  
   }
 }
 
@@ -235,6 +236,10 @@
   \url{http://www.uniprot.org/help/fasta-headers}
 }
 
+
+\seealso{
+  \code{\link{calculateHeavyLabels}}
+}
 
 \author{
   Laurent Gatto <lg390@cam.ac.uk> and Sebastian Gibb <mail@sebastiangibb.de>

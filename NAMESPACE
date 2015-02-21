@@ -44,14 +44,10 @@ exportMethods(
     seqnames,
     show,
     ## action methods
-    calculateHeavyLabels,
     cleave,
-    isCleaved,
     plot,
     addIdentificationData,
     pfilter,
-    proteinCoverage,
-    proteotypic,
     ## mapping
     mapToGenome,
     pmapToGenome,
@@ -62,4 +58,10 @@ export(rmEmptyRanges,
        Pparams,
        etrid2grl,
        isReverse,
-       isForward)
+       isForward,
+       ## actions on Proteins
+       isCleaved,
+       proteinCoverage,
+       proteotypic,
+       calculateHeavyLabels)
+
