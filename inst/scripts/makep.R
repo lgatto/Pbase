@@ -17,6 +17,11 @@ p <- addIdentificationData(p, mzid)
 ## here.
 
 ## ENST 1 retrieved manually from Ensembl
+
+## There is a mismatch between UniProt and Ensembl. A4UGR9 (A4UGR9-1)
+## is 3374 aa long, while the corresponding transcript,
+## ENST00000409195, indicates a length 3549 aa for its protein.
+
 ## ENST 2:9 identified through the
 ## README_HUMAN_uniprot_ensembl_gene_coordindate.txt coordinate file.
 
