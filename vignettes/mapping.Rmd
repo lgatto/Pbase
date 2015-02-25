@@ -298,7 +298,7 @@ seqnames(p)[k]
 In the code chunk below, we remind ourselves that, querying the
 Ensembl Biomart server for `r seqnames(p)[k]`, we obtain several
 possible transcript identifiers, including the identifier of interest
-`r seqnames(p)[4]`.
+`r acols(p)$ENST[k]`.
 
 ```{r remindbm}
 sel <- bm$uniprot_swissprot_accession == seqnames(p)[k]
@@ -320,9 +320,6 @@ grl <- etrid2grl(eid, ens, use.names = TRUE)
 pcgrl <- proteinCoding(grl)
 ```
 
-As we can see on the next figures, only `r bm[3:4, "ensembl_transcript_id"]`
-(including the actual transcript) show comparable exons patterns.
-
 ```{r plot5}
 grTr <- lapply(pcgrl, function(i)
     GeneRegionTrack(i, name = mcols(i)$transcript[1]))
@@ -333,8 +330,8 @@ plotTracks(grTr)
 ### Descriminating transcripts
 
 We extract the transcript sequences, translate them into protein
-sequences and align each to our protein sequence (imported from the
-fasta database). 
+sequences and align each to our protein sequence (originally imported
+from the fasta database, see `?Proteins` for the construction of `p`).
 
 ```{r getseq2, warning=FALSE}
 
@@ -345,14 +342,14 @@ laln <- sapply(lseq, pairwiseAlignment, aa(p[k]))
 sapply(laln, nmatch)/width(aa(p[k]))
 ```
 
-```{r}
+```{r, echo=FALSE}
 ki <- which.max(sapply(laln, nmatch))
 ```
 We see that transcript number `r ki`, `r eid[ki]`, perfectly aligns
 with our protein sequence. This is also the transcipt that corresponds
-to the curated Ensembl transcript in `acols(p)$ENST' and we verify
+to the curated Ensembl transcript in `acols(p)$ENST`.
 
-```{r checkk, echo=FALSE}
+```{r checkk}
 stopifnot(eid[ki] == acols(p)$ENST[k])
 ```
 
@@ -363,11 +360,6 @@ map these peptides against all possible transcript exons.
 res <- pmapToGenome(p[k], pcgrl[ki])
 .res <- res[[1]]
 ```
-
-As can be seen above, 3 warnings are throw because the mapping
-failed. Such failed mapping produce empty ranges that are
-automatically dropped from the result, leaving `r length(res)`
-relevant ranges in the `res` output.
 
 ```{r pepcoords2}
 
