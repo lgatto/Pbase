@@ -306,10 +306,9 @@ bm[sel, ]
 acols(p)$ENST[k]
 ```
 
-Let's fetch the coordinates of all possible transcipts and making sure
+Let's fetch the coordinates of all possible transcipts, making sure
 that the names of the Ensembl identifiers are used to name the `grl`
-ranges (using `use.names = TRUE`). We obtain `r nrow(bm)` sets of
-ranges for `r length(p)` proteins.
+ranges (using `use.names = TRUE`). 
 
 ```{r etris2grl2}
 eid <- bm[sel, 3]
@@ -342,7 +341,7 @@ laln <- sapply(lseq, pairwiseAlignment, aa(p[k]))
 sapply(laln, nmatch)/width(aa(p[k]))
 ```
 
-```{r, echo=FALSE}
+```{r ki, echo=FALSE}
 ki <- which.max(sapply(laln, nmatch))
 ```
 We see that transcript number `r ki`, `r eid[ki]`, perfectly aligns
@@ -350,11 +349,9 @@ with our protein sequence. This is also the transcipt that corresponds
 to the curated Ensembl transcript in `acols(p)$ENST`.
 
 ```{r checkk}
+ki <- which.max(sapply(laln, nmatch))
 stopifnot(eid[ki] == acols(p)$ENST[k])
 ```
-
-Using `r seqnames(p)[1]` as an example, we will use `mapToGenome` to
-map these peptides against all possible transcript exons.
 
 ```{r map2}
 res <- pmapToGenome(p[k], pcgrl[ki])
