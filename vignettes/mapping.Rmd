@@ -182,9 +182,9 @@ above).
 library("BSgenome.Hsapiens.NCBI.GRCh38")
 head(seqnames(BSgenome.Hsapiens.NCBI.GRCh38))
 if (!"chr1" %in% seqnames(BSgenome.Hsapiens.NCBI.GRCh38))
-    seqnames(BSgenome.Hsapiens.NCBI.GRCh38) <-
-        paste0("chr", seqnames(BSgenome.Hsapiens.NCBI.GRCh38))
-head(seqnames(BSgenome.Hsapiens.NCBI.GRCh38))
+    seqnames(BSgenome.Hsapiens.NCBI.GRCh38)[1:23] <-
+        paste0("chr", seqnames(BSgenome.Hsapiens.NCBI.GRCh38)[1:23])
+seqnames(BSgenome.Hsapiens.NCBI.GRCh38)[21:27]
 ```
 
 Once we have extracted the actual sequences, we must also make sure
@@ -291,15 +291,19 @@ pres
 
 ## Dealing with multiple transcipts per protein
 
-
+```{r}
+k <- 6
+seqnames(p)[k]
+```
 In the code chunk below, we remind ourselves that, querying the
-Ensembl Biomart server for `r seqnames(p)[1]`, we obtain several
+Ensembl Biomart server for `r seqnames(p)[k]`, we obtain several
 possible transcript identifiers, including the identifier of interest
-`r seqnames(p)[1]`.
+`r acols(p)$ENST[k]`.
 
 ```{r remindbm}
-head(bm)
-acols(p)$ENST[1]
+sel <- bm$uniprot_swissprot_accession == seqnames(p)[k]
+bm[sel, ]
+acols(p)$ENST[k]
 ```
 
 Let's fetch the coordinates of all possible transcipts and making sure
@@ -308,65 +312,76 @@ ranges (using `use.names = TRUE`). We obtain `r nrow(bm)` sets of
 ranges for `r length(p)` proteins.
 
 ```{r etris2grl2}
-eid <- bm[, 3]
-names(eid) <- bm[, 1]
-head(eid)
+eid <- bm[sel, 3]
+names(eid) <- bm[sel, 1]
+eid
 
 grl <- etrid2grl(eid, ens, use.names = TRUE)
 pcgrl <- proteinCoding(grl)
 ```
 
-As we can see on the next figures, only `r bm[3:4, "ensembl_transcript_id"]`
-(including the actual transcript) show comparable exons patterns.
-
 ```{r plot5}
-grTr <- lapply(1:5, function(i)
-    GeneRegionTrack(pcgrl[[i]],
-                    name = bm[i, "ensembl_transcript_id"]))
+grTr <- lapply(pcgrl, function(i)
+    GeneRegionTrack(i, name = mcols(i)$transcript[1]))
+
 plotTracks(grTr)
+```
+
+### Descriminating transcripts
+
+We extract the transcript sequences, translate them into protein
+sequences and align each to our protein sequence (originally imported
+from the fasta database, see `?Proteins` for the construction of `p`).
+
+```{r getseq2, warning=FALSE}
+
+lseq <- lapply(getSeq(BSgenome.Hsapiens.NCBI.GRCh38, pcgrl),
+               function(s) translate(unlist(s)))
+
+laln <- sapply(lseq, pairwiseAlignment, aa(p[k]))
+sapply(laln, nmatch)/width(aa(p[k]))
+```
+
+```{r, echo=FALSE}
+ki <- which.max(sapply(laln, nmatch))
+```
+We see that transcript number `r ki`, `r eid[ki]`, perfectly aligns
+with our protein sequence. This is also the transcipt that corresponds
+to the curated Ensembl transcript in `acols(p)$ENST`.
+
+```{r checkk}
+stopifnot(eid[ki] == acols(p)$ENST[k])
 ```
 
 Using `r seqnames(p)[1]` as an example, we will use `mapToGenome` to
 map these peptides against all possible transcript exons.
 
 ```{r map2}
-res <- mapToGenome(p[1], pcgrl)
+res <- pmapToGenome(p[k], pcgrl[ki])
+.res <- res[[1]]
 ```
-
-As can be seen above, 3 warnings are throw because the mapping
-failed. Such failed mapping produce empty ranges that are
-automatically dropped from the result, leaving `r length(res)`
-relevant ranges in the `res` output.
 
 ```{r pepcoords2}
-pepTr <- lapply(res, function(.res)
-    AnnotationTrack(start = start(.res),
-                    end = end(.res),
-                    chr = chrom(.res),
-                    strand = strand(.res),
-                    id = mcols(.res)$pepseq,
-                    name = "peptides"))
 
-plotTracks(list(grTr[[3]], pepTr[[1]],
-                grTr[[4]], pepTr[[2]]))
+pepTr <- AnnotationTrack(start = start(.res),
+                         end = end(.res),
+                         chr = chrom(.res),
+                         strand = strand(.res),
+                         id = mcols(.res)$pepseq,
+                         name = mcols(.res)$transcript[1])
+
+plotTracks(list(grTr[[ki]], pepTr))
 ```
 
-The `r length(res)` transcript are indistinguishable based on the
-mapped peptides (`r elementLengths(res)[1]` and
-`r elementLengths(res)[2]`, respectively). Below, we further confirm this
-by aligning the coding sequences of the two transcripts.
-
-```{r getseq2, warning=FALSE}
-s1 <- translate(unlist(getSeq(BSgenome.Hsapiens.NCBI.GRCh38, pcgrl[[3]])))
-s2 <- translate(unlist(getSeq(BSgenome.Hsapiens.NCBI.GRCh38, pcgrl[[4]])))
-writePairwiseAlignments(pairwiseAlignment(s1, s2))
-```
-
-We can apply the above many-to-one mapping approach to all proteins in
+One can also apply a many-to-one mapping approach to all proteins in
 the `p` object and all the transcripts identifiers fetched with
 `etrid2grl` as shown below.
 
 ```{r coordall}
+alleid <- bm[, 3]
+names(alleid) <- bm[, 1]
+grl <- etrid2grl(alleid, ens, use.names = TRUE)
+pcgrl <- proteinCoding(grl)
 res <- mapToGenome(p, pcgrl)
 length(res)
 ```
@@ -382,8 +397,8 @@ failed. In total, we obtain `r length(res)` mapping for
 sessionInfo()
 ```
 
-#### TODO
+<!-- #### TODO -->
 
-Check spectra. Describe how data tracks can be used to overlay
-additional information, such as quantitation data, identification
-scores, coverage, ...
+<!-- Check spectra. Describe how data tracks can be used to overlay -->
+<!-- additional information, such as quantitation data, identification -->
+<!-- scores, coverage, ... -->
