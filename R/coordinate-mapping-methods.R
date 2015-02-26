@@ -1,3 +1,41 @@
+makeGroups <- function(j) {
+    stopifnot(sum(j) %% 2 == 0)
+    n <- length(j)
+    id <- rep(1, n)
+    ni <- !j[1]
+    for (i in seq(2,length(j))) {
+        if (j[i]) {
+            if (ni) id[i] <- id[i-1] + 1
+            else id[i] <- id[i-1]
+            ni <- !ni
+        } else {
+            id[i] <- id[i-1]+1
+        }
+    }
+    id
+}
+
+### gr: and GRanges object with mapped peptides
+### j: a logical, typically mcols(gr)$exonJunctions
+### ex: a GRanges object with exonsx
+splitExonJunctions <- function(gr, j, ex) {
+    ## (1) the ranges to be split
+    gr2split <- gr[j]
+
+    ## (2) remove junc exons from 
+    gr <- gr[!j]
+
+    ## (3) split ranges, but missing mcols
+    grsplit <- intersect(gr2split, ex)
+
+    ## (4) add mcols
+    mcols(grsplit) <-
+        mcols(gr2split)[rep(seq_len(sum(j)), ## the number of junc exons
+                            each = 2), ] ## each split in 2
+    ## (5) add back to original ranges
+    ans <- c(gr, grsplit)
+    sort(ans)
+}
 
 setGeneric("mapToGenome",
            function(x, genome, ...) standardGeneric("mapToGenome"))
@@ -66,15 +104,21 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 
     chr <- as.character(seqnames(grObj)@values)
     
-    GRanges(seqnames = rep(chr, length(peptides_on_genome)),
-            ranges = peptides_on_genome,
-            strand = strand(grObj)@values,
-            pepseq = as.character(pfeatures(pObj)[[1]]),
-            accession = seqnames(pObj)[1],
-            gene = mcols(grObj)$gene[1],
-            transcript = mcols(grObj)$transcript[1],
-            symbol = mcols(grObj)$symbol[1],
-            exonJunctions = junc)    
+    x <- GRanges(seqnames = rep(chr, length(peptides_on_genome)),
+                 ranges = peptides_on_genome,
+                 strand = strand(grObj)@values,
+                 pepseq = as.character(pfeatures(pObj)[[1]]),
+                 accession = seqnames(pObj)[1],
+                 gene = mcols(grObj)$gene[1],
+                 transcript = mcols(grObj)$transcript[1],
+                 symbol = mcols(grObj)$symbol[1],
+                 exonJunctions = junc)
+
+    if (any(mcols(x)$exonJunctions))
+        x <- splitExonJunctions(x, mcols(x)$exonJunctions, grObj)
+    mcols(x)$group <- makeGroups(mcols(x)$exonJunctions)
+    if (validObject(x))
+        return(x)
 }    
 
 
