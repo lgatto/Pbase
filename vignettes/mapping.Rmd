@@ -369,6 +369,7 @@ pepTr <- AnnotationTrack(start = start(.res),
                          id = mcols(.res)$pepseq,
                          group = mcols(.res)$group,
                          fill = ifelse(mcols(.res)$exonJunctions, "red", "steelblue"),
+                         col = NULL,
                          name = mcols(.res)$transcript[1])
 
 plotTracks(list(grTr[[ki]], pepTr))
