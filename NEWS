@@ -1,3 +1,7 @@
+CHANGES IN VERSION 0.6.8
+------------------------
+ o fix splitting exon junction ranges [2015-02-26 Thu]
+ 
 CHANGES IN VERSION 0.6.7
 ------------------------
  o The genomic coordinates of Ppeptide that overlap exon junctions are
