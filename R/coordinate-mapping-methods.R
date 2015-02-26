@@ -1,6 +1,7 @@
 makeGroups <- function(j) {
     stopifnot(sum(j) %% 2 == 0)
     n <- length(j)
+    if (n == 1) return(1)
     id <- rep(1, n)
     ni <- !j[1]
     for (i in seq(2,length(j))) {
@@ -26,7 +27,12 @@ splitExonJunctions <- function(gr, j, ex) {
     gr <- gr[!j]
 
     ## (3) split ranges, but missing mcols
-    grsplit <- intersect(gr2split, ex)
+    ## this must be done range by range, as we want to preserve
+    ## duplicated ranges and ranges that have the same start in exon i
+    ## and different ends in exon i+1, and would be split as 3 splits.
+### THIS IS VERY SLOW 
+    grsplit <- sapply(gr2split, intersect, ex)
+    grsplit <- Reduce(c, grsplit)  
 
     ## (4) add mcols
     mcols(grsplit) <-
