@@ -357,6 +357,9 @@ res <- pmapToGenome(p[k], pcgrl[ki])
 .res <- res[[1]]
 ```
 
+As shown on the next figure, peptides that span over exon junctions
+are grouped together and, below, colour-coded.
+
 ```{r pepcoords2}
 
 pepTr <- AnnotationTrack(start = start(.res),
