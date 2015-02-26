@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.6.7
+------------------------
+ o The genomic coordinates of Ppeptide that overlap exon junctions are
+   now coorectly split instead of spanning over the exon and are
+   grouped accordingly. [2015-02-26 Thu]
+ 
 CHANGES IN VERSION 0.6.6
 ------------------------
  o update mapping vignette and use alignment to identify correct

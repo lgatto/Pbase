@@ -230,7 +230,6 @@ straightforward to create a new `AnnotationTrack` and add it the the
 track visualisation.
 
 ```{r pepcoords, fig.align='center'}
-
 pepTrack <- AnnotationTrack(start = start(res),
                             end = end(res),
                             chr = chrom(res),
@@ -365,6 +364,8 @@ pepTr <- AnnotationTrack(start = start(.res),
                          chr = chrom(.res),
                          strand = strand(.res),
                          id = mcols(.res)$pepseq,
+                         group = mcols(.res)$group,
+                         fill = ifelse(mcols(.res)$exonJunctions, "red", "steelblue"),
                          name = mcols(.res)$transcript[1])
 
 plotTracks(list(grTr[[ki]], pepTr))
