@@ -105,6 +105,6 @@
         DataFrame(PeptideIndex = Rle(rep.int(seq_along(pattern)[isMatch],
                                              nmatches)),
                   ProteinIndex = Rle(rep.int(proteinIndex[isMatch], nmatches)))
-    .splitIRanges(ir, f = names(subject)[as.integer(mcols(ir)$ProteinIndex)])
+    split(ir, f = names(subject)[as.integer(mcols(ir)$ProteinIndex)])
 }
 

@@ -56,22 +56,6 @@
   unlist(x)
 }
 
-##' @param x IRanges
-##' @param f defines the grouping (see ?split)
-##' @param unshift if TRUE the IRanges will shift back to start with 1L
-##' @return a IRangesList
-##' @noRd
-.splitIRanges <- function(x, f = seq_along(x), unshift = FALSE) {
-  stopifnot(is(x, "IRanges"))
-  x <- split(unname(x), f)
-
-  if (unshift) {
-    w <- c(0L, unlist(lapply(end(x), tail, n = 1L)))
-    x <- shift(x, -head(w, -1L))
-  }
-  x
-}
-
 ##' setNames2 is similar to setNames but uses the names of the second
 ##' argument if they are available
 ##' @param object object to give names to
@@ -149,11 +133,11 @@ htcat <- function(x, n = 3) {
 ##' are on the \code{"-"} (or \code{"+"} for code{isForward}) strand.
 ##' @author Laurent Gatto
 ##' @aliases isForward
-isReverse <- function(gr) 
+isReverse <- function(gr)
     isTRUE(all(strand(gr) == "-"))
 
 ##' @rdname isReverse
-isForward <- function(gr) 
+isForward <- function(gr)
     isTRUE(all(strand(gr) == "+"))
 
 

@@ -37,7 +37,7 @@
 ##' @noRd
 .aarangesProteins <- function(x, unshift = FALSE) {
   r <- unname(as(aa(x)@ranges, "IRanges"))
-  irl <- .splitIRanges(r, unshift = unshift)
+  irl <- split(r, f = seq_along(r))
   names(irl) <- seqnames(x)
   irl
 }
