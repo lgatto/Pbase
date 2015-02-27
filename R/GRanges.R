@@ -100,14 +100,55 @@ etrid2grl <- function(etrid, ens, use.names = FALSE) {
 }
 
 
+## http://www.ensembl.org/common/Help/Glossary?db=core
+biotypes <- function(type = c("protein_coding",
+                         "pseudogene",
+                         "long_noncoding",
+                         "short_noncoding"),
+                     simplify = TRUE) {
+    type <- match.arg(type, several.ok = TRUE)
+
+    biotypes <- list(
+        protein_coding = c("IG_C_gene", "IG_D_gene", "IG_J_gene",
+            "IG_LV_gene", "IG_M_gene", "IG_V_gene", "IG_Z_gene",
+            "nonsense_mediated_decay", "nontranslating_CDS", "non_stop_decay",
+            "polymorphic_pseudogene", "protein_coding", "TR_C_gene", "TR_D_gene",
+            "TR_gene", "TR_J_gene", "TR_V_gene"),    
+        pseudogene = c("disrupted_domain", "IG_C_pseudogene",
+            "IG_J_pseudogene", "IG_pseudogene", "IG_V_pseudogene",
+            "processed_pseudogene", "pseudogene",
+            "transcribed_processed_pseudogene",
+            "transcribed_unprocessed_pseudogene",
+            "translated_processed_pseudogene",
+            "translated_unprocessed_pseudogene", "TR_J_pseudogene",
+            "TR_V_pseudogene", "unitary_pseudogene", "unprocessed_pseudogene"),
+        long_noncoding = c("3prime_overlapping_ncrna",
+            "ambiguous_orf", "antisense", "lincRNA", "ncrna_host", "non_coding",
+            "processed_transcript", "retained_intron", "sense_intronic ",
+            "sense_overlapping"),    
+        short_noncoding = c("miRNA", "miRNA_pseudogene", "misc_RNA",
+            "misc_RNA_pseudogene", "Mt_rRNA", "Mt_tRNA", "Mt_tRNA_pseudogene",
+            "ncRNA", "pre_miRNA", "RNase_MRP_RNA", "RNase_P_RNA", "rRNA",
+            "rRNA_pseudogene", "scRNA_pseudogene", "snlRNA", "snoRNA",
+            "snoRNA_pseudogene", "snRNA", "snRNA_pseudogene", "SRP_RNA", "tmRNA",
+            "tRNA", "tRNA_pseudogene"))
+    ans <- biotypes[type]
+    if (simplify) ans <- unlist(ans)
+    return(ans)
+}
+       
+
 setMethod("proteinCoding", "GRanges",
           function(object, mcol = "feature",
-                   coding = "protein_coding") {
-              sel <- mcols(object)[, mcol] == coding
+                   coding = biotypes("protein_coding")) {
+              sel <- mcols(object)[, mcol] %in% coding
               object[sel, ]
           })
 
 setMethod("proteinCoding", "GRangesList",
-          function(object, mcol = "feature", coding = "protein_coding")
+          function(object, mcol = "feature",
+                   coding = biotyes("protein_coding"))
               endoapply(object, proteinCoding))
 
+                     
+    

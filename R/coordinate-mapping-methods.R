@@ -30,14 +30,15 @@ splitExonJunctions <- function(gr, j, ex) {
     ## this must be done range by range, as we want to preserve
     ## duplicated ranges and ranges that have the same start in exon i
     ## and different ends in exon i+1, and would be split as 3 splits.
-### THIS IS VERY SLOW 
+### THIS IS VERY SLOW
     grsplit <- sapply(gr2split, intersect, ex)
+    for (i in 1:length(grsplit))
+         mcols(grsplit[[i]])$._N_ <- i
     grsplit <- Reduce(c, grsplit)  
 
     ## (4) add mcols
-    mcols(grsplit) <-
-        mcols(gr2split)[rep(seq_len(sum(j)), ## the number of junc exons
-                            each = 2), ] ## each split in 2
+    mcols(grsplit) <- mcols(gr2split)[mcols(grsplit)$._N_, ]
+
     ## (5) add back to original ranges
     ans <- c(gr, grsplit)
     sort(ans)
