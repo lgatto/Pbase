@@ -179,7 +179,16 @@ rmEmptyRanges <- function(x) {
     x[!em]
 }
 
-isCleaved <- function(x, missedCleavages = 0) 
+isCleaved <- function(x, missedCleavages = 0)
     return(!isEmpty(pranges(x)) && all(missedCleavages %in%
-                                       unlist(runValue(pmetadata(x)[, "MissedCleavages"])))) 
+                                       unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
+
+### Caution: This is based purley on IRanges. No sequence based checks are
+### involved! You have to make sure that you compare compareable sequences.
+proteinCoverage <- function(x) {
+    stopifnot(is(x, "Proteins"))
+    prtl <- width(aa(x))
+    pepl <- sapply(width(reduce(pranges(x))), sum)
+    addacol(x, "Coverage", pepl/prtl)
+}
 
