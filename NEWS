@@ -1,6 +1,8 @@
 CHANGES IN VERSION 0.6.9
 ------------------------
- o
+ o Fixing junction peptides splitting to support peptides reaching > 2
+   exons [2015-02-27 Fri]
+ o supporting more protein coding biotypes [2015-02-27 Fri]
  
 CHANGES IN VERSION 0.6.8
 ------------------------
