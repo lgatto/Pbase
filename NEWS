@@ -3,17 +3,18 @@ CHANGES IN VERSION 0.6.9
  o Fixing junction peptides splitting to support peptides reaching > 2
    exons [2015-02-27 Fri]
  o supporting more protein coding biotypes [2015-02-27 Fri]
- 
+ o rewrite and simplify proteinCoverage; closes #19 [2015-02-27 Fri]
+
 CHANGES IN VERSION 0.6.8
 ------------------------
  o fix splitting exon junction ranges [2015-02-26 Thu]
- 
+
 CHANGES IN VERSION 0.6.7
 ------------------------
- o The genomic coordinates of Ppeptide that overlap exon junctions are
-   now coorectly split instead of spanning over the exon and are
+ o The genomic coordinates of peptides that overlap exon junctions are
+   now correctly split instead of spanning over the exon and are
    grouped accordingly. [2015-02-26 Thu]
- 
+
 CHANGES IN VERSION 0.6.6
 ------------------------
  o update mapping vignette and use alignment to identify correct
@@ -26,14 +27,14 @@ CHANGES IN VERSION 0.6.5
    are is now a function [2015-02-20 Fri]
  o added accessors to Pbase:::pplot() and update Pbase-data vignette
    accordingly [2015-02-21 Sat]
- 
+
 CHANGES IN VERSION 0.6.4
 ------------------------
  o typos in man [2015-02-19 Thu]
  o Added use.names argument ot etrid2gel [2015-02-19 Thu]
  o mapToGenome,Proteins,GRangesList (remove GRanges) using names for
    1-to-many mapping and document in mapping vignette [2015-02-19 Thu]
- 
+
 CHANGES IN VERSION 0.6.3
 ------------------------
  o new fig in Pbase-data vignette [2015-02-14 Sat]
@@ -43,11 +44,11 @@ CHANGES IN VERSION 0.6.2
 ------------------------
  o Add uniprot release to p metadata [2015-02-14 Sat]
  o added a metadata update method [2015-02-14 Sat]
- 
+
 CHANGES IN VERSION 0.6.1
 ------------------------
  o [p]mapToGenome methods [2015-02-14 Sat]
- 
+
 CHANGES IN VERSION 0.6.0
 ------------------------
  o fixed typos in vigs [2015-02-12 Thu]
@@ -56,20 +57,20 @@ CHANGES IN VERSION 0.6.0
  o initial mapToGenome function [2015-02-13 Fri]
  o regenerated p data using latest UniProt release and added
    acols(p)$ENST [2015-02-13 Fri]
- 
+
 CHANGES IN VERSION 0.5.5
 ------------------------
  o various fixes in vignettes [2015-02-12 Thu]
- 
+
 CHANGES IN VERSION 0.5.4
 ------------------------
  o Ensembl - UCSC mapping vignette [2015-02-11 Wed]
-  
+
 CHANGES IN VERSION 0.5.3
 ------------------------
  o Render vignettes with rmarkdown [2015-02-11 Wed]
  o Improve mapping vignette [2015-02-11 Wed]
- 
+
 CHANGES IN VERSION 0.5.2
 ------------------------
  o Adapt to new `addIdentification` signature in MSnbase >= 1.15.5.
