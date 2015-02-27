@@ -161,7 +161,7 @@ setMethod("show", "Proteins",
 
 setMethod("aaranges",
           "Proteins",
-          function(x, unshift = FALSE) {
-              .aarangesProteins(x, unshift = unshift)
+          function(x, ...) {
+              .aarangesProteins(x, ...)
           })
 
