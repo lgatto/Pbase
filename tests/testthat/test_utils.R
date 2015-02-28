@@ -77,15 +77,3 @@ test_that(".singular", {
     expect_equal(Pbase:::.singular(x3), 1:5)
 })
 
-
-test_that("making peptide groups", {
-    expect_equal(makeGroups(c(TRUE, TRUE, FALSE, TRUE, TRUE, FALSE)),
-             c(1, 1, 2, 3, 3, 4))
-    expect_error(makeGroups(c(TRUE, TRUE, FALSE, TRUE, TRUE, TRUE)))
-    expect_error(makeGroups(c(FALSE, TRUE, FALSE, TRUE, TRUE, FALSE)))
-    expect_equal(makeGroups(c(FALSE, FALSE, FALSE, TRUE, TRUE, FALSE)),
-                 c(1, 2, 3, 4, 4, 5))
-    expect_equal(makeGroups(c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-                             FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE)),
-                 c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 12, 12))
-})
