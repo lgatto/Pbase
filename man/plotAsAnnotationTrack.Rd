@@ -35,10 +35,9 @@ Takes one of more \code{GRanges} instances as input, converts them
 to \code{AnnotationTrack} or \code{GeneRegionTrack} objects from
 the \code{Gviz} package and produces the corresponding plot. The
 \code{genome} argument controls whether additional ideogram and
-axis tracks are to be plotted.
-}
-\details{
-See \code{\link{pmapToGenome}} for example code.
+axis tracks are to be plotted. \code{plotAsAnnotationTrack} plots
+peptides that span multiple exons in red and connects them with a
+grey line. See \code{\link{pmapToGenome}} for example code.
 }
 \author{
 Laurent Gatto
