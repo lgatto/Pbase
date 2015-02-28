@@ -9,6 +9,7 @@ import(Pviz)
 import(biomaRt)
 
 importFrom(GenomicRanges, GRanges, GRangesList)
+importFrom(rtracklayer, chrom)
 
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
