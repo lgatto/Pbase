@@ -1,3 +1,8 @@
+CHANGES IN VERSION 0.6.10
+-------------------------
+ o plotting helper functions [2015-02-28 Sat]
+ o fixed peptide grouping [2015-02-28 Sat]
+ 
 CHANGES IN VERSION 0.6.9
 ------------------------
  o Fixing junction peptides splitting to support peptides reaching > 2
