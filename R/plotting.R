@@ -29,7 +29,7 @@ plotAsAnnotationTrack <- function(x, ..., genome = "hg38",
     args <- plotAsGeneRegionTrack(..., genome = genome, plot=FALSE)
     pepTrack <- AnnotationTrack(start = start(x),
                                 end = end(x),
-                                chr = rtracklayer::chrom(x),
+                                chromosome = rtracklayer::chrom(x),
                                 strand = strand(x),
                                 group = mcols(x)$group,
                                 id = mcols(x)$pepseq,
