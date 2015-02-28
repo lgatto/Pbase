@@ -1,6 +1,6 @@
-##' Takes one of more \code{GRanges} instances as input, converts them
-##' to \code{AnnotationTrack} or \code{GeneRegionTrack} objects from
-##' the \code{Gviz} package and produces the corresponding plot. The
+##' These functions convert ranges of peptides or exons to
+##' \code{AnnotationTrack} or \code{GeneRegionTrack} objects from the
+##' \code{Gviz} package and produces the corresponding plot. The
 ##' \code{genome} argument controls whether additional ideogram and
 ##' axis tracks are to be plotted. \code{plotAsAnnotationTrack} plots
 ##' peptides that span multiple exons in red and connects them with a
@@ -12,8 +12,9 @@
 ##' \code{\link{pmapToGenome}}. These ranges are converted to a
 ##' \code{AnnotationTrack}.
 ##' @param ... One or more \code{GRanges} instances, typically
-##' resulting from calling \code{\link{etrid2grl}}. These ranges are
-##' converted to \code{GeneRegionTrack} instances.
+##' resulting from calling \code{\link{etrid2grl}}, or, a single
+##' \code{GRangesList}. These ranges are converted to
+##' \code{GeneRegionTrack} instances.
 ##' @param genome A \code{character} of length 1, giving the name of
 ##' the genome. Default is \code{"hg38"}. If \code{NULL}, no
 ##' chromosome and axis tracks are displayed.
@@ -46,6 +47,8 @@ plotAsAnnotationTrack <- function(x, ..., genome = "hg38",
 plotAsGeneRegionTrack <- function(..., genome = "hg38",
                                   plot = TRUE) {
     args <- pairlist(...)
+    if (length(args) == 1 & is(args[[1]], "GRangesList"))
+        args <- args[[1]]
     stopifnot(sapply(args, is, "GRanges"))
     args <- lapply(args, GeneRegionTrack)
     if (!is.null(genome)) {
