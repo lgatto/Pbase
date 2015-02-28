@@ -63,5 +63,8 @@ export(rmEmptyRanges,
        isCleaved,
        proteinCoverage,
        proteotypic,
-       calculateHeavyLabels)
+       calculateHeavyLabels,
+       ## plotting
+       plotAsGeneRegionTrack,
+       plotAsAnnotationTrack)
 
