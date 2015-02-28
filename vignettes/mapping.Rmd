@@ -135,23 +135,7 @@ We can also plot the transcript regions inluding (`grl`) or exclusing
 (`pcgrl`) the untranslated regions.
 
 ```{r}
-plotTracks(list(GeneRegionTrack(grl[[5]]),
-                GeneRegionTrack(pcgrl[[5]])))
-```
-
-To add context, we add the ideogram of chromosome X and an axis.
-
-```{r gvizfig, fig.align='center', cache=TRUE}
-library("rtracklayer") 
-chrom(grl[[5]])
-
-grTrack <- GeneRegionTrack(grl[[5]],
-                           name = acols(p)$ENST[5])
-ideoTrack <- IdeogramTrack(genome = "hg38",
-                           chromosome = "chrX")
-axisTrack <- GenomeAxisTrack()
-plotTracks(list(ideoTrack, axisTrack, grTrack),
-           add53 = TRUE, add35 = TRUE)
+plotAsGeneRegionTrack(grl[[5]], pcgrl[[5]])
 ```
 
 ## Mapping peptides back to the genome
@@ -160,7 +144,6 @@ The aim of this document is to document the mapping of peptides,
 i.e. ranges along a protein sequence to ranges along the genome
 reference. In other words, our aim is the convert protein coordinates
 to genome coordinates.
-
 
 ### Comparing protein and translated DNA sequences
 
@@ -220,7 +203,7 @@ using the `mapToGenome` function.
 
 ```{r map}
 res <- mapToGenome(p[5], pcgrl[5])
-(res <- res[[1]])
+res[[1]]
 ```
 
 ### Plotting
@@ -230,19 +213,7 @@ straightforward to create a new `AnnotationTrack` and add it the the
 track visualisation.
 
 ```{r pepcoords, fig.align='center'}
-pepTrack <- AnnotationTrack(start = start(res),
-                            end = end(res),
-                            chr = chrom(res),
-                            strand = strand(res),
-                            id = mcols(res)$pepseq,
-                            name = paste0(seqnames(p[5]),
-                                " peptides"))
-
-plotTracks(list(ideoTrack, axisTrack, grTrack, pepTrack),
-           groupAnnotation = "id",
-           just.group = "below",
-           fontsize.group = 9,
-           add53 = TRUE, add35 = TRUE)
+plotAsAnnotationTrack(res[[1]], grl[[5]])
 ```
 
 ### Detailed annotation track
@@ -263,6 +234,7 @@ details <- function(identifier, ...) {
     print(p, newpage=FALSE)
 }
 
+res <- res[[1]]
 deTrack <- AnnotationTrack(start = start(res),
                            end = end(res),
                            genome = "hg38", chromosom = "chrX",
@@ -270,6 +242,11 @@ deTrack <- AnnotationTrack(start = start(res),
                            name = "MS2 spectra",
                            stacking = "squish", fun = details)
 
+grTrack <- GeneRegionTrack(grl[[5]],
+                           name = acols(p)$ENST[5])
+ideoTrack <- IdeogramTrack(genome = "hg38",
+                           chromosome = "chrX")
+axisTrack <- GenomeAxisTrack()
 
 plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
            add53 = TRUE, add35 = TRUE)
@@ -319,10 +296,7 @@ pcgrl <- proteinCoding(grl)
 ```
 
 ```{r plot5}
-grTr <- lapply(pcgrl, function(i)
-    GeneRegionTrack(i, name = mcols(i)$transcript[1]))
-
-plotTracks(grTr)
+plotAsGeneRegionTrack(pcgrl)
 ```
 
 ### Descriminating transcripts
@@ -354,25 +328,13 @@ stopifnot(eid[ki] == acols(p)$ENST[k])
 
 ```{r map2}
 res <- pmapToGenome(p[k], pcgrl[ki])
-.res <- res[[1]]
 ```
 
 As shown on the next figure, peptides that span over exon junctions
 are grouped together and, below, colour-coded.
 
 ```{r pepcoords2}
-
-pepTr <- AnnotationTrack(start = start(.res),
-                         end = end(.res),
-                         chr = chrom(.res),
-                         strand = strand(.res),
-                         id = mcols(.res)$pepseq,
-                         group = mcols(.res)$group,
-                         fill = ifelse(mcols(.res)$exonJunctions, "red", "steelblue"),
-                         col = NULL,
-                         name = mcols(.res)$transcript[1])
-
-plotTracks(list(grTr[[ki]], pepTr))
+plotAsAnnotationTrack(res[[1]], pcgrl[[ki]])
 ```
 
 One can also apply a many-to-one mapping approach to all proteins in
