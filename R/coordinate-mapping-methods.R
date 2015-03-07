@@ -82,7 +82,9 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
                           width = width(peprngProt) * 3)
 
     ## find exon and position in prex (3)
+    ## In which exon does the i-th peptide start?
     start_ex <- subjectHits(findOverlaps(start(peprngCdna), prex))
+    ## In which exon does the i-th peptide end?
     end_ex <- subjectHits(findOverlaps(end(peprngCdna), prex))
 
     junc <- start_ex != end_ex
