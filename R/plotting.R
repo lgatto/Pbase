@@ -28,18 +28,16 @@ plotAsAnnotationTrack <- function(x, ..., genome = "hg38",
                                   plot = TRUE) {
     stopifnot(is(x, "GRanges"))
     args <- plotAsGeneRegionTrack(..., genome = genome, plot=FALSE)
-    pepTrack <- AnnotationTrack(start = start(x),
-                                end = end(x),
-                                chromosome = rtracklayer::chrom(x),
-                                strand = strand(x),
+    pepTrack <- AnnotationTrack(x,
                                 group = mcols(x)$group,
                                 id = mcols(x)$pepseq,
-                                fill = ifelse(mcols(x)$exonJunctions,
-                                    "red", "steelblue"),
                                 col = NULL,
+                                groupAnnotation = "id",
                                 name = "peptides")
+    feature(pepTrack) <- ifelse(mcols(x)$exonJunctions,
+                                "exex", "ex")
     args <- c(args, pepTrack)
-    if (plot) plotTracks(args, groupAnnotation = "id")
+    if (plot) plotTracks(args, exex = "red", ex = "steelblue")
     invisible(args)
 }
 
