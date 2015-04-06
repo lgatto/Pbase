@@ -81,26 +81,26 @@ library("biomaRt")
 ens <- useMart("ensembl", "dmelanogaster_gene_ensembl")
 
 select(ens, keys = "P53501",
-       keytype = "uniprot_swissprot_accession",
+       keytype = "uniprot_swissprot",
        columns = c(columns(ens)[1:12],
-           "uniprot_swissprot_accession"))
+           "uniprot_swissprot"))
 
 select(ens, keys = "ACT3_DROME",
        keytype = "uniprot_swissprot",
        columns = c(columns(ens)[1:12],
-           "uniprot_swissprot_accession"))
+           "uniprot_swissprot"))
 
 ens <- useMart("ensembl", "hsapiens_gene_ensembl")
 
 select(ens, keys = "P60709",
-       keytype = "uniprot_swissprot_accession",
+       keytype = "uniprot_swissprot",
        columns = c(columns(ens)[1:12],
-           "uniprot_swissprot_accession"))
+           "uniprot_swissprot"))
 
 select(ens, keys = "ACTB_HUMAN",
        keytype = "uniprot_swissprot",
        columns = c(columns(ens)[1:12],
-           "uniprot_swissprot_accession"))
+           "uniprot_swissprot"))
 
 
 
@@ -139,7 +139,7 @@ bm <- select(ens, keys = "DTX4_MOUSE",
                  ## "exon_chrom_start",
                  ## "exon_chrom_end",
                  ## "rank",
-                 ## "uniprot_swissprot_accession",
+                 ## "uniprot_swissprot",
                  ## "uniprot_swissprot",
                  ## "gene_exon",
                  ## "cdna",
