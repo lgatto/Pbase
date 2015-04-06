@@ -68,9 +68,9 @@ ens <- useMart("ensembl", "hsapiens_gene_ensembl")
 ens
 
 bm <- select(ens, keys = seqnames(p),
-             keytype = "uniprot_swissprot_accession",
+             keytype = "uniprot_swissprot",
              columns = c(
-                 "uniprot_swissprot_accession",
+                 "uniprot_swissprot",
                  "hgnc_symbol",
                  "ensembl_transcript_id"))
 
@@ -277,7 +277,7 @@ possible transcript identifiers, including the identifier of interest
 `r acols(p)$ENST[k]`.
 
 ```{r remindbm}
-sel <- bm$uniprot_swissprot_accession == seqnames(p)[k]
+sel <- bm$uniprot_swissprot == seqnames(p)[k]
 bm[sel, ]
 acols(p)$ENST[k]
 ```
