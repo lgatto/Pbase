@@ -147,7 +147,7 @@ setMethod("proteinCoding", "GRanges",
 
 setMethod("proteinCoding", "GRangesList",
           function(object, mcol = "feature",
-                   coding = biotyes("protein_coding"))
+                   coding = biotypes("protein_coding"))
               endoapply(object, proteinCoding))
 
                      
