@@ -124,6 +124,10 @@ Maybe support for the annotation of detection of protein domains.
 
 See the [`mapping`](http://bioconductor.org/packages/devel/bioc/vignettes/Pbase/inst/doc/mapping.html) vignette.
 
+See also
+[this document](https://github.com/ComputationalProteomicsUnit/Intro-Integ-Omics-Prot/blob/master/mapping.md)
+for additional examples and integration with RNA-seq data.
+
 ## Interoperability
 
 The package allows to easily interact with `AAString` and
