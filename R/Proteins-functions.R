@@ -54,7 +54,6 @@
 
   if (par@IdReader == "mzID") {
       y <- mzID(filenames)
-      n <- sapply(y@data, length)
       y <- flatten(y)
 
       an <- y$accession
