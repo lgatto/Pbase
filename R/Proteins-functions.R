@@ -110,7 +110,7 @@
       .irl[names(spir)] <- spir
       x@pranges <- .irl
   }
-  x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
+  x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
   x
 }
 
@@ -129,7 +129,7 @@
 }
 
 .plotProteins <- function(object, from = 1L,
-                          to = max(elementLengths(object@aa)), ...) {
+                          to = max(elementNROWS(object@aa)), ...) {
 
   nTracks <- 3L
   tracks <- vector(mode="list", length=length(object) * nTracks)
@@ -173,7 +173,7 @@ proteotypic <- function(x) {
 
 
 rmEmptyRanges <- function(x) {
-    lns <- elementLengths(pranges(x));
+    lns <- elementNROWS(pranges(x));
     em <- lns == 0
     x[!em]
 }

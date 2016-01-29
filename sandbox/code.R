@@ -9,8 +9,8 @@ p2 <- addIdentificationData(p0, "~/Data2/Thermo_HELA_PRT/Thermo_Hela_PRTC_1.mzid
                             FALSE)
 
 ## only 10 proteins, chosen as follows
-## lns <- elementLengths(pranges(p0))
-## plns <- elementLengths(aa(p0))
+## lns <- elementNROWS(pranges(p0))
+## plns <- elementNROWS(aa(p0))
 ## i <- which(lns > 20)
 ## j <- which(lns < 6 & lns > 3)
 ## c(i[1:5], j[1:5])
