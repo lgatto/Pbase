@@ -90,7 +90,7 @@
     }
 
     matches <- unlist(l)
-    nmatches <- elementLengths(l)
+    nmatches <- elementNROWS(l)
     nchars <- rep.int(nchar(pattern), nmatches)
 
     isMatch <- matches != -1

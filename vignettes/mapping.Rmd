@@ -115,7 +115,7 @@ pcgrl
 
 ```{r echo=FALSE}
 pp <- p[5]
-n <- elementLengths(pranges(pp))
+n <- elementNROWS(pranges(pp))
 pepstring <- paste(unique(pcols(pp)[[1]]$pepseq), collapse = ", ")
 ```
 
