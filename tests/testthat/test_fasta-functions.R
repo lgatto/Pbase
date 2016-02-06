@@ -164,4 +164,3 @@ test_that(".isValidAccesionNumber", {
   result <- c(rep(TRUE, 5L) , rep(FALSE, 3))
   expect_identical(Pbase:::.isValidAccessionNumber(acn), result)
 })
-
