@@ -160,11 +160,8 @@ proteotypic <- function(x) {
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
-
 rmEmptyRanges <- function(x) {
-    lns <- elementLengths(pranges(x));
-    em <- lns == 0
-    x[!em]
+    x[as.logical(elementLengths(pranges(x)))]
 }
 
 isCleaved <- function(x, missedCleavages = 0)
