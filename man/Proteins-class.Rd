@@ -113,7 +113,7 @@
 
   See \code{news(package = "Pbase")} for a description of all changes.
 
-  Other possible metadata fields: \code{Uniprot.SW}, \code{biomaRt}
+  Other possible metadata fields: \code{Uniprot.sw}, \code{biomaRt}
   instances.
 
 }
@@ -227,7 +227,7 @@
     \item{isCleaver}{\code{signature(x = "Proteins", missedCleavages =
 	"numeric")}: Tests whether a Protein object was cleaved
       already.}
-  
+
   }
 }
 
