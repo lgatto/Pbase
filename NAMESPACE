@@ -48,6 +48,7 @@ exportMethods(
     cleave,
     plot,
     addIdentificationData,
+    addPeptideFragments,
     pfilter,
     ## mapping
     mapToGenome,

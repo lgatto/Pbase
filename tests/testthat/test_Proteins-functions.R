@@ -10,3 +10,14 @@ test_that("proteinCoverage", {
     expect_equal(acols(proteinCoverage(p))$Coverage, c(P1=1, P2=0.75, P3=0))
 })
 
+test_that("rmEmptyRanges", {
+    p <- Proteins()
+    p@aa <- AAStringSet(c(P1="ABCDEF", P2="ABCD", P3="HIJKL"))
+    p@pranges <- IRangesList(P1=IRanges(1, 6), P2=IRanges(1, 3), P3=IRanges())
+
+    pr <- Proteins()
+
+    pr@aa <- AAStringSet(c(P1="ABCDEF", P2="ABCD"))
+    pr@pranges <- IRangesList(P1=IRanges(1, 6), P2=IRanges(1, 3))
+    expect_equal(rmEmptyRanges(p), pr)
+})

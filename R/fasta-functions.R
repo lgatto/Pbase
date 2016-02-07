@@ -122,7 +122,5 @@
   fastaMetaData <- .addColumn(fastaMetaData, "Filename", filenames)
 
   mcols(x) <- fastaMetaData
-
-  return(x)
+  x
 }
-
