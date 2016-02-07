@@ -81,8 +81,8 @@
                                           lengths = lengths(irl))
   }
 
-  x@pranges[unique(mcols(ir)$ProteinIndex)] <-
-      split(ir, mcols(ir)$ProteinIndex)
+  nms <- sort(unique(names(ir)))
+  x@pranges[nms] <- split(ir, names(ir))
   x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
 
   if (rmEmptyRanges) {
