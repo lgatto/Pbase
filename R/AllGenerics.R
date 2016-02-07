@@ -33,6 +33,9 @@ setGeneric("avarLabels", function(object, ...) standardGeneric("avarLabels"))
 ## replacement
 
 ## methods
+if (is.null(getGeneric("addPeptideFragments")))
+  setGeneric("addPeptideFragments",
+             function(object, filenames, ...) standardGeneric("addPeptideFragments"))
 if (is.null(getGeneric("cleave")))
   setGeneric("cleave", function(x, ...) standardGeneric("cleave"))
   setGeneric("plot", function(x, y, ...) standardGeneric("plot"))

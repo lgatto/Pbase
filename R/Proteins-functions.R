@@ -1,24 +1,6 @@
 ## constructors
 .ProteinsFromFasta <- function(filenames, ...) {
-  isExistingFile <- file.exists(filenames)
-
-  if (any(!isExistingFile)) {
-    stop("The file(s) ", paste0(sQuote(filenames[!isExistingFile]),
-                                collapse = ","), " do(es) not exist!")
-  }
-
-  ## readAAStringSet can handle multiple input files but we want to know which
-  ## entry belongs to which file (and this information is not stored).
-  aa <- lapply(filenames, readAAStringSet, ...)
-  filenames <- Rle(factor(filenames), lengths = sapply(aa, length))
-
-  aa <- do.call(c, aa)
-  aa <- .addFastaInformation2mcol(aa, fastacomments = names(aa),
-                                  filenames = filenames)
-
-  ## we reorder the new Proteins object by the seqnames (AccessionNumber)
-  names(aa) <- mcols(aa)$AccessionNumber
-  aa <- aa[order(names(aa))]
+  aa <- .readAAStringSet(filenames, ...)
 
   ## pranges should have the same order and the same names
   pranges <- IRangesList(replicate(length(aa), IRanges()))
@@ -95,23 +77,42 @@
       if (v) message("done.")
 
       ir <- Reduce(c, irl)
-      ir@elementMetadata$filenames <-
-          Rle(factor(filenames), lengths = sapply(irl, length))
+      ir@elementMetadata$filenames <- Rle(factor(filenames),
+                                          lengths = lengths(irl))
   }
-  if (rmEmptyRanges) {
-      x@pranges <- split(ir, names(ir))
-      nms <- names(x@pranges)
-      x@aa <- aa(x)[nms]
-  } else {
-      n <- length(x)
-      .irl <- IRangesList(replicate(n, IRanges()))
-      names(.irl) <- seqnames(x)
-      spir <- split(ir, names(ir))
-      .irl[names(spir)] <- spir
-      x@pranges <- .irl
-  }
+
+  nms <- sort(unique(names(ir)))
+  x@pranges[nms] <- split(ir, names(ir))
   x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
+
+  if (rmEmptyRanges) {
+      x <- rmEmptyRanges(x)
+  }
   x
+}
+
+##' @param x
+##' @param filenames fasta files
+##' @return a modified Proteins object
+##' @noRd
+.addPeptideFragmentsProteins <- function(x, filenames, rmEmptyRanges, par) {
+    if (!isEmpty(x@pranges)) {
+        stop("The ", sQuote("pranges"), " slot is not empty! ",
+            "No ranges and metadata could be added.")
+    }
+    fragments <- .readAAStringSet(filenames)
+
+    ir <- unlist(.peptidePosition(fragments, x@aa))
+    mcols(ir) <- cbind(mcols(fragments)[mcols(ir)$PeptideIndex, ],
+                       mcols(ir))
+    x@pranges[unique(mcols(ir)$ProteinIndex)] <-
+        split(ir, mcols(ir)$ProteinIndex)
+    x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
+
+    if (rmEmptyRanges) {
+        x <- rmEmptyRanges(x)
+    }
+    x
 }
 
 ##' @param x Proteins object
@@ -171,11 +172,8 @@ proteotypic <- function(x) {
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
-
 rmEmptyRanges <- function(x) {
-    lns <- elementNROWS(pranges(x));
-    em <- lns == 0
-    x[!em]
+    x[as.logical(elementNROWS(pranges(x)))]
 }
 
 isCleaved <- function(x, missedCleavages = 0)
