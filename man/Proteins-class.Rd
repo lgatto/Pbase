@@ -41,6 +41,7 @@
 
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins,character-method}
+\alias{addPeptideFragments,Proteins,character-method}
 
 \alias{rmEmptyRanges}
 \alias{proteotypic}
@@ -198,7 +199,17 @@
 
     \item{addIdentificationData}{\code{signature(object = "Proteins",
 	id = "character", rmEmptyRanges = "logical", par =
-	"Pparams")}: ... }
+	"Pparams")}: Adds identification data from an IdentMzMl file (\code{id})
+    to the Proteins \code{object}. If \code{rmEmptyRanges} is \code{TRUE}
+    proteins without any identification data are removed. See
+    \code{\linkS4class{Pparams}} for further settings.}
+
+    \item{addPeptideFragments}{\code{signature(object = "Proteins",
+	filenames = "character", rmEmptyRanges = "logical", par =
+	"Pparams")}: Adds identification data from a fasta file (\code{filenames})
+    to the Proteins \code{object}. If \code{rmEmptyRanges} is \code{TRUE}
+    proteins without any identification data are removed. See
+    \code{\linkS4class{Pparams}} for further settings.}
 
     \item{plot}{\code{signature(x = "Proteins", y = "missing")}: Plots
       all proteins and associated peptides using the

@@ -22,3 +22,70 @@ test_that("isCleaved", {
     expect_true(isCleaved(cleave(p, missedCleavages = 2), missedCleavages = 2))
 })
 
+test_that("addPeptideFragments", {
+    fasta <- file.path(system.file("extdata", package = "Pbase"),
+                       "01_test_database.fasta")
+    fragments <- tempfile(fileext=".fasta")
+    on.exit(unlink(fragments))
+
+    p <- Proteins(fasta)
+
+    irl <- IRangesList(P1=IRanges(c(8, 1), c(10, 4)),
+                       P2=IRanges(),
+                       P3=IRanges(c(2, 10), c(4, 15)))
+
+    writeLines(c(">td|P1|PEP1 peptide 1, length 3 OS=machina arithmetica GN=g1 PE=1 SV=1",
+                 "KDE",
+                 ">td|P1|PEP2 peptide 2, length 4 OS=machina arithmetica GN=g1 PE=1 SV=1",
+                 "AKAK",
+                 ">td|P1|PEP3 peptide 3, length 4 OS=machina arithmetica GN=g1 PE=1 SV=1",
+                 "ZZZ",
+                 ">td|P3|PEP4 peptide 4, length 3 OS=machina arithmetica GN=g3 PE=1 SV=1",
+                 "KKL",
+                 ">td|P4|PEP5 peptide 5, length 3 OS=machina arithmetica GN=g4 PE=1 SV=1",
+                 "ABC",
+                 ">td|P3|PEP6 peptide 6, length 6 OS=machina arithmetica GN=g3 PE=1 SV=1",
+                 "OPQRST"), fragments)
+
+    df <- DataFrame(
+        DB = Rle(factor(rep("td", 4))),
+        AccessionNumber = paste0("P", rep(c(1, 3), each=2)),
+        EntryName = paste0("PEP", c(1:2, 4, 6)),
+        IsoformName = Rle(rep(NA_character_, 4)),
+        ProteinName = c("peptide 1, length 3",
+                        "peptide 2, length 4",
+                        "peptide 4, length 3",
+                        "peptide 6, length 6"),
+        OrganismName = Rle(factor("machina arithmetica")),
+        GeneName = Rle(factor(rep(c(1, 2), each=2),
+                              labels = paste0("g", c(1, 3:4)),
+                              levels = 1:3)),
+        ProteinExistence = Rle(factor(rep(1, 4),
+            labels = c("Evidence at protein level",
+                "Evidence at transcript level",
+                "Inferred from homology",
+                "Predicted",
+                "Uncertain"),
+            levels = 1L:5L)),
+        SequenceVersion = Rle(rep("1", 4)),
+        Comment = Rle(c(rep(NA_character_, 4))),
+        Filename = Rle(factor(rep(fragments, 4))),
+        PeptideIndex = Rle(c(1, 2, 4, 5)),
+        ProteinIndex = Rle(rep(c(1, 3), each=2)))
+
+    pr <- pranges(addPeptideFragments(p, fragments))
+    expect_true(length(pr) == 2)
+    expect_true(all(unlist(pr) == unlist(irl)))
+    expect_equal(mcols(pr[[1]]), df[1:2, ])
+    expect_equal(mcols(pr[[2]]), df[3:4, ])
+
+    pr <- pranges(addPeptideFragments(p, fragments, rmEmptyRanges=FALSE))
+    expect_true(length(pr) == 3)
+    expect_true(all(unlist(pr) == unlist(irl)))
+    expect_equal(mcols(pr[[1]]), df[1:2, ])
+    expect_equal(mcols(pr[[2]]), df[0, ])
+    expect_equal(mcols(pr[[3]]), df[3:4, ])
+
+    expect_error(addPeptideFragments(p, "foobar"),
+                 "The file\\(s\\) .*foobar.* do\\(es\\) not exist!")
+})

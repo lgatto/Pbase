@@ -100,7 +100,24 @@
 ##' @param filenames fasta files
 ##' @return a modified Proteins object
 ##' @noRd
-.addPeptideFragments <- function(x, filenames, rmEmptyRanges, par) {
+.addPeptideFragmentsProteins <- function(x, filenames, rmEmptyRanges, par) {
+    if (!isEmpty(x@pranges)) {
+        stop("The ", sQuote("pranges"), " slot is not empty! ",
+            "No ranges and metadata could be added.")
+    }
+    fragments <- .readAAStringSet(filenames)
+
+    ir <- unlist(.peptidePosition(fragments, x@aa))
+    mcols(ir) <- cbind(mcols(fragments)[mcols(ir)$PeptideIndex, ],
+                       mcols(ir))
+    x@pranges[unique(mcols(ir)$ProteinIndex)] <-
+        split(ir, mcols(ir)$ProteinIndex)
+    x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
+
+    if (rmEmptyRanges) {
+        x <- rmEmptyRanges(x)
+    }
+    x
 }
 
 ##' @param x Proteins object

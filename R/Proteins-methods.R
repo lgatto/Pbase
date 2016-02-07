@@ -99,10 +99,17 @@ setMethod("aa", "Proteins", function(x) x@aa)
 setMethod("addIdentificationData",
           c("Proteins", "character"),
           function(object, id, rmEmptyRanges = TRUE, par = Pparams()) {
-              message(id)
               .addIdentificationDataProteins(object, filenames = id,
                                              rmEmptyRanges = rmEmptyRanges,
                                              par = par)
+          })
+
+setMethod("addPeptideFragments",
+          c("Proteins", "character"),
+          function(object, filenames, rmEmptyRanges = TRUE, par = Pparams()) {
+              .addPeptideFragmentsProteins(object, filenames = filenames,
+                                           rmEmptyRanges = rmEmptyRanges,
+                                           par = par)
           })
 
 setMethod("cleave", "Proteins",

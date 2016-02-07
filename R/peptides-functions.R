@@ -93,7 +93,7 @@
     nmatches <- elementLengths(l)
     nchars <- rep.int(nchar(pattern), nmatches)
 
-    isMatch <- matches != -1
+    isMatch <- !is.na(matches) & matches != -1
 
     matches <- matches[isMatch]
     nmatches <- nmatches[isMatch]
