@@ -13,7 +13,7 @@ system.time(
 )
 
 cv <- acols(pc)$Coverage
-n <- elementLengths(aa(pc))
+n <- elementNROWS(aa(pc))
 
 par(mfrow = c(2, 2))
 boxplot(cv)

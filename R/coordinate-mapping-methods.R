@@ -134,7 +134,7 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
                   l[[i]] <- tryCatchMapToGenome(x[i], genome[[i]], ...)
               ans <- GRangesList(l)
               if (drop.empty.ranges)
-                  ans <- ans[elementLengths(ans) > 0] 
+                  ans <- ans[elementNROWS(ans) > 0] 
               if (validObject(ans))
                   return(ans)
           })

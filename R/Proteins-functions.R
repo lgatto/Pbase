@@ -83,7 +83,7 @@
 
   nms <- sort(unique(names(ir)))
   x@pranges[nms] <- split(ir, names(ir))
-  x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
+  x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
 
   if (rmEmptyRanges) {
       x <- rmEmptyRanges(x)
@@ -107,7 +107,7 @@
                        mcols(ir))
     x@pranges[unique(mcols(ir)$ProteinIndex)] <-
         split(ir, mcols(ir)$ProteinIndex)
-    x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
+    x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
 
     if (rmEmptyRanges) {
         x <- rmEmptyRanges(x)
@@ -130,7 +130,7 @@
 }
 
 .plotProteins <- function(object, from = 1L,
-                          to = max(elementLengths(object@aa)), ...) {
+                          to = max(elementNROWS(object@aa)), ...) {
 
   nTracks <- 3L
   tracks <- vector(mode="list", length=length(object) * nTracks)
@@ -173,7 +173,7 @@ proteotypic <- function(x) {
 }
 
 rmEmptyRanges <- function(x) {
-    x[as.logical(elementLengths(pranges(x)))]
+    x[as.logical(elementNROWS(pranges(x)))]
 }
 
 isCleaved <- function(x, missedCleavages = 0)

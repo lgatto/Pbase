@@ -42,7 +42,7 @@ setClass("Proteins",
 
     if (!is.null(object@pranges@unlistData@elementMetadata) &&
         nrow(object@pranges@unlistData@elementMetadata) !=
-        sum(elementLengths(object@pranges))) {
+        sum(elementNROWS(object@pranges))) {
         msg <- validMsg(msg, paste0("Number of rows in the pmetadata and the ",
                                     "number of IRanges in @pranges do not ",
                                     "match!"))

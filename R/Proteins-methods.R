@@ -69,7 +69,7 @@ setReplaceMethod("metadata", "Proteins",
 setMethod("pmetadata", "Proteins",
           function(x) {
               if (!is.null(x@pranges@unlistData@elementMetadata)) {
-                  f <- rep.int(seqnames(x), elementLengths(x@pranges))
+                  f <- rep.int(seqnames(x), elementNROWS(x@pranges))
                   split(x@pranges@unlistData@elementMetadata, f)
               } else {
                   return(NULL)
