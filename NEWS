@@ -1,7 +1,11 @@
+CHANGES IN VERSION 0.9.2
+------------------------
+ o add addPeptideFragments; see #24 for details [2016-02-07 Sun]
+
 CHANGES IN VERSION 0.9.1
 ------------------------
- o update cleave method to address build error <2015-10-13 Tue>
- 
+ o update cleave method to address build error [2015-10-13 Tue]
+
 CHANGES IN VERSION 0.9.0
 ------------------------
  o Bioc devel 3.2
@@ -9,7 +13,7 @@ CHANGES IN VERSION 0.9.0
 CHANGES IN VERSION 0.8.0
 ------------------------
  o Bioc release 3.1
- 
+
 CHANGES IN VERSION 0.6.13
 -------------------------
  o Updating Biomart query to reflect changes [2015-04-06 Mon]
@@ -17,16 +21,16 @@ CHANGES IN VERSION 0.6.13
 CHANGES IN VERSION 0.6.12
 -------------------------
  o Fix filling in tracks plots [2015-03-07 Sat]
- 
+
 CHANGES IN VERSION 0.6.11
 -------------------------
  o Documentation for the plotting heler functions [2015-02-28 Sat]
- 
+
 CHANGES IN VERSION 0.6.10
 -------------------------
  o plotting helper functions [2015-02-28 Sat]
  o fixed peptide grouping [2015-02-28 Sat]
- 
+
 CHANGES IN VERSION 0.6.9
 ------------------------
  o Fixing junction peptides splitting to support peptides reaching > 2
