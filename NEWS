@@ -1,6 +1,20 @@
-CHANGES IN VERSION 0.9.2
-------------------------
+CHANGES IN VERSION 0.11.2
+-------------------------
  o add addPeptideFragments; see #24 for details [2016-02-07 Sun]
+
+CHANGES IN VERSION 0.11.1
+-------------------------
+ o elementLengths was renamed -> elementNROWS in S4Vectors (new name
+   reflects TRUE semantic, old name will be deprecated soon) [r113044
+   | hpages@fhcrc.org | 2016-01-29 01:22:03 +0000 (Fri, 29 Jan 2016)]
+
+CHANGES IN VERSION 0.11.0
+-------------------------
+ o New Bioc devel version
+
+CHANGES IN VERSION 0.10.0
+-------------------------
+ o New Bioc release version
 
 CHANGES IN VERSION 0.9.1
 ------------------------
