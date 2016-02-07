@@ -77,22 +77,17 @@
       if (v) message("done.")
 
       ir <- Reduce(c, irl)
-      ir@elementMetadata$filenames <-
-          Rle(factor(filenames), lengths = sapply(irl, length))
+      ir@elementMetadata$filenames <- Rle(factor(filenames),
+                                          lengths = lengths(irl))
   }
-  if (rmEmptyRanges) {
-      x@pranges <- split(ir, names(ir))
-      nms <- names(x@pranges)
-      x@aa <- aa(x)[nms]
-  } else {
-      n <- length(x)
-      .irl <- IRangesList(replicate(n, IRanges()))
-      names(.irl) <- seqnames(x)
-      spir <- split(ir, names(ir))
-      .irl[names(spir)] <- spir
-      x@pranges <- .irl
-  }
+
+  x@pranges[unique(mcols(ir)$ProteinIndex)] <-
+      split(ir, mcols(ir)$ProteinIndex)
   x@aa@elementMetadata$npeps <- elementLengths(pranges(x))
+
+  if (rmEmptyRanges) {
+      x <- rmEmptyRanges(x)
+  }
   x
 }
 
