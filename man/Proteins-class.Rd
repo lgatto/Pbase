@@ -41,6 +41,7 @@
 
 \alias{cleave,Proteins-method}
 \alias{addIdentificationData,Proteins,character-method}
+\alias{addPeptideFragments}
 \alias{addPeptideFragments,Proteins,character-method}
 
 \alias{rmEmptyRanges}
@@ -207,7 +208,10 @@
     \item{addPeptideFragments}{\code{signature(object = "Proteins",
 	filenames = "character", rmEmptyRanges = "logical", par =
 	"Pparams")}: Adds identification data from a fasta file (\code{filenames})
-    to the Proteins \code{object}. If \code{rmEmptyRanges} is \code{TRUE}
+    to the Proteins \code{object}. Please note that both fasta files (the origin
+    of the Proteins \code{object} and the ones given in \code{filenames}) must
+    share the same Uniprot accession numbers.
+    If \code{rmEmptyRanges} is \code{TRUE}
     proteins without any identification data are removed. See
     \code{\linkS4class{Pparams}} for further settings.}
 
