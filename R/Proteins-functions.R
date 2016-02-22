@@ -189,3 +189,17 @@ proteinCoverage <- function(x) {
     addacol(x, "Coverage", pepl/prtl)
 }
 
+
+##' .. content for \description{} (no empty lines) ..
+##'
+##' @param object An object of class Proteins
+##' @param value A new pranges of class CompressedIRangesList
+##' @return Proteins object with updated pranges
+##' @noRd
+replacePranges <- function(object, value) {
+    if (length(pranges(object)) != length(value))
+        stop("Length of replacement pranges differs from current pranges.")
+    object@pranges <- value
+    if (validObject(object))
+        return(object)
+}

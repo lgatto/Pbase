@@ -51,6 +51,11 @@ setMethod("pfeatures", "Proteins",
 setMethod("pranges", "Proteins",
           function(x) x@pranges)
 
+setReplaceMethod("pranges",
+                 c("Proteins", "CompressedIRangesList"),
+                 function(object, value)
+                     replacePranges(object, value))
+
 setMethod("length", "Proteins",
           function(x) length(x@aa))
 
