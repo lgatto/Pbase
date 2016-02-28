@@ -89,3 +89,12 @@ test_that("addPeptideFragments", {
     expect_error(addPeptideFragments(p, "foobar"),
                  "The file\\(s\\) .*foobar.* do\\(es\\) not exist!")
 })
+
+
+test_that("pranges replacement", {
+    ## TODO
+})
+
+test_that("acols replacement", {
+    ## TODO
+})
