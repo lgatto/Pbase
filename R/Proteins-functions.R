@@ -215,7 +215,3 @@ replaceAcols <- function(object, value) {
         return(object)
 }
 
-## setReplaceMethod("acols",
-##                  c("Proteins", "DataFrame"),
-##                  function(object, value)
-##                      replaceAcols(object, value))

@@ -56,6 +56,11 @@ setReplaceMethod("pranges",
                  function(object, value)
                      replacePranges(object, value))
 
+setReplaceMethod("acols",
+                 c("Proteins", "DataFrame"),
+                 function(object, value)
+                     replaceAcols(object, value))
+
 setMethod("length", "Proteins",
           function(x) length(x@aa))
 
@@ -176,4 +181,3 @@ setMethod("aaranges",
           function(x, ...) {
               .aarangesProteins(x, ...)
           })
-
