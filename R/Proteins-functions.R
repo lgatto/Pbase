@@ -197,7 +197,7 @@ proteinCoverage <- function(x) {
 replacePranges <- function(object, value) {
     if (length(pranges(object)) != length(value))
         stop("Length of replacement pranges differs from current ones.")
-    if (!identical(names(object@pranges, names(values))))
+    if (!identical(names(object@pranges), names(value)))
         stop("Names of replacement pranges differ from current ones.")
     object@pranges <- value
     if (validObject(object))
