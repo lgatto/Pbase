@@ -204,13 +204,17 @@ replacePranges <- function(object, value) {
         return(object)
 }
 
+##' @param object An object of class Proteins
+##' @param value A new acols of class DataFrame
+##' @return Proteins object with updated pranges
+##' @noRd
 replaceAcols <- function(object, value) {
     if (nrow(acols(object)) != nrow(value))
         stop("Number of rows of replacement acols differ from current ones.")
     if (!is.null(rownames(acols(object))) &&
          !identical(rownames(acols(object)), rownames(values)))
         stop("Row names of replacement acols differ from current ones.")
-    mcols(object@aa) <- tmp
+    mcols(object@aa) <- value
     if (validObject(object))
         return(object)
 }

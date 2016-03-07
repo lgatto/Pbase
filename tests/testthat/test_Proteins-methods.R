@@ -100,7 +100,7 @@ test_that("pranges replacement", {
                        P3=IRanges(3, 4))
     pranges(pm) <- irl
     expect_equal(pranges(pm), irl)
-    expect_error(pranges(p) <- irl[3:1]),
+    expect_error(pranges(p) <- irl[3:1],
                  "Names of replacement pranges differ from current ones.")
 
     pc <- cleave(p)
@@ -114,5 +114,16 @@ test_that("pranges replacement", {
 })
 
 test_that("acols replacement", {
-    ## TODO
+    expect_error(acols(p) <- 1:3,
+                 "unable to find an inherited method for function .*acols<-.* for signature .*Proteins.*, .*integer.*")
+    expect_error(acols(p) <- DataFrame(),
+                 "Number of rows of replacement acols differ from current ones.")
+
+    pm <- p
+    ac <- DataFrame(A=1:3, B=1:3, row.names = c("P1", "P2", "P3"))
+    acols(pm) <- ac
+    rownames(pm@aa@elementMetadata) <- c("P1", "P2", "P3")
+    expect_equal(acols(pm), ac)
+    expect_error(acols(pm) <- ac[3:1,],
+                 "Row names of replacement acols differ from current ones.")
 })
