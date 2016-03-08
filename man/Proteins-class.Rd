@@ -28,6 +28,9 @@
 \alias{pcols}
 \alias{pranges,Proteins-method}
 \alias{pranges}
+\alias{pranges<-,Proteins,CompressedIRangesList-method}
+\alias{pranges<-}
+
 \alias{pfilter,Proteins-method}
 \alias{pfilter}
 \alias{pvarLabels,Proteins-method}

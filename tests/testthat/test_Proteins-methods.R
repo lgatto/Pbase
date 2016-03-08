@@ -23,12 +23,8 @@ test_that("isCleaved", {
 })
 
 test_that("addPeptideFragments", {
-    fasta <- file.path(system.file("extdata", package = "Pbase"),
-                       "01_test_database.fasta")
     fragments <- tempfile(fileext=".fasta")
     on.exit(unlink(fragments))
-
-    p <- Proteins(fasta)
 
     irl <- IRangesList(P1=IRanges(c(8, 1), c(10, 4)),
                        P2=IRanges(),
@@ -88,4 +84,46 @@ test_that("addPeptideFragments", {
 
     expect_error(addPeptideFragments(p, "foobar"),
                  "The file\\(s\\) .*foobar.* do\\(es\\) not exist!")
+})
+
+test_that("pranges replacement", {
+    expect_error(pranges(p) <- 1:3,
+                 "unable to find an inherited method for function .*pranges<-.* for signature .*Proteins.*, .*integer.*")
+    expect_error(pranges(p) <- IRangesList(),
+                 "Length of replacement pranges differs from current ones.")
+    expect_error(pranges(p) <- IRangesList(A=IRanges(1, 2), B=IRanges(1, 2), C=IRanges(1, 2)),
+                 "Names of replacement pranges differ from current ones.")
+
+    pm <- p
+    irl <- IRangesList(P1=IRanges(1, 2),
+                       P2=IRanges(2, 3),
+                       P3=IRanges(3, 4))
+    pranges(pm) <- irl
+    expect_equal(pranges(pm), irl)
+    expect_error(pranges(p) <- irl[3:1],
+                 "Names of replacement pranges differ from current ones.")
+
+    pc <- cleave(p)
+    pranges(pm) <- pranges(pc)
+    expect_equal(pranges(pm), pranges(pc))
+    l <- LogicalList(c(TRUE, FALSE, FALSE, TRUE),
+                     c(TRUE, FALSE),
+                     c(rep(TRUE, 3), rep(FALSE, 3)))
+    pranges(pm) <- pranges(pm)[l]
+    expect_equal(pranges(pm), pranges(pc)[NumericList(c(1, 4), c(1), 1:3)])
+})
+
+test_that("acols replacement", {
+    expect_error(acols(p) <- 1:3,
+                 "unable to find an inherited method for function .*acols<-.* for signature .*Proteins.*, .*integer.*")
+    expect_error(acols(p) <- DataFrame(),
+                 "Number of rows of replacement acols differ from current ones.")
+
+    pm <- p
+    ac <- DataFrame(A=1:3, B=1:3, row.names = c("P1", "P2", "P3"))
+    acols(pm) <- ac
+    rownames(pm@aa@elementMetadata) <- c("P1", "P2", "P3")
+    expect_equal(acols(pm), ac)
+    expect_error(acols(pm) <- ac[3:1,],
+                 "Row names of replacement acols differ from current ones.")
 })

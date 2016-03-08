@@ -39,7 +39,7 @@ exportMethods(
     pcols,
     pfeatures,
     pmetadata,
-    pranges,
+    pranges, "pranges<-",
     pvarLabels,
     avarLabels,
     seqnames,
