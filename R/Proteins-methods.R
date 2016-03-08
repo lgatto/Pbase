@@ -51,6 +51,16 @@ setMethod("pfeatures", "Proteins",
 setMethod("pranges", "Proteins",
           function(x) x@pranges)
 
+setReplaceMethod("pranges",
+                 c("Proteins", "CompressedIRangesList"),
+                 function(object, value)
+                     replacePranges(object, value))
+
+setReplaceMethod("acols",
+                 c("Proteins", "DataFrame"),
+                 function(object, value)
+                     replaceAcols(object, value))
+
 setMethod("length", "Proteins",
           function(x) length(x@aa))
 
@@ -171,4 +181,3 @@ setMethod("aaranges",
           function(x, ...) {
               .aarangesProteins(x, ...)
           })
-

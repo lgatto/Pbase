@@ -4,7 +4,7 @@
 \docType{data}
 
 \title{
-  An \code{Proteins} object and its MSMS spectra
+  Data accompanying the \code{Pbase} package
 }
 
 
