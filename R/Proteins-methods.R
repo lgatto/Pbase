@@ -22,6 +22,12 @@ setMethod("Proteins",
               .toBeImplemented()
           })
 
+############################################################
+## Proteins for EnsDb, character, use uniprotIds in an UniprotidFilter.
+## Proteins for EnsDb, missing, ... -> check if we've got filter specified,
+##  otherwise just return everything.
+## Add also an optional argument loadDomains = TRUE -> load the protein domains.
+
 setMethod("[", "Proteins",
           function(x, i, j = "missing", ..., drop) {
               if (!missing(j) || length(list(...)) > 0L)
@@ -173,6 +179,9 @@ setMethod("show", "Proteins",
               }
           })
 
+
+## New suggested methods:
+## width: return the width(x@aa)
 
 ## internal use only; not exported
 

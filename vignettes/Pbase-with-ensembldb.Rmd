@@ -1,0 +1,473 @@
+---
+title: "Using ensembldb to retrieve protein annotations and map peptide
+sequences to genomic coordinates"
+output:
+  BiocStyle::html_document:
+    toc: true
+---
+
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{Mapping experimental MS data to genomic coordinates}
+%\VignettePackage{Pbase}
+-->
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+**Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
+**Author:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) <br />
+**Last compiled:** `r date()` <br />
+**Last modified:** `r file.info("mapping.Rmd")$mtime`
+
+```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
+library("Pbase")
+```
+
+## Introduction
+
+The aim of this vignette is to document the mapping of proteins and
+the tandem mass spectrometry-derived peptides to genomic locations.
+
+```{r schema, echo=FALSE, fig.cap='Mapping proteins to a genome reference.', fig.align='center'}
+Pbase:::mapplot()
+```
+
+
+
+## Protein and genome data
+
+We will use a small `Proteins` object from the `r Biocpkg("Pbase")`
+package to illustrate how to retrieve genome coordinates and map a
+peptides back to genomic coordinates. See the `Pbase-data` vignette
+for an introduction to `Proteins` data. The main information needed in
+this vignette consists of protein UniProt identifiers and a set of
+peptides positions along the protein sequence.
+
+
+```{r p, message=FALSE}
+library("Pbase")
+data(p)
+p
+seqnames(p)
+```
+
+```{r startend}
+pcols(p)[1, c("start", "end")]
+```
+
+We will also require an identifier relating the protein feature of
+interest to the genome. Below, we use `r Biocpkg("biomaRt")` to query
+the matching Ensembl transcript identifier. We start by create a
+`Mart` object that stores the connection details to the latest human
+Ensembl biomart server.
+
+```{r bm, cache=TRUE, message=FALSE}
+library("biomaRt")
+ens <- useMart("ensembl", "hsapiens_gene_ensembl")
+ens
+
+bm <- select(ens, keys = seqnames(p),
+             keytype = "uniprot_swissprot",
+             columns = c(
+                 "uniprot_swissprot",
+                 "hgnc_symbol",
+                 "ensembl_transcript_id"))
+
+bm
+```
+
+As can be seen, there can be multiple transcripts for one protein
+accession. We have defined the transcripts of interest for our
+proteins in `p`; they are stored as protein elements metadata:
+
+```{r enst}
+acols(p)$ENST
+```
+
+## Genomic transcript coordinates
+
+The `etrid2grl` function takes our transcript identifiers and will
+query the Ensembl biomart server (note the `ens` argument) and return
+a `GRangesList` object. For each of Ensembl transcript identifiers
+provided as input, we have the genomic coordinates of that
+transcript's exons as well as additional information such as the type
+of exons (protein coding or untranslated region).
+
+```{r etris2grl}
+grl <- etrid2grl(acols(p)$ENST, ens)
+all.equal(names(grl), acols(p)$ENST,
+          check.attributes=FALSE)
+grl
+```
+
+We also need to retain only coding exons and discard untranslated
+regions for later peptide mapping, using the `proteinCoding` function.
+
+```{r pc}
+pcgrl <- proteinCoding(grl)
+pcgrl
+```
+
+## Visualisation with `r Biocpkg("Gviz")` and `r Biocpkg("Pviz")`
+
+### Peptides along proteins
+
+```{r echo=FALSE}
+pp <- p[5]
+n <- elementNROWS(pranges(pp))
+pepstring <- paste(unique(pcols(pp)[[1]]$pepseq), collapse = ", ")
+```
+
+The peptides that have been experimentally observed are available as
+ranges (coordinates) along the protein sequences. For example, below,
+we isolate and visualise the `r n` peptides (`r pepstring`) have been
+identified for our protein of interest `r seqnames(p)[5]`.
+
+```{r}
+sort(pranges(p)[5])
+plot(p[5])
+```
+
+### Exons along the genome
+
+We can also plot the transcript regions inluding (`grl`) or exclusing
+(`pcgrl`) the untranslated regions.
+
+```{r}
+plotAsGeneRegionTrack(grl[[5]], pcgrl[[5]])
+```
+
+## Mapping peptides back to the genome
+
+The aim of this document is to document the mapping of peptides,
+i.e. ranges along a protein sequence to ranges along the genome
+reference. In other words, our aim is the convert protein coordinates
+to genome coordinates.
+
+### Comparing protein and translated DNA sequences
+
+The first check that we want to implement is to verify that we can
+regenerate the protein amino acid sequence from the genome regions
+that we have extracted.
+
+We also need the actual genome sequence (so far, we have only dealt
+with regions and features). The exons coordinates have been retrieved
+from the latest Ensembl release, which is based on the human genome
+assembly `GRCh38`. We will use a genome package that is based on the
+same reference genome, namely `r Biocannopkg("BSgenome.Hsapiens.NCBI.GRCh38")`.
+
+We need to make sure that the chromosomes are named the same way in
+the genome sequence data and our genomics ranges (`"chrX"`, as seen
+above).
+
+```{r protfromgenome}
+library("BSgenome.Hsapiens.NCBI.GRCh38")
+head(seqnames(BSgenome.Hsapiens.NCBI.GRCh38))
+if (!"chr1" %in% seqnames(BSgenome.Hsapiens.NCBI.GRCh38))
+    seqnames(BSgenome.Hsapiens.NCBI.GRCh38)[1:23] <-
+        paste0("chr", seqnames(BSgenome.Hsapiens.NCBI.GRCh38)[1:23])
+seqnames(BSgenome.Hsapiens.NCBI.GRCh38)[21:27]
+```
+
+Once we have extracted the actual sequences, we must also make sure
+that we we reverse the sequences in case out genomic features are on
+the reverse strand. We the combine (`unlist`) the exons (coding
+sequences only, `pcgrl`) and translate then into a protein sequence.
+
+
+```{r aaseq}
+s <- getSeq(BSgenome.Hsapiens.NCBI.GRCh38, pcgrl[[5]])
+s
+
+if (isReverse(pcgrl[[5]]))
+    s <- rev(s)
+
+aaseq <- translate(unlist(s))
+aaseq
+```
+
+We verify that the translated genome sequence and the protein squence
+we started with match by aligning them.
+
+```{r aln}
+writePairwiseAlignments(pairwiseAlignment(aa(p[5]), aaseq))
+```
+
+### Calculating new coordinates
+
+We can now calculate the peptide coordinate along the genome using the
+position of the peptides along the protein (in `p`) and the position
+of the exons of the protein's transcript along the genome (in `pcgrl`)
+using the `mapToGenome` function.
+
+```{r map}
+res <- mapToGenome(p[5], pcgrl[5])
+res[[1]]
+```
+
+### Plotting
+
+Based on the new peptide genomic coordinates, it is now
+straightforward to create a new `AnnotationTrack` and add it the the
+track visualisation.
+
+```{r pepcoords, fig.align='center'}
+plotAsAnnotationTrack(res[[1]], grl[[5]])
+```
+
+### Detailed annotation track
+
+Finally, we customise the figure by adding a track with the $MS^2$
+spectra. The raw data used to search the protein database an create
+`p` are available as an `MSnExp` object.
+
+```{r msmsspectra, fig.align='center'}
+data(pms)
+
+library("ggplot2")
+details <- function(identifier, ...) {
+    p <- plot(pms[[as.numeric(identifier)]], full=TRUE, plot=FALSE) + ggtitle("")
+    p <- p + theme_bw() + theme(axis.text.y = element_blank(),
+                                axis.text.x = element_blank()) +
+                                labs(x = NULL, y = NULL)
+    print(p, newpage=FALSE)
+}
+
+res <- res[[1]]
+deTrack <- AnnotationTrack(start = start(res),
+                           end = end(res),
+                           genome = "hg38", chromosom = "chrX",
+                           id = pcols(p)[[5]]$acquisitionNum,
+                           name = "MS2 spectra",
+                           stacking = "squish", fun = details)
+
+grTrack <- GeneRegionTrack(grl[[5]],
+                           name = acols(p)$ENST[5])
+ideoTrack <- IdeogramTrack(genome = "hg38",
+                           chromosome = "chrX")
+axisTrack <- GenomeAxisTrack()
+
+plotTracks(list(ideoTrack, axisTrack, deTrack, grTrack),
+           add53 = TRUE, add35 = TRUE)
+```
+
+### Mapping all peptide sets in the `Proteins` object
+
+Above, we have demonstrated the `mapToGenome` functionality on one
+protein only. The same operation can be performed on all the `r length(p)`
+of the `p` object using the `pmapToGenome` equivalent using
+the `r length(pcgrl)` ranges calculated with `etrid2grl`. The `pmapToGenome`
+will map the peptides of i-th protein to the i-th genomic location of `pcgrl`.
+
+```{r pmap}
+pres <- pmapToGenome(p, pcgrl)
+pres
+```
+
+
+## Genomic coordinates and peptide mappings using `r Biocpkg("ensembldb")`
+
+The `r Biocpkg("ensembldb")` package can be used as an alternative to `r
+Biocpkg("biomaRt")` package to fetch genomic coordinates of transcript
+models. `EnsDB` databases built by the `ensembldb` package encapsule genomic
+coordinates of all genes/transcripts and exons of an organism thus, in contrast
+to `biomaRt`, enabling offline analyses. Because `EnsDb` databases contain
+annotations from a certain Ensembl release reproducible analyses are
+guaranteed. Since Bioconductor version 3.4, `ensembldb` supports adding protein
+annotations to `EnsDb` databases hence allowing to directly query transcripts
+encoding certain proteins.
+
+Below we load the `EnsDb` package containing all human gene annotations from
+Ensembl version 86. We change also the default chromosome naming style from
+_Ensembl_ to _UCSC_ (e.g. _chrX_ instead of _X_). While this is not necessary
+for most analyses, it ensures that the retrieved sequence names are in the
+format expected by the `Gviz` package which will be used later for plotting the
+transcripts.
+
+```{r load_ensdb}
+library(ensembldb)
+library(EnsDb.Hsapiens.v86)
+edb <- EnsDb.Hsapiens.v86
+## Change sequence naming style
+seqlevelsStyle(edb) <- "UCSC"
+```
+
+We can now fetch transcripts encoding the proteins providing their Uniprot IDs
+with a `UniprotidFilter` (see the vignettes of the `ensembldb` for a complete
+listing of all supported filters. We use in addition a `SeqnameFilter`
+to ensure that we're only fetching transcripts from the reference sequences and
+not from patched chromosomes or chromosome variants. Note that we have to use
+here _UCSC-style_ chromosome names, since we changed the `seqlevelsStyle` above.
+
+```{r fetch_tx}
+p_tx <- transcripts(edb,
+                    filter = list(UniprotidFilter(seqnames(p)),
+                                  SeqnameFilter(paste0("chr", c(1:22, "X", "Y")))))
+p_tx
+```
+
+Each of the proteins can be encoded by more than one protein. Also, for one
+protein (_P04075-2_) we don't have a mapping to a transcript.
+
+```{r table_tx}
+table(p_tx$uniprot_id)
+```
+
+Below we use the `exonsBy` method to retrieve the transcript models for the
+transcripts associated to the proteins. While this returns all exons (including
+non-coding exons), we could alternatively use the `cdsBy` method to retrieve
+just the genomic coordinates of the transcripts' coding regions.
+
+```{r exonsBy}
+exns <- exonsBy(edb, filter = TxidFilter(acols(p)$ENST))
+exns
+```
+
+### Mapping peptides to genomic coordinates
+
+To map peptides within the protein sequence to genomic coordinates, we need
+first the genomic coordinates of the transcript's coding region. We use the
+`cdsBy` method to fetch that information, but have to re-order the resulting
+`GRangesList` as results are not returned in the same order than the transcript
+IDs that we submitted.
+
+```{r cdsBy}
+p_cds <- cdsBy(edb, filter = TxidFilter(acols(p)$ENST))
+p_cds <- p_cds[acols(p)$ENST]
+p_cds
+```
+
+Ranges within protein sequences of the `Proteins` object can now be mapped to
+genomic coordinates with the `mapToGenome` method.
+
+```{r ens_mapToGenome}
+res_2 <- mapToGenome(p[5], p_cds[5])
+## Does not work because the function expects the mcols to be in a certain order
+
+tx5 <- p_cds[[5]]
+p5 <- p[5]
+## Check if we would get the same protein sequence from Ensembl:
+p5_ens <- proteins(edb, filter = TxidFilter(tx5$tx_id[1]),
+                   return.type = "AAStringSet")
+
+## Compare the protein sequences:
+
+
+## Why it's not working???
+p_grt <- getGeneRegionTrackForGviz(edb, filter = TxidFilter(acols(p)$ENST))
+p_grt <- split(p_grt, p_grt$transcript)
+p_grt <- p_grt[acols(p)$ENST]
+res_3 <- mapToGenome(p[5], p_grt[5])
+```
+
+### Plotting
+
+Plotting of transcript models on genomic coordinates can be performed with the
+functionality from the `r Biocpkg("Gviz")` package. The `ensembldb` package
+provides the dedicated `getGeneRegionTrackForGviz` to fetch transcript models in
+the format supported by `Gviz`.
+
+
+## Dealing with multiple transcipts per protein
+
+```{r}
+k <- 6
+seqnames(p)[k]
+```
+In the code chunk below, we remind ourselves that, querying the
+Ensembl Biomart server for `r seqnames(p)[k]`, we obtain several
+possible transcript identifiers, including the identifier of interest
+`r acols(p)$ENST[k]`.
+
+```{r remindbm}
+sel <- bm$uniprot_swissprot == seqnames(p)[k]
+bm[sel, ]
+acols(p)$ENST[k]
+```
+
+Let's fetch the coordinates of all possible transcipts, making sure
+that the names of the Ensembl identifiers are used to name the `grl`
+ranges (using `use.names = TRUE`).
+
+```{r etris2grl2}
+eid <- bm[sel, 3]
+names(eid) <- bm[sel, 1]
+eid
+
+grl <- etrid2grl(eid, ens, use.names = TRUE)
+pcgrl <- proteinCoding(grl)
+```
+
+```{r plot5}
+plotAsGeneRegionTrack(pcgrl)
+```
+
+### Descriminating transcripts
+
+We extract the transcript sequences, translate them into protein
+sequences and align each to our protein sequence (originally imported
+from the fasta database, see `?Proteins` for the construction of `p`).
+
+```{r getseq2, warning=FALSE}
+
+lseq <- lapply(getSeq(BSgenome.Hsapiens.NCBI.GRCh38, pcgrl),
+               function(s) translate(unlist(s)))
+
+laln <- sapply(lseq, pairwiseAlignment, aa(p[k]))
+sapply(laln, nmatch)/width(aa(p[k]))
+```
+
+```{r ki, echo=FALSE}
+ki <- which.max(sapply(laln, nmatch))
+```
+We see that transcript number `r ki`, `r eid[ki]`, perfectly aligns
+with our protein sequence. This is also the transcipt that corresponds
+to the curated Ensembl transcript in `acols(p)$ENST`.
+
+```{r checkk}
+ki <- which.max(sapply(laln, nmatch))
+stopifnot(eid[ki] == acols(p)$ENST[k])
+```
+
+```{r map2}
+res <- pmapToGenome(p[k], pcgrl[ki])
+```
+
+As shown on the next figure, peptides that span over exon junctions
+are grouped together and, below, colour-coded.
+
+```{r pepcoords2}
+plotAsAnnotationTrack(res[[1]], pcgrl[[ki]])
+```
+
+One can also apply a many-to-one mapping approach to all proteins in
+the `p` object and all the transcripts identifiers fetched with
+`etrid2grl` as shown below.
+
+```{r coordall}
+alleid <- bm[, 3]
+names(alleid) <- bm[, 1]
+grl <- etrid2grl(alleid, ens, use.names = TRUE)
+pcgrl <- proteinCoding(grl)
+res <- mapToGenome(p, pcgrl)
+length(res)
+```
+
+The messages indicate that one protein accession number was not found
+in the `pcgrl` ranges (no transcript was found) and several mapping
+failed. In total, we obtain `r length(res)` mapping for
+`r length(unique(names(pcgrl)))` protein accession numbers.
+
+## Session information
+
+```{r si}
+sessionInfo()
+```
+
+<!-- #### TODO -->
+
+<!-- Check spectra. Describe how data tracks can be used to overlay -->
+<!-- additional information, such as quantitation data, identification -->
+<!-- scores, coverage, ... -->
