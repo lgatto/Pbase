@@ -142,6 +142,7 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
     ## encoded. Exception: if there is no 3'UTR the length can also be
     ## length(CDS) / 3. For most CDS/AA sequences it works, but there are some,
     ## e.g. ENST00000371584 that have a truncated 5' sequences (no START codon).
+    ## TODO @jo: fix this; eventually just show a warning.
     p_width <- width(pObj@aa)
     cds_width <- sum(width(grObj))
     if (p_width != cds_width/3)
@@ -180,6 +181,8 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 
     chr <- as.character(seqnames(grObj)@values)
 
+    ## TODO @jo: change the way the mcols is generated. Basically take the
+    ##           mcols form teh grObj and add eventual additional columns.
     x <- GRanges(seqnames = rep(chr, length(peptides_on_genome)),
                  ranges = peptides_on_genome,
                  strand = strand(grObj)@values,

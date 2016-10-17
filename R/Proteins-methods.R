@@ -28,6 +28,126 @@ setMethod("Proteins",
 ##  otherwise just return everything.
 ## Add also an optional argument loadDomains = TRUE -> load the protein domains.
 
+############################################################
+## Proteins, EnsDb, missing
+##
+## o Fetch all proteins from the EnsDb database.
+## TODO @jo: don't know yet how to handle Uniprot IDs and uniprot table data.
+##'
+##' @param file EnsDb database from which protein data should/can be retrieved.
+##'
+##' @param uniprotIds missing.
+##'
+##' @param loadProteinDomains Logical whether protein domains within the
+##' proteins' sequences should be loaded too. If \code{TRUE}, protein domains
+##' are loaded and added into the \code{@pranges} slot of the object.
+##'
+##' @param filter Single object extending
+##' \code{\linkS4Object[ensembldb]{BasicFilter}} or \code{list} of such objects
+##' to retrieve only specific proteins from the database. See
+##' \code{\link[ensembldb]{proteins}} for more information.
+##'
+##' @param columns Character vector specifying the columns that should be
+##' returned from the database. By default, all columns from the \emph{protein}
+##' database table are returned. Use the \code{\link[ensembldb]{listColumns}}
+##' function to get a list of all supported columns. Note that exon-related
+##' columns are not supported for the \code{Proteins} method.
+##'
+##' @param ... Additional arguments to be passed to the
+##' \code{\link[ensembldb]{proteins}} method that is used to fetch the data.
+##' @noRd
+setMethod("Proteins",
+          signature(file = "EnsDb", uniprotIds = "missing"),
+          function(file, uniprotIds, loadProteinDomains = TRUE,
+                   filter = list(), columns = NULL, ...) {
+              ## Get the data from EnsDb.
+              if (!hasProteinData(file))
+                  stop("The provided 'EnsDb' does not contain protein annotations!")
+              ## Check 'columns':
+              ## o add all columns from the protein table.
+              ## o ensure we have no column from the exon or tx2exon table.
+              ## o load, if necessary, columns from the protein_domain table.
+              columns <- unique(c(columns, listColumns(file, "protein")))
+              not_allowed <- listColumns(file, c("exon", "tx2exon"))
+              not_allowed <- not_allowed[not_allowed != "tx_id"]
+              if (any(columns %in% not_allowed)) {
+                  warning("For 'Proteins', fetching exon-related columns is not",
+                          " allowed! Columns ",
+                          paste0("'", columns[columns %in% not_allowed], "'",
+                                 collapse = ", "), " have been removed.")
+                  columns <- columns[!(columns %in% not_allowed)]
+              }
+              if (loadProteinDomains) {
+                  columns <- unique(c(columns,
+                                      listColumns(file, "protein_domain")))
+              }
+              ## Now fetch the data:
+              res <- ensembldb::proteins(file, filter = filter,
+                                         columns = columns,
+                                         return.type = "data.frame")
+              if (nrow(res) == 0)
+                  return(Proteins())
+              ## Get the unique data for protein:
+              pids <- unique(res$protein_id)
+              prt_cn <- colnames(res)[!(colnames(res) %in%
+                                        listColumns(file, c("protein_domain",
+                                                            "uniprot")))]
+              prt <- unique(res[, c("protein_id", prt_cn)])
+              aa <- AAStringSet(prt$protein_sequence)
+              names(aa) <- prt$protein_id
+              mcols(aa) <- prt[, !colnames(prt) %in% c("protein_id",
+                                                       "protein_sequence")]
+              ## Fetch protein domain data
+              if (loadProteinDomains) {
+                  prng <- IRangesList(list())
+                  prt_dom_cols <- listColumns(edb, "protein_domain")
+                  prt_dom_mcols <- prt_dom_cols[!(prt_dom_cols %in%
+                                                  c("protein_domain_id",
+                                                    "prot_dom_start",
+                                                    "prot_dom_end"))]
+                  prt_dom <- unique(res[, prt_dom_cols, drop = FALSE])
+                  ## Remove empty ones
+                  prt_dom <- prt_dom[!is.na(prt_dom$prot_dom_start), ,
+                                     drop = FALSE]
+                  if (nrow(prt_dom) > 0) {
+                      prng <- IRanges(start = prt_dom$prot_dom_start,
+                                      end = prt_dom$prot_dom_end)
+                      names(prng) <- prt_dom$protein_domain_id
+                      mcols(prng) <- prt_dom[, prt_dom_mcols]
+                      prng <- split(prng,
+                                    f = factor(prt_dom$protein_id,
+                                               levels = unique(prt_dom$protein_id)))
+                  }
+                  ## Fill empty ones.
+                  if (!all(pids %in% prt_dom$protein_id)) {
+                      miss_prt <- pids[!(pids %in% prt_dom$protein_id)]
+                      tmp <- replicate(length(miss_prt),
+                                       .emptyProtDomIRanges(cols = prt_dom_mcols))
+                      names(tmp) <- miss_prt
+                      prng <- c(prng, IRangesList(tmp))
+                  }
+                  ## Ensure correct ordering.
+                  prng <- prng[pids]
+              } else {
+                  prng <- IRangesList(replicate(length(pids), IRanges()))
+                  names(prng) <- pids
+              }
+              ## Create the Proteins object.
+              pr <- new("Proteins", aa = aa, pranges = prng,
+                        metadata = list(created = date(),
+                                        ensembl_version = ensemblVersion(file)))
+              return(pr)
+          })
+## Simple helper function to create an IRanges with mcols.
+.emptyProtDomIRanges <- function(cols) {
+    res <- IRanges()
+    tmp <- DataFrame(matrix(ncol = length(cols), nrow = 0))
+    colnames(tmp) <- cols
+    mcols(res) <- tmp
+    return(res)
+}
+
+
 setMethod("[", "Proteins",
           function(x, i, j = "missing", ..., drop) {
               if (!missing(j) || length(list(...)) > 0L)
@@ -85,8 +205,14 @@ setReplaceMethod("metadata", "Proteins",
 setMethod("pmetadata", "Proteins",
           function(x) {
               if (!is.null(x@pranges@unlistData@elementMetadata)) {
+                  ## This has a problem if one of the proteins does not have a
+                  ## peptide range: elementNROWS will be 0 in such cases and the
+                  ## order and elements of the returned SplitDataFrameList does
+                  ## no longer match the seqnames(x).
                   f <- rep.int(seqnames(x), elementNROWS(x@pranges))
                   split(x@pranges@unlistData@elementMetadata, f)
+                  ## Alternative:
+                  ## SplitDataFrameList(lapply(x@pranges, mcols))
               } else {
                   return(NULL)
               }

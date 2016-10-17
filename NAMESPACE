@@ -23,6 +23,12 @@ importFrom(mzID, mzID, flatten)
 
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
 
+## ensembldb
+importFrom(ensembldb, listProteinColumns)
+importMethodsFrom(ensembldb, hasProteinData, listColumns, proteins,
+                  ensemblVersion)
+importClassesFrom(ensembldb, EnsDb)
+
 exportClasses(Proteins,
               Pparams)
 

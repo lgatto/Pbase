@@ -4,36 +4,117 @@ sequences to genomic coordinates"
 output:
   BiocStyle::html_document:
     toc: true
+vignette: >
+  %\VignetteIndexEntry{Querying protein features}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{ensembldb,EnsDb.Hsapiens.v75,BiocStyle}
+  %\VignettePackage{Pbase}
 ---
-
-<!--
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{Mapping experimental MS data to genomic coordinates}
-%\VignettePackage{Pbase}
--->
 
 ```{r style, echo = FALSE, results = 'asis', message=FALSE}
 BiocStyle::markdown()
 ```
 
 **Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
-**Author:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) <br />
+**Author:** [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) [Johannes Rainer] <br />
 **Last compiled:** `r date()` <br />
-**Last modified:** `r file.info("mapping.Rmd")$mtime`
+**Last modified:** `r file.info("Pbase-with-ensembldb.Rmd")$mtime`
 
 ```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
 library("Pbase")
+library("ensembldb")
 ```
 
 ## Introduction
 
-The aim of this vignette is to document the mapping of proteins and
-the tandem mass spectrometry-derived peptides to genomic locations.
+This vignette describes how the `r Biocpkg("ensembldb")` package can be used to
+retrieve protein annotations and to map peptides within protein sequences to the
+genomic coordinates. `EnsDb` databases and packages created by the `ensembldb`
+package version > XXX _can_ provide protein annotations, but don't necessarily
+have too. Only `EnsDb` packages created using the Ensembl Perl API contain
+protein annotations, while databases created from GTF or GFF files or from
+`GRanges` objects or using the `r Biocpkg("AnnotationHub")` don't.
 
-```{r schema, echo=FALSE, fig.cap='Mapping proteins to a genome reference.', fig.align='center'}
-Pbase:::mapplot()
+Below we load the `EnsDb` object with for all human genes defined in the Ensembl
+database version 86 and use the `hasProteinData` method to evaluate whether
+protein annotations are available.
+
+```{r loadlib, message = FALSE}
+library(ensembldb)
+library(EnsDb.Hsapiens.v86)
+## Make a shortcut to the object
+edb <- EnsDb.Hsapiens.v86
+hasProteinData(edb)
 ```
 
+## Fetch protein annotations from the database
+
+```{r}
+## What data do I need:
+## o ALL from protein table
+## o NOTHING from exon or tx2exon table(s)
+## o Optionally the protein_domain table (but if, then load all).
+## o Optionally the uniprot table.
+## Parameter 'columns' should not contain any columns from exon, tx2exon or
+## protein_domain tables.
+
+## That's now more to check how we could get the data and how we could implement
+## the Proteins method.
+prt <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+                return.type = "data.frame", columns = listProteinColumns(edb))
+## Without list and lapply:
+pids <- unique(prt$protein_id)
+## If loadProteinDomains == TRUE
+prt_dom_cols <- listColumns(edb, "protein_domain")
+prt_dom_mcols <- prt_dom_cols[!(prt_dom_cols %in% c("protein_domain_id",
+                                                     "prot_dom_start",
+                                                     "prot_dom_end"))]
+prot_dom <- unique(prt[, prt_dom_cols, drop = FALSE])
+## Get rid of empty ones.
+prot_dom <- prot_dom[!is.na(prot_dom$prot_dom_start), , drop = FALSE]
+## Make the IRangesList
+if (nrow(prot_dom) > 0) {
+    prng <- IRanges(start = prot_dom$prot_dom_start, end = prot_dom$prot_dom_end)
+    names(prng) <- prot_dom$protein_domain_id
+    mcols(prng) <- prot_dom[, prt_dom_mcols]
+    prng <- split(prng, f = factor(prot_dom$protein_id,
+                                   levels = unique(prot_dom$protein_id)))
+}
+## Fill the empty ones.
+if (!all(pids %in% names(prng))) {
+    miss_prt <- pids[!(pids %in% names(prng))]
+    tmp <- replicate(length(miss_prt),
+                     .emptyProtDomIRanges(cols = prt_dom_mcols))
+    names(tmp) <- miss_prt
+    prng <- c(prng, IRangesList(tmp))
+}
+## Fix ordering
+prng <- prng[pids]
+## Make the AAStringSet.
+## Get the unique data for each protein: all that is NOT in protein_domain
+prt_cn <- colnames(prt)[!(colnames(prt) %in%
+                          listColumns(edb, c("protein_domain", "uniprot")))]
+prt <- unique(prt[, c("protein_id", prt_cn)])
+aa <- AAStringSet(prt$protein_sequence)
+names(aa) <- prt$protein_id
+mcols(aa) <- prt[, !(colnames(prt) %in% c("protein_id", "protein_sequence")),
+                 drop = FALSE]
+## Create the Proteins object.
+mtd <- list(created = date(), ensembl_version = ensemblVersion(edb))
+pr <- new("Proteins", aa = aa, pranges = prng, metadata = mtd)
+
+
+
+.emptyProtDomIRanges <- function(cols) {
+    res <- IRanges()
+    tmp <- DataFrame(matrix(ncol = length(cols), nrow = 0))
+    colnames(tmp) <- cols
+    mcols(res) <- tmp
+    return(res)
+}
+
+```
 
 
 ## Protein and genome data

@@ -127,3 +127,19 @@ test_that("acols replacement", {
     expect_error(acols(pm) <- ac[3:1,],
                  "Row names of replacement acols differ from current ones.")
 })
+
+test_that("pcols fix", {
+    library(Biostrings)
+    ## Create a dummy Proteins.
+    seqs <- c("MDLTKMGMIQLQNPSHPTGLLCK", "XGGLLPQGFIQRELFSKLGELAV",
+              "GHKPEEIPPDWRIEKTYLYLCYV")
+    aa <- AAStringSet(seqs)
+    names(aa) <- c("a", "b", "c")
+    ## Create the pranges: have a IRange for the 1st and 3rd.
+    ir <- IRanges(start = c(3, 5), end = c(10, 15))
+    mcols(ir) <- DataFrame(prot_id = c("a", "c"), other_mcol = c(1, 3))
+    irL <- split(ir, f = mcols(ir)$prot_id)
+    ## Add the empty one.
+    empty_ir <- IRanges()
+    mcols(empty_ir) <- DataFrame(prot_id = NULL, other_mcol = NULL)
+})
