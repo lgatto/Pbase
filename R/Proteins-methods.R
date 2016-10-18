@@ -39,8 +39,7 @@ setMethod("[", "Proteins",
 
               x@aa <- x@aa[i]
               x@pranges <- x@pranges[i]
-
-              return(x)
+              x
           })
 
 
@@ -73,7 +72,7 @@ setReplaceMethod("metadata", "Proteins",
                      if (name == "created")
                          stop("Creation date can't be modified.")
                    x@metadata[[name]] <- value
-                   return(x)
+                   x
                })
 
 setMethod("pmetadata", "Proteins",
@@ -81,7 +80,7 @@ setMethod("pmetadata", "Proteins",
               if (!is.null(x@pranges@unlistData@elementMetadata)) {
                   SplitDataFrameList(lapply(x@pranges, mcols))
               } else {
-                  return(NULL)
+                  NULL
               }
           })
 
@@ -105,7 +104,7 @@ setMethod("pvarLabels", "Proteins",
           })
 
 setMethod("[[", "Proteins",
-          function(x, i, j = missing, ..., drop = TRUE) return(x@aa[[i]]))
+          function(x, i, j = missing, ..., drop = TRUE) x@aa[[i]])
 
 setMethod("aa", "Proteins", function(x) x@aa)
 
@@ -137,7 +136,7 @@ setMethod("cleave", "Proteins",
                   mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
                   r
               }))
-              return(x)
+              x
           })
 
 setMethod("plot",
