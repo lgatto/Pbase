@@ -176,9 +176,10 @@ rmEmptyRanges <- function(x) {
     x[as.logical(elementNROWS(pranges(x)))]
 }
 
-isCleaved <- function(x, missedCleavages = 0)
-    return(!isEmpty(pranges(x)) && all(missedCleavages %in%
-                                       unlist(runValue(pmetadata(x)[, "MissedCleavages"]))))
+isCleaved <- function(x, missedCleavages = 0) {
+    !isEmpty(pranges(x)) &&
+        all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"])))
+}
 
 ### Caution: This is based purley on IRanges. No sequence based checks are
 ### involved! You have to make sure that you compare compareable sequences.

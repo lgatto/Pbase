@@ -1,4 +1,8 @@
 import(methods)
+importFrom(graphics, abline, arrows, axis, par, plot.new, plot.window, points,
+                     rect, segments, text, title)
+importFrom(stats, setNames)
+
 import(Rcpp)
 import(BiocGenerics)
 import(Biostrings)

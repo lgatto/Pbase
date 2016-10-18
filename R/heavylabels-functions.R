@@ -113,7 +113,7 @@ calculateHeavyLabels <-
                collapse=".")
     })
 
-    return(d)
+    d
 }
 
 ##' This functions creates peptide sequences for heavy labeled peptides. Sadly
@@ -218,9 +218,9 @@ calculateHeavyLabels <-
     solution[shortC] <- "C_overhang_shortened"
     solution[shortBoth] <- "both_overhangs_shortened"
 
-    return(data.frame(Peptide = substring(sequence, ps, pe),
-                      N_overhang = substring(sequence, s, ps - 1L),
-                      C_overhang = substring(sequence, pe + 1L, e),
-                      spikeTideResult = solution, stringsAsFactors = FALSE))
+    data.frame(Peptide = substring(sequence, ps, pe),
+               N_overhang = substring(sequence, s, ps - 1L),
+               C_overhang = substring(sequence, pe + 1L, e),
+               spikeTideResult = solution, stringsAsFactors = FALSE)
 }
 

@@ -171,8 +171,7 @@ setMethod("[", "Proteins",
 
               x@aa <- x@aa[i]
               x@pranges <- x@pranges[i]
-
-              return(x)
+              x
           })
 
 
@@ -205,22 +204,15 @@ setReplaceMethod("metadata", "Proteins",
                      if (name == "created")
                          stop("Creation date can't be modified.")
                    x@metadata[[name]] <- value
-                   return(x)
+                   x
                })
 
 setMethod("pmetadata", "Proteins",
           function(x) {
               if (!is.null(x@pranges@unlistData@elementMetadata)) {
-                  ## issue #27: This has a problem if one of the proteins does
-                  ## not have a peptide range: elementNROWS will be 0 in such
-                  ## cases and the order and elements of the returned
-                  ## SplitDataFrameList does no longer match the seqnames(x).
-                  ## f <- rep.int(seqnames(x), elementNROWS(x@pranges))
-                  ## split(x@pranges@unlistData@elementMetadata, f)
-                  ## Alternative:
                   SplitDataFrameList(lapply(x@pranges, mcols))
               } else {
-                  return(NULL)
+                  NULL
               }
           })
 
@@ -235,10 +227,16 @@ setMethod("avarLabels", "Proteins",
           function(object) names(aa(object)@elementMetadata))
 
 setMethod("pvarLabels", "Proteins",
-          function(object) names(pranges(object)@unlistData@elementMetadata@listData))
+          function(object) {
+              if (!isEmpty(pranges(object))) {
+                names(pranges(object)@unlistData@elementMetadata@listData)
+              } else {
+                NULL
+              }
+          })
 
 setMethod("[[", "Proteins",
-          function(x, i, j = missing, ..., drop = TRUE) return(x@aa[[i]]))
+          function(x, i, j = missing, ..., drop = TRUE) x@aa[[i]])
 
 setMethod("aa", "Proteins", function(x) x@aa)
 
@@ -270,7 +268,7 @@ setMethod("cleave", "Proteins",
                   mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
                   r
               }))
-              return(x)
+              x
           })
 
 setMethod("plot",
