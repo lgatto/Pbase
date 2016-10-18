@@ -159,3 +159,11 @@ test_that("pmetadata", {
     expect_equal(lengths(pcols(p)), setNames(c(1, 0, 1), c("P1", "P2", "P3")))
     expect_equal(elementNROWS(pranges(p)), setNames(c(1, 0, 1), c("P1", "P2", "P3")))
 })
+
+test_that("pvarLabels", {
+    expect_null(pvarLabels(p))
+    ir <- IRanges(1:3, 2:4)
+    mcols(ir) <- DataFrame(AccessionNumber = c("P1", "P2", "P3"), OtherMcol = 1:3)
+    pranges(p) <- split(ir, mcols(ir)$AccessionNumber)
+    expect_identical(pvarLabels(p), c("AccessionNumber", "OtherMcol"))
+})

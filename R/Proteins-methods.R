@@ -96,7 +96,13 @@ setMethod("avarLabels", "Proteins",
           function(object) names(aa(object)@elementMetadata))
 
 setMethod("pvarLabels", "Proteins",
-          function(object) names(pranges(object)@unlistData@elementMetadata@listData))
+          function(object) {
+              if (!isEmpty(pranges(object))) {
+                names(pranges(object)@unlistData@elementMetadata@listData)
+              } else {
+                NULL
+              }
+          })
 
 setMethod("[[", "Proteins",
           function(x, i, j = missing, ..., drop = TRUE) return(x@aa[[i]]))
