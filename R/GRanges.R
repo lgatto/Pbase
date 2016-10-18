@@ -73,7 +73,7 @@ etrid2grl <- function(etrid, ens, use.names = FALSE) {
               "exon_chrom_end", "rank", "strand", "external_gene_name",
               "feature", "chromosome_name", "phase")
     bm <- rbind(bm[!hasUtr,keep, drop=FALSE], utrFinal[,keep])
-    bm$chromosome <- Gviz:::.chrName(bm$chromosome, force=TRUE)
+    bm$chromosome <- Gviz::.chrName(bm$chromosome, force=TRUE)
 
     gr <- GRanges(seqnames=bm$chromosome,
                   ranges=IRanges(
