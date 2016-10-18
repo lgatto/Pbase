@@ -88,6 +88,12 @@ setMethod("Proteins",
               if (nrow(res) == 0)
                   return(Proteins())
               ## Get the unique data for protein:
+              ## For now we're removing the Uniprot IDs. Problem is the 1:n
+              ## mapping from protein_id to uniprot_id. Solutions:
+              ## 1) return a redundant list of proteins, i.e. replicate the
+              ##    proteins, one for each Uniprot ID.
+              ## 2) return a unique list of proteins adding the Uniprot IDs as
+              ##    a list to the mcols of the AAStringSet (i.e. acols).
               pids <- unique(res$protein_id)
               prt_cn <- colnames(res)[!(colnames(res) %in%
                                         listColumns(file, c("protein_domain",
@@ -100,7 +106,7 @@ setMethod("Proteins",
               ## Fetch protein domain data
               if (loadProteinDomains) {
                   prng <- IRangesList(list())
-                  prt_dom_cols <- listColumns(edb, "protein_domain")
+                  prt_dom_cols <- listColumns(file, "protein_domain")
                   prt_dom_mcols <- prt_dom_cols[!(prt_dom_cols %in%
                                                   c("protein_domain_id",
                                                     "prot_dom_start",
@@ -205,14 +211,14 @@ setReplaceMethod("metadata", "Proteins",
 setMethod("pmetadata", "Proteins",
           function(x) {
               if (!is.null(x@pranges@unlistData@elementMetadata)) {
-                  ## This has a problem if one of the proteins does not have a
-                  ## peptide range: elementNROWS will be 0 in such cases and the
-                  ## order and elements of the returned SplitDataFrameList does
-                  ## no longer match the seqnames(x).
-                  f <- rep.int(seqnames(x), elementNROWS(x@pranges))
-                  split(x@pranges@unlistData@elementMetadata, f)
+                  ## issue #27: This has a problem if one of the proteins does
+                  ## not have a peptide range: elementNROWS will be 0 in such
+                  ## cases and the order and elements of the returned
+                  ## SplitDataFrameList does no longer match the seqnames(x).
+                  ## f <- rep.int(seqnames(x), elementNROWS(x@pranges))
+                  ## split(x@pranges@unlistData@elementMetadata, f)
                   ## Alternative:
-                  ## SplitDataFrameList(lapply(x@pranges, mcols))
+                  SplitDataFrameList(lapply(x@pranges, mcols))
               } else {
                   return(NULL)
               }
