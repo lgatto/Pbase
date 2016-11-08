@@ -50,60 +50,116 @@ hasProteinData(edb)
 
 ## Fetch protein annotations from the database
 
-```{r}
-prts <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+`ensembldb` provides the `proteins` method to fetch protein annotations from an
+`EnsDb` database (along eventual transcript or gene annotation) and return the
+results as a `data.frame`, `DataFrame` or `AAStringSet`. Below we use that
+function to retrieve all proteins encoded by the gene _ZBTB16_. We use a
+`GenenameFilter` to select entries for that gene. In the simple example below
+only protein annotations were retrieved (i.e. the Ensembl protein ID, the amino
+acid sequence, the ID of the transcript encoding the protein and the gene name;
+the latter two stored in the `AAStringSet`'s `mcols`), but `EnsDb`s provide in
+addition also the mapping between Ensembl protein IDs and Uniprot IDs and all
+protein domains within the protein sequence. For more information on available
+filters, methods and annotation columns see the `ensembldb` vignette.
+
+```{r proteins_method}
+prts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+                 return.type = "AAStringSet")
+prts
+
+## Get access to the additional annotation data
+mcols(prts)
+
 ```
 
+In `Pbase`, a `Proteins` method is also implemented for `EnsDb` objects that
+enables to load a `Proteins` object from an `EnsDb` database and optionally load
+all protein domains as peptide ranges in the `pranges` slot (using the
+`loadProteinDomains` parameter which is by default `TRUE`).
+
+```{r Proteins_method, message = FALSE}
+library(Pbase)
+zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+```
+
+The proteins' sequences are stored in the `aa` slot and the protein domains in
+the `pranges` slot:
+
+```{r Proteins_aa_pranges}
+## Get the protein sequences.
+aa(zbtb16)
+
+## Get the protein domains stored as peptide features.
+pranges(zbtb16)
+```
+
+In a similar fashion we can also load all proteins encoded on chromosome Y from
+the database, or even all human proteins if no filter is provided.
+
+```{r Proteins_on_Y}
+pr_y <- Proteins(edb, filter = SeqnameFilter("Y"))
+length(pr_y)
+```
 
 ## Protein and genome data
 
-We will use a small `Proteins` object from the `r Biocpkg("Pbase")`
-package to illustrate how to retrieve genome coordinates and map a
-peptides back to genomic coordinates. See the `Pbase-data` vignette
-for an introduction to `Proteins` data. The main information needed in
-this vignette consists of protein UniProt identifiers and a set of
-peptides positions along the protein sequence.
+`EnsDb` databases provide both, protein annotations, and also gene/transcript
+annotations along with their genomic coordinates. Thus, we can use the `EnsDb`
+database for the mapping of the peptide features within the `Proteins` to the
+genome. The `Proteins` object has already the ID of the encoding transcript
+available in the metadata column `tx_id`. These additional, protein related,
+annotation columns can be accessed with the `acols` method (in contrast to the
+`pcols` method that is used to access metadata columns of the peptide features
+of each protein).
 
-
-```{r p, message=FALSE}
-library("Pbase")
-data(p)
-p
-seqnames(p)
+```{r genome_map_tx}
+acols(zbtb16)
 ```
 
-```{r startend}
-pcols(p)[1, c("start", "end")]
+We can use these IDs as input for a `TxidFilter` to fetch the genomic
+coordinates of the transcripts' coding regions (i.e. the exons and parts of
+exons forming the coding region) from the `EnsDb`. Note that in contrast to the
+`cdsBy` method used below, the `exonsBy` method would return all exons, thus
+also the 5' and 3' UTR. Note also that we have to re-order the resulting
+`GRangesList` as the results don't necessarily have to be ordered by the `tx_id`
+used in the query.
+
+```{r genome_map_cdsBy}
+zbtb16_cds <- cdsBy(edb,
+                    filter = TxidFilter(acols(zbtb16)$tx_id))
+## Reorder the tx
+zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
+## The exons for the first transcript.
+zbtb16_cds[[1]]
 ```
 
-We will also require an identifier relating the protein feature of
-interest to the genome. Below, we use `r Biocpkg("biomaRt")` to query
-the matching Ensembl transcript identifier. We start by create a
-`Mart` object that stores the connection details to the latest human
-Ensembl biomart server.
+With this information available we can simply use `Pbase`'s `mapToGenome`
+method to map the protein domains within a protein back to genomic coordinates.
 
-```{r bm, cache=TRUE, message=FALSE}
-library("biomaRt")
-ens <- useMart("ensembl", "hsapiens_gene_ensembl")
-ens
+```{r genome_map_mapToGenome}
+## For mapToGenome
+res <- mapToGenome(zbtb16[1], zbtb16_cds[1])
 
-bm <- select(ens, keys = seqnames(p),
-             keytype = "uniprot_swissprot",
-             columns = c(
-                 "uniprot_swissprot",
-                 "hgnc_symbol",
-                 "ensembl_transcript_id"))
-
-bm
 ```
 
-As can be seen, there can be multiple transcripts for one protein
-accession. We have defined the transcripts of interest for our
-proteins in `p`; they are stored as protein elements metadata:
+```{r dev}
+## Development block!
+pObj <- zbtb16[1]
+grObj <- zbtb16_cds[[1]]
 
-```{r enst}
-acols(p)$ENST
+
 ```
+
+
+TODO:
++ [ ] fix the `mapToGenome` method.
++ [ ] implement a `mapToGenome` with `Proteins` and `EnsDb`?
+
+
+DO
++ map to genomic coordinates.
++ map to genomic coordinates without a `GRanges`.
++ plot the domains within protein sequence.
 
 ## Visualisation with `r Biocpkg("Gviz")` and `r Biocpkg("Pviz")`
 

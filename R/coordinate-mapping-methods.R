@@ -1,6 +1,7 @@
 ### gr: and GRanges object with mapped peptides
 ### j: a logical, typically mcols(gr)$exonJunctions
 ### ex: a GRanges object with exonsx
+## Update jo: ensure that names are not dropped for spliced features.
 splitExonJunctions <- function(gr, j, ex) {
     ## (1) the ranges to be split
     gr2split <- gr[j]
@@ -20,8 +21,11 @@ splitExonJunctions <- function(gr, j, ex) {
 
     ## (4) add mcols
     groups <- mcols(grsplit)$._N_
-    mcols(grsplit) <- mcols(gr2split)[mcols(grsplit)$._N_, ]
+    mcols(grsplit) <- mcols(gr2split)[groups, ]
     mcols(grsplit)$group <- groups
+    ## (4.2) add names
+    if (!is.null(names(gr2split)))
+        names(grsplit) <- names(gr2split)[groups]
 
     if (length(gr) > 0)
         mcols(gr)$group <- (max(groups)+1):(max(groups)+length(gr))
@@ -121,11 +125,11 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 
 ############################################################
 ## .mapToGenome2
-##' maps ranges within the protein sequence to genomic sequence.
-##' This function ensures:
-##' 1) that the provided grObj could indeed encode the protein in pObj (based on
-##'    its sequence length).
-##' 2) that coordinates are correctly returned for + and - strand genes.
+##' maps ranges within the protein sequence to genomic sequence. The function
+##' takes the acols from the pObj and adds it to the mcols of the returned
+##' GRanges. In contrast to the "old" function this:
+##' a) does not require the presence of certain columns in the grObj, but uses
+##'    all of the mcols that are associated to genes or transcripts.
 ##' @param pObj is a Proteins of length 1
 ##' @param grObj is a GRanges representing the start and end coordinates of the
 ##' (CDS!) exons of the transcript encoding the protein sequence.
@@ -137,17 +141,19 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
         warning("Only considering first protein in the Proteins object.")
         pObj <- pObj[1]
     }
-    ## Check that the length of the CDS corresponds to the length of the AA:
-    ## AA length should be (length(CDS) - 1) / 3, -1 because stop codon is not
-    ## encoded. Exception: if there is no 3'UTR the length can also be
-    ## length(CDS) / 3. For most CDS/AA sequences it works, but there are some,
-    ## e.g. ENST00000371584 that have a truncated 5' sequences (no START codon).
-    ## TODO @jo: fix this; eventually just show a warning.
-    p_width <- width(pObj@aa)
-    cds_width <- sum(width(grObj))
-    if (p_width != cds_width/3)
-        stop("The protein sequence length of the provided Proteins object does",
-             " not match the length of the coding sequence in the GRanges!")
+    ## DROP THAT TEST FOR NOW - eventually implement later.
+    ## ## Check that the length of the CDS corresponds to the length of the AA:
+    ## ## AA length should be (length(CDS) - 1) / 3, -1 because stop codon is not
+    ## ## encoded. Exception: if there is no 3'UTR the length can also be
+    ## ## length(CDS) / 3. For most CDS/AA sequences it works, but there are some,
+    ## ## e.g. ENST00000371584 that have a truncated 5' sequences (no START codon).
+    ## ## TODO @jo: fix this; eventually just show a warning.
+    ## p_width <- width(pObj@aa)
+    ## cds_width <- sum(width(grObj))
+    ## if (!(p_width == cds_width/3 | p_width == (cds_width/3 - 1)))
+    ##     warning("The protein sequence length of the provided Proteins object",
+    ##             " does not match the length of the coding sequence in the",
+    ##             " GRanges!")
 
 
     ## exons ranges along the protein (1)
@@ -179,19 +185,39 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
         IRanges(start = getPos(start(peprngCdna), start_ex, grObj, prex),
                 end = getPos(end(peprngCdna), end_ex, grObj, prex))
 
-    chr <- as.character(seqnames(grObj)@values)
+    chr <- seqlevels(grObj)
 
-    ## TODO @jo: change the way the mcols is generated. Basically take the
-    ##           mcols form teh grObj and add eventual additional columns.
+    ## Change the way the mcols is generated. Basically take all gene and
+    ## transcript related mcols from the grObj and add additional columns.
+    ## Eventually we might opt to rename 'accession' into 'protein_id'.
+    want_cols <- c("transcript", "gene", "symbol", "tx_id", "tx_name",
+                   "tx_biotype", "gene_name", "gene_id", "gene_biotype")
+    got_cols <- colnames(mcols(grObj)) %in% want_cols
+    ## Build the mcols:
+    mcol <- DataFrame(pepseq = as.character(pfeatures(pObj)[[1]]),
+                      accession = seqnames(pObj)[1],
+                      exonJunctions = junc)
+    if (any(got_cols)) {
+        to_add <- unique(mcols(grObj)[, got_cols, drop = FALSE])
+        if (nrow(to_add) > 1)
+            stop("Gene and transcript related mcols of GRanges 'grObj' are not",
+                 " unique!")
+        mcol <- cbind(to_add, mcol)
+    }
     x <- GRanges(seqnames = rep(chr, length(peptides_on_genome)),
                  ranges = peptides_on_genome,
                  strand = strand(grObj)@values,
-                 pepseq = as.character(pfeatures(pObj)[[1]]),
-                 accession = seqnames(pObj)[1],
-                 gene = mcols(grObj)$gene[1],
-                 transcript = mcols(grObj)$transcript[1],
-                 symbol = mcols(grObj)$symbol[1],
-                 exonJunctions = junc)
+                 mcol)
+    names(x) <- names(peprngProt)
+    ## x <- GRanges(seqnames = rep(chr, length(peptides_on_genome)),
+    ##              ranges = peptides_on_genome,
+    ##              strand = strand(grObj)@values,
+    ##              pepseq = as.character(pfeatures(pObj)[[1]]),
+    ##              accession = seqnames(pObj)[1],
+    ##              gene = mcols(grObj)$gene[1],
+    ##              transcript = mcols(grObj)$transcript[1],
+    ##              symbol = mcols(grObj)$symbol[1],
+    ##              exonJunctions = junc)
 
     if (any(mcols(x)$exonJunctions))
         x <- splitExonJunctions(x, mcols(x)$exonJunctions, grObj)

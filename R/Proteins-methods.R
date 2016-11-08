@@ -53,13 +53,18 @@ setMethod("Proteins",
 ##' function to get a list of all supported columns. Note that exon-related
 ##' columns are not supported for the \code{Proteins} method.
 ##'
+##' @param fetchLRG Logical indicating whether proteins for Locus Reference
+##' Genes (LRG) should be retrieved too. By default LRG genes will not be
+##' fetched as they do have a 1:n mapping between transcripts and proteins.
+##'
 ##' @param ... Additional arguments to be passed to the
 ##' \code{\link[ensembldb]{proteins}} method that is used to fetch the data.
+##'
 ##' @noRd
 setMethod("Proteins",
           signature(file = "EnsDb", uniprotIds = "missing"),
           function(file, uniprotIds, loadProteinDomains = TRUE,
-                   filter = list(), columns = NULL, ...) {
+                   filter = list(), columns = NULL, fetchLRG = FALSE, ...) {
               ## Get the data from EnsDb.
               if (!hasProteinData(file))
                   stop("The provided 'EnsDb' does not contain protein annotations!")
@@ -80,6 +85,9 @@ setMethod("Proteins",
               if (loadProteinDomains) {
                   columns <- unique(c(columns,
                                       listColumns(file, "protein_domain")))
+              }
+              if (!fetchLRG) {
+                  ##
               }
               ## Now fetch the data:
               res <- ensembldb::proteins(file, filter = filter,

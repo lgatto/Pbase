@@ -79,3 +79,44 @@ test_that("Proteins,EnsDb,missing constructor", {
     expect_true(all(unlist(lapply(pcols(prots), nrow)) == 0))
     expect_true(all(unlist(lengths(pranges(prots))) == 0))
 })
+
+dontrun_test_all <- function() {
+    ## Get the mapping between all protein_id and tx_id
+    library(RSQLite)
+    maps <- dbGetQuery(dbconn(edb), "select protein_id,tx_id from protein;")
+    ## Have 103,725 entries, protein_id: 103,722, tx_id: 103,725.
+    head(sort(table(maps$protein_id), decreasing = TRUE))
+    ## OK, the LRG have multi-mappings! LRG_321p8:3, LRG_321p1:2
+    ## Fetching all proteins EXCEPT LRG proteins from the database:
+    system.time(
+        all_prots <- Proteins(edb, filter = TxidFilter("ENS%",
+                                                       condition = "like"),
+                              loadProteinDomains = FALSE)
+    ) ## 20 sec
+    system.time(
+        all_prots <- Proteins(edb, filter = TxidFilter("ENS%",
+                                                       condition = "like"),
+                              loadProteinDomains = TRUE)
+    ) ## 93 sec
+    ## Seems like we have to use the TxidFilter by default to avoid fetching LRG
+    ## genes.
+}
+
+dontrun_IRangesList_unique <- function() {
+    ## Simple test just to evaluate whether IRanges and IRangesList can have
+    ## duplicated names.
+
+    ## GRanges with non-unique names.
+    ir <- IRanges(start = c(4, 5, 10), end = c(12, 35, 34))
+    library(GenomicFeatures)
+    gr <- GRanges(seqnames = rep(1, 3), ranges = ir)
+    mcols(gr) <- DataFrame(tx_id = c("tx_1", "tx_2", "tx_1"))
+    ## Let's see if names can be non-unique:
+    names(gr) <- c("a", "b", "a")
+    ## that's OK.
+    grL <- split(gr, gr$tx_id)
+    ## Let's see if names of GRangesList can be non-unique
+    names(grL) <- c("tx_3", "tx_3")
+    ## that's OK too
+    names(grL)
+}
