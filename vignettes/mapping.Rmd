@@ -220,16 +220,16 @@ plotAsAnnotationTrack(res[[1]], grl[[5]])
 
 Finally, we customise the figure by adding a track with the $MS^2$
 spectra. The raw data used to search the protein database an create
-`p` are available as an `MSnExp` object. 
+`p` are available as an `MSnExp` object.
 
 ```{r msmsspectra, fig.align='center'}
 data(pms)
 
 library("ggplot2")
 details <- function(identifier, ...) {
-    p <- plot(pms[[as.numeric(identifier)]], full=TRUE, plot=FALSE) + ggtitle("") 
+    p <- plot(pms[[as.numeric(identifier)]], full=TRUE, plot=FALSE) + ggtitle("")
     p <- p + theme_bw() + theme(axis.text.y = element_blank(),
-                                axis.text.x = element_blank()) + 
+                                axis.text.x = element_blank()) +
                                 labs(x = NULL, y = NULL)
     print(p, newpage=FALSE)
 }
@@ -284,7 +284,7 @@ acols(p)$ENST[k]
 
 Let's fetch the coordinates of all possible transcipts, making sure
 that the names of the Ensembl identifiers are used to name the `grl`
-ranges (using `use.names = TRUE`). 
+ranges (using `use.names = TRUE`).
 
 ```{r etris2grl2}
 eid <- bm[sel, 3]
@@ -352,7 +352,7 @@ length(res)
 
 The messages indicate that one protein accession number was not found
 in the `pcgrl` ranges (no transcript was found) and several mapping
-failed. In total, we obtain `r length(res)` mapping for 
+failed. In total, we obtain `r length(res)` mapping for
 `r length(unique(names(pcgrl)))` protein accession numbers.
 
 ## Session information

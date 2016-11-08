@@ -57,10 +57,11 @@ setGeneric("pmapToGenome",
 ##
 
 tryCatchMapToGenome <- function(pObj, grObj, ...)
-    tryCatch(.mapToGenome(pObj, grObj, ...),
+    tryCatch(.mapToGenome2(pObj, grObj, ...),
              warning = function() NULL,
              error = function(e) {
                  warning("Mapping failed. Returning an empty range.",
+                         " Last message was: ", e,
                          call. = FALSE)
                  GRanges()
              })
@@ -130,9 +131,14 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 ##' GRanges. In contrast to the "old" function this:
 ##' a) does not require the presence of certain columns in the grObj, but uses
 ##'    all of the mcols that are associated to genes or transcripts.
+##' b) Ensure that coordinate conversion for - strand transcripts works.
+##' c) Doesn't need splitExonJunctions and thus might be faster.
 ##' @param pObj is a Proteins of length 1
 ##' @param grObj is a GRanges representing the start and end coordinates of the
-##' (CDS!) exons of the transcript encoding the protein sequence.
+##' (CDS!) exons of the transcript encoding the protein sequence. Exons HAVE to
+##' be ordered by exon index, i.e. first exon is first element, last exon last
+##' one. For + strand, exons should be ordered by start increasingly, for -
+##' strand by end decreasingly (or start * strand increasingly).
 ##' @return Returns a GRanges with positions of pranges(pObj)[[1]] mapped to
 ##' grObj
 ##' @noRd
@@ -155,6 +161,14 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
     ##             " does not match the length of the coding sequence in the",
     ##             " GRanges!")
 
+    strand_num <- 1
+    if (as.character(strand(grObj)[1]) == "-") {
+        strand_num <- -1
+    }
+    ## Ensure exons in grObj are ordered correctly.
+    exn_order <- order(start(grObj) * strand_num)
+    if (!all(exn_order == 1:length(exn_order)))
+        stop("Provided exons in 'grObj' are not ordered by exon index/rank!")
 
     ## exons ranges along the protein (1)
     j <- cumsum(width(grObj))
@@ -176,16 +190,21 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
     junc <- start_ex != end_ex
 
     ## (4)
-    getPos <- function(pos, idx, nclex, prtex) {
-        ## position in cdna
-        ## exon index
-        start(nclex[idx]) + (pos - start(prtex[idx]))
+    ## Translate position within cDNA to position within the respective exon.
+    pepstartExon <- width(prex)[start_ex] + start(peprngCdna) - j[start_ex]
+    pependExon <- width(prex)[end_ex] + end(peprngCdna) - j[end_ex]
+    ## Transform these coordinates into genomic coords:
+    if (strand_num < 0) {
+        pependGnm <- end(grObj)[start_ex] - (pepstartExon - 1)
+        pepstartGnm <- end(grObj)[end_ex] - (pependExon - 1)
+    } else {
+        pepstartGnm <- start(grObj)[start_ex] + (pepstartExon - 1)
+        pependGnm <- start(grObj)[end_ex] + (pependExon - 1)
     }
-    peptides_on_genome <-
-        IRanges(start = getPos(start(peprngCdna), start_ex, grObj, prex),
-                end = getPos(end(peprngCdna), end_ex, grObj, prex))
-
-    chr <- seqlevels(grObj)
+    peptides_on_genome <- IRanges(start = pepstartGnm, end = pependGnm)
+    chr <- as.character(unique(seqnames((grObj))))
+    if (length(chr) > 1)
+        stop("Provided exons are on different chromosomes!")
 
     ## Change the way the mcols is generated. Basically take all gene and
     ## transcript related mcols from the grObj and add additional columns.
@@ -209,19 +228,16 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
                  strand = strand(grObj)@values,
                  mcol)
     names(x) <- names(peprngProt)
-    ## x <- GRanges(seqnames = rep(chr, length(peptides_on_genome)),
-    ##              ranges = peptides_on_genome,
-    ##              strand = strand(grObj)@values,
-    ##              pepseq = as.character(pfeatures(pObj)[[1]]),
-    ##              accession = seqnames(pObj)[1],
-    ##              gene = mcols(grObj)$gene[1],
-    ##              transcript = mcols(grObj)$transcript[1],
-    ##              symbol = mcols(grObj)$symbol[1],
-    ##              exonJunctions = junc)
 
-    if (any(mcols(x)$exonJunctions))
-        x <- splitExonJunctions(x, mcols(x)$exonJunctions, grObj)
-    else
+    if (any(mcols(x)$exonJunctions)) {
+        rep_num <- (end_ex - start_ex) + 1
+        new_x <- pintersect(rep(x, rep_num),
+                            grObj[unlist(mapply(start_ex, end_ex, FUN = seq))])
+        mcols(new_x)$group <- rep(1:length(x), rep_num)
+        ## Get rid of the "hit" col:
+        mcols(new_x) <- mcols(new_x)[, colnames(mcols(new_x)) != "hit"]
+        return(sort(new_x))
+    } else
         mcols(x)$group <- 1:length(x)
     if (validObject(x))
         return(x)
