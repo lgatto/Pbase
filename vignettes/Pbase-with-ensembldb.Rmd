@@ -26,7 +26,7 @@ library("Pbase")
 library("ensembldb")
 ```
 
-## Introduction
+# Introduction
 
 This vignette describes how the `r Biocpkg("ensembldb")` package can be used to
 retrieve protein annotations and to map peptides within protein sequences to the
@@ -48,7 +48,7 @@ edb <- EnsDb.Hsapiens.v86
 hasProteinData(edb)
 ```
 
-## Fetch protein annotations from the database
+# Fetch protein annotations from the database
 
 `ensembldb` provides the `proteins` method to fetch protein annotations from an
 `EnsDb` database (along eventual transcript or gene annotation) and return the
@@ -101,7 +101,7 @@ pr_y <- Proteins(edb, filter = SeqnameFilter("Y"))
 length(pr_y)
 ```
 
-## Protein and genome data
+# Protein and genome data
 
 `EnsDb` databases provide both, protein annotations, and also gene/transcript
 annotations along with their genomic coordinates. Thus, we can use the `EnsDb`
@@ -142,19 +142,45 @@ res <- mapToGenome(zbtb16[1], zbtb16_cds[1])
 res
 ```
 
+The `GRanges` in the resulting `GRangesList` specify the genomic regions in
+which the individual peptide features are encoded. The `group` column in the
+`GRanges`' `mcols` links ranges encoding the same peptide feature, e.g. if a
+feature is encoded by a RNA sequence spanning 2 or more exons, the corresponding
+genomic regions have the same index in the `group` column. The protein domain
+_PS50157_ is for example encoded by a sequence within 2 exons of the transcript _ENST00000335953_.
 
-TODO:
-+ [ ] fix the `mapToGenome` method.
-+ [ ] implement a `mapToGenome` with `Proteins` and `EnsDb`?
+```{r genome_map_group_col}
+## Extract the GRanges associated with "group 4"
+res[[1]][res[[1]]$group == 4]
+```
+
+With this information available we can plot the transcript along with the
+peptide feature on the genomic scale. The figure below hence shows the
+transcript and all of the protein domains within the protein encoded by that transcript.
+
+```{r plot-zbtb16-with-prot-domains, fig.align = 'center'}
+
+## Define a genome axis track
+gat <- GenomeAxisTrack()
+## Get a GRanges for the specific transcript
+trt <- getGeneRegionTrackForGviz(edb, filter = TxidFilter(res[[1]]$tx_id[1]))
+
+## At last adding the protein domain name as column "id" to the mcols
+res[[1]]$id <- names(res[[1]])
+
+## Plotting everything
+plotTracks(list(gat,
+                GeneRegionTrack(trt, name = "tx"),
+                AnnotationTrack(res[[1]], groupAnnotation = "id",
+                                just.group = "above",
+                                name = "Protein domains")),
+           transcriptAnnotation = "transcript")
+
+```
 
 
-DO
-+ map to genomic coordinates.
-+ map to genomic coordinates without a `GRanges`.
-+ plot the domains within protein sequence.
 
-
-## Session information
+# Session information
 
 ```{r si}
 sessionInfo()
