@@ -406,6 +406,10 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
                             filter = .featureToFilter(x = idType, got_id),
                             columns = unique(c(idType, "tx_id", "protein_id")))
               message("OK")
+              ## Calculate peptide widths - might need them later.
+              prot_widths <- width(aa(x))
+              names(prot_widths) <- got_id
+              tx_widths <- sum(width(cdss))
 
               if (length(cdss) == 0)
                   stop("Could not find any coding region for the specified IDs.")
@@ -420,27 +424,33 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
                           "database! Peptide features for those can thus not ",
                           "be mapped.")
               common_id <- intersect(got_id, db_id)
+              ## Subset the input object and re-order the results.
+              keep_what <- which(got_id %in% common_id)
+              x <- x[keep_what]
+              got_id <- got_id[keep_what]
 
               cdss <- split(cdss, f = mcols(cdss)[, idType])
               ## How to handle Uniprot: uniprot could be encoded by more than
               ## one tx and each tx can be assigned to more than one uniprot!
-              ## Split by uniprot and lapply to return all entries for the first
-              ## transcript!
-              if (idType == "uniprot") {
-                  ## Now select for each Uniprot the first tx only
+              ## Split by uniprot and lapply to return all entries for the
+              ## transcript with the best matching coding sequence length.
+              if (idType == "uniprot_id") {
+                  ## Select for each Uniprot the transcript with the best
+                  ## matching CDS length.
                   cdss <- endoapply(cdss, function(z) {
-                      return(z[z$tx_id == z$tx_id[1]])
+                      diffs <- abs(prot_widths[mcols(z)[1, idType]] -
+                                   tx_widths[unique(z$tx_id)]/3)
+                      return(z[z$tx_id ==
+                               unique(z$tx_id)[which.min(diffs)[1]]])
                   })
               }
-              ## Subset the input object and re-order the results.
-              x <- x[got_id %in% common_id]
-              cdss <- cdss[common_id]
+              ## Re-order and ensure that the lengths of cdss and x match.
+              cdss <- cdss[got_id]
 
               ans <- pmapToGenome(x, cdss, drop.empty.ranges, ...)
 
               if (validObject(ans))
                   return(ans)
-
           })
 
 
