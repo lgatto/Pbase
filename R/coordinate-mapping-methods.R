@@ -352,6 +352,13 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
 ##' object has to provide the necessary IDs that can be used to query the
 ##' database. Ideally, these should be Ensembl protein IDs.
 ##'
+##' While the mapping between Ensembl protein and transcript IDs is 1:1, a single
+##' Uniprot ID can be annotated to several proteins and hence transcripts.
+##' If Uniprot IDs are provided, the method thus identifies for 1:n mappings
+##' between Uniprot ID and transcript the best matching transcript by comparing
+##' the length of the transcripts' CDS with the length of the proteins amino
+##' acid sequence.
+##'
 ##' @param x A \code{\linkS4class{Proteins}} object providing the proteins,
 ##' peptide features to map and IDs to identify the proteins and that can be
 ##' used to query the database.
@@ -381,6 +388,26 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
 ##' links ranges for peptide features spanning two or more exons.
 ##'
 ##' @author Johannes Rainer
+##' @examples
+##' ## Load the test data
+##' data(p)
+##'
+##' ## Load the EnsDb database for the mapping. In the example human Ensembl
+##' ## version 86.
+##' library(EnsDb.Hsapiens.v86)
+##' edb <- EnsDb.Hsapiens.v86
+##'
+##' ## The Proteins object contains 9 proteins with each having several peptide
+##' ## sequences. The seqnames of the object contain the protein's Uniprot IDs.
+##' seqnames(p)
+##'
+##' ## Below we map these peptide sequences to the genome.
+##' res <- mapToGenome(p, edb, idType = "uniprot_id")
+##'
+##' res
+##'
+##' ## With the exception of one protein (which Uniprot ID could not be found in
+##' the database) for all proteins the mapping could be performed.
 ##' @noRd
 setMethod("mapToGenome", c("Proteins", "EnsDb"),
           function(x, genome, id = "name", idType = "protein_id",
@@ -391,9 +418,6 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
               ## Check other input arguments.
               id <- match.arg(id, c("name", avarLabels(x)))
               idType <- match.arg(idType, c("protein_id", "uniprot_id", "tx_id"))
-
-              if (idType == "uniprot_id")
-                  warning("Uniprot ID support is very experimental at present!")
 
               ## (1) Fetch coding regions for the proteins.
               if (id == "name") {

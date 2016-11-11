@@ -201,6 +201,57 @@ res_all <- mapToGenome(zbtb16, edb, id = "tx_id", idType = "tx_id")
 lengths(res_all)
 ```
 
+In addition to Ensembl transcript or protein IDs, it is also possible to provide
+Uniprot IDs. While the mapping between Ensembl protein IDs and transcript IDs is
+1:1, multiple Ensembl protein IDs can be assigned to a single Uniprot ID hence
+the mappoing between Uniprot IDs and Ensembl transcript IDs is also 1:n. In
+cases in which a Uniprot is annotated to multiple transcript IDs, the
+`mapToGenome` method will select automatically the _best suited_ transcript by
+comparing the length of the protein sequence with the length of the transcripts'
+coding sequences. In the example below we use the test `Proteins` data from the
+`Pbase` package and perform the mapping of the peptide features using the
+provided Uniprot IDs of the proteins.
+
+```{r mapToGenome-ensdb-uniprot, message = FALSE}
+data(p)
+
+## What identifiers do we have
+seqnames(p)
+
+res <- mapToGenome(p, edb, idType = "uniprot_id")
+
+```
+
+Apart from one of the Uniprot IDs, _P04075-2_, for which no corresponding
+transcript could be identified, all peptide features could be mapped
+successfully. As detailed above, the method did select for each Uniprot ID the
+transcript with the best matching CDs. To illustrate this, we select below all
+transcripts that are annotated to the first Uniprot ID.
+
+```{r uniprot_multi_tx}
+txs <- transcripts(edb, filter = UniprotidFilter(seqnames(p)[1]))
+names(txs)
+```
+
+There are 6 transcripts annotated, but only from one the coding sequence matches
+the length of the protein:
+
+```{r uniprot_seqlength}
+## Fetch the CDs for each transcript
+cdss <- cdsBy(edb, filter = TxidFilter(names(txs)))
+
+## The protein sequence length:
+width(aa(p)[1])
+
+## The difference between protein sequence and CDS length
+width(aa(p)[1]) - sum(width(cdss)) / 3
+
+```
+
+Thus, the lenght of the coding region of the last transcript matches the length
+of the protein's amino acid sequence (since the stop codon, being still part of
+the CDS is not encoded).
+
 
 # Session information
 

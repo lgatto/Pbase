@@ -88,7 +88,9 @@ setMethod("Proteins",
                                       listColumns(file, "protein_domain")))
               }
               if (!fetchLRG) {
-                  ##
+                  ## Add a filter to fetch only transcripts starting with ENS
+                  filter <- c(list(TxidFilter("ENS%", condition = "like")),
+                              filter)
               }
               ## Now fetch the data:
               res <- ensembldb::proteins(file, filter = filter,
@@ -105,8 +107,7 @@ setMethod("Proteins",
               ##    a list to the mcols of the AAStringSet (i.e. acols).
               pids <- unique(res$protein_id)
               prt_cn <- colnames(res)[!(colnames(res) %in%
-                                        listColumns(file, c("protein_domain",
-                                                            "uniprot")))]
+                                        listColumns(file, c("protein_domain")))]
               prt <- unique(res[, c("protein_id", prt_cn)])
               aa <- AAStringSet(prt$protein_sequence)
               names(aa) <- prt$protein_id

@@ -80,6 +80,19 @@ test_that("Proteins,EnsDb,missing constructor", {
     expect_true(all(unlist(lengths(pranges(prots))) == 0))
 })
 
+dontrun_test_multi_unitprot <- function() {
+    library(EnsDb.Hsapiens.v86)
+    edb <- EnsDb.Hsapiens.v86
+    gn <- "XIRP2" ## that's the first gene from the data(p)
+    prts <- proteins(edb, filter = GenenameFilter(gn),
+                     columns = c("tx_id","uniprot_id"))
+    ## OK, here I've got multiple proteins for one Uniprot.
+    res <- Proteins(edb, filter = GenenameFilter(gn),
+                    columns = c("tx_id", "gene_name", "uniprot_id"))
+    res_2 <- Proteins(edb, filter = UniprotidFilter("A4UGR9"),
+                      columns = c("tx_id", "gene_name"))
+}
+
 dontrun_test_all <- function() {
     ## Get the mapping between all protein_id and tx_id
     library(RSQLite)
@@ -93,6 +106,10 @@ dontrun_test_all <- function() {
                                                        condition = "like"),
                               loadProteinDomains = FALSE)
     ) ## 20 sec
+    system.time(
+        all_prots <- Proteins(edb, fetchLRG = TRUE,
+                              loadProteinDomains = FALSE)
+    )
     system.time(
         all_prots <- Proteins(edb, filter = TxidFilter("ENS%",
                                                        condition = "like"),
