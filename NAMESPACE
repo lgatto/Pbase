@@ -28,10 +28,11 @@ importFrom(mzID, mzID, flatten)
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
 
 ## ensembldb
-importFrom(ensembldb, listProteinColumns)
+importFrom(ensembldb, listProteinColumns, TxidFilter, ProteinidFilter,
+           UniprotidFilter)
 importMethodsFrom(ensembldb, hasProteinData, listColumns, proteins,
-                  ensemblVersion)
-importClassesFrom(ensembldb, EnsDb)
+                  ensemblVersion, cdsBy)
+importClassesFrom(ensembldb, EnsDb, TxidFilter, ProteinidFilter, UniprotidFilter)
 
 exportClasses(Proteins,
               Pparams)

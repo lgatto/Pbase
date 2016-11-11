@@ -82,6 +82,7 @@ test_that(".mapToGenome2 internal function", {
         sum(width(z)) == nchar(z$pepseq[1]) * 3
     }))))
 
+    ## issue #29
     ## - strand:
     ## transcript with 3 exons:
     ## ex1: 60-50, ex2: 40-30, ex3: 10-20
@@ -119,3 +120,137 @@ test_that(".mapToGenome2 internal function", {
         sum(width(z)) == nchar(z$pepseq[1]) * 3
     }))))
 })
+
+
+test_that("mapToGenome,Proteins,EnsDb", {
+    library(EnsDb.Hsapiens.v86)
+    edb <- EnsDb.Hsapiens.v86
+    ## Let's start with our famous ZBTB16 example:
+    zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+    zbtb16_cds <- cdsBy(edb,
+                        filter = TxidFilter(acols(zbtb16)$tx_id),
+                        columns = c("tx_id", "protein_id"))
+    zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
+
+    ## Do the mapping using EnsDb, using the protein_id
+    res <- mapToGenome(zbtb16, edb)
+    ## Check if we get what we expect:
+    for (i in 1:length(res)) {
+        ## tx_id, protein_id from Proteins and result have to match
+        expect_equal(unique(res[[i]]$tx_id), acols(zbtb16[i])$tx_id)
+        expect_equal(unique(res[[i]]$accession), seqnames(zbtb16)[i])
+        expect_equal(res[[i]],
+                    mapToGenome(zbtb16[i], zbtb16_cds[i])[[1]])
+    }
+    ## Use tx_id as identifiers.
+    res_2 <- mapToGenome(zbtb16, edb, id = "tx_id", idType = "tx_id")
+    expect_equal(res, res_2)
+
+    ## Use uniprot ID.
+    uniprts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+                        columns = "uniprot_id", return.type = "data.frame")
+    uniprts <- unique(uniprts$uniprot_id)
+    prts <- Proteins(edb, filter = UniprotidFilter(uniprts))
+    ## FIX this does not return the uniprot ids.
+
+    ## Check errors:
+    expect_error(mapToGenome(zbtb16, edb, id = "other"))
+    expect_error(mapToGenome(zbtb16, edb, idType = "exon"))
+})
+
+
+benchmark_pmapToGenome <- function() {
+    ## issue #20
+    ## Simple benchmark comparing the efficiency of the pmapToGenome method
+    ## using sapply and a for loop with the pmapToGenom2 that uses bpmapply.
+    library(microbenchmark)
+    library(BiocParallel)
+
+    ## Fetch a bunch of proteins.
+    gnf <- GenenameFilter(c("ZBTB16", "BCL2", "BCL2L11"))
+    cdss <- cdsBy(edb, by = "tx", columns = c("tx_id", "protein_id"),
+                  filter = gnf)
+    prts <- Proteins(edb, filter = gnf)
+    cdss <- cdss[acols(prts)$tx_id]
+
+    ## (1) Without parallel processing
+    ## FIX THE ERRORS:
+    register(SerialParam())
+    res <- pmapToGenome(prts, cdss)
+    res_2 <- Pbase:::pmapToGenome2(prts, cdss)
+    expect_equal(res, res_2)
+    microbenchmark(pmapToGenome(prts, cdss),
+                   Pbase:::pmapToGenome2(prts, cdss),
+                   times = 20)
+    ## Unit: seconds
+    ##                               expr      min       lq     mean   median       uq
+    ##           pmapToGenome(prts, cdss) 1.334235 1.371089 1.537094 1.442745 1.610697
+    ##  Pbase:::pmapToGenome2(prts, cdss) 1.624151 1.644120 1.797967 1.672039 1.744216
+    ##       max neval cld
+    ##  2.272202    20  a
+    ##  3.827477    20   b
+
+    ## With 2 CPUs.
+    register(MulticoreParam(workers = 2))
+    microbenchmark(pmapToGenome(prts, cdss),
+                   Pbase:::pmapToGenome2(prts, cdss),
+                   times = 20)
+    ## Unit: seconds
+    ##                               expr      min       lq     mean   median       uq
+    ##           pmapToGenome(prts, cdss) 1.348400 1.370049 1.520549 1.453795 1.502679
+    ##  Pbase:::pmapToGenome2(prts, cdss) 4.108021 4.148563 4.252193 4.163558 4.213703
+    ##       max neval cld
+    ##  2.218503    20  a
+    ##  5.573078    20   b
+}
+
+benchmark_dot_mapToGenome <- function() {
+    ## issue #30
+    ## Benchmark comparing the speed of the .mapToGenome and .mapToGenome2
+    ## functions.
+    ## Need an object that is compatible with both, .mapToGenoma and
+    ## .mapToGenom2, i.e. has mcols 'gene', 'transcript' and 'symbol' in the
+    ## GRanges
+    zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+    ## NOTE: the first query is much faster!
+    zbtb16_cds <- cdsBy(edb,
+                        filter = TxidFilter(acols(zbtb16)$tx_id),
+                        columns = c("tx_id", "protein_id"))
+    prot <- zbtb16[1]
+    gen <- zbtb16_cds[acols(prot)$tx_id]
+    gen <- unlist(gen)
+    gen$gene <- "ZBTB16"
+    gen$symbol <- "ZBTB16"
+    gen$transcript <- gen$tx_id
+
+    res <- Pbase:::.mapToGenome(prot, gen)
+    res_2 <- Pbase:::.mapToGenome2(prot, gen)
+    ## .mapToGenome2 returns more mcols and names, fix that.
+    res <- unlist(res)
+    res_2 <- unname(unlist(res_2))
+    mcols(res_2) <- mcols(res_2)[, colnames(mcols(res))]
+    ## Drop column group as this is different.
+    mcols(res) <- mcols(res)[, colnames(mcols(res)) != "group"]
+    mcols(res_2) <- mcols(res_2)[, colnames(mcols(res_2)) != "group"]
+    expect_equal(res, res_2)
+    ## OK
+
+    ## Benchmark:
+    library(microbenchmark)
+    microbenchmark(Pbase:::.mapToGenome(prot, gen),
+                   Pbase:::.mapToGenome2(prot, gen), times = 20)
+    ## Unit: milliseconds
+    ##                              expr       min        lq      mean    median
+    ##   Pbase:::.mapToGenome(prot, gen) 918.21352 927.42580 972.29711 940.74852
+    ##  Pbase:::.mapToGenome2(prot, gen)  50.62116  53.04321  55.59854  55.08398
+    ##         uq        max neval cld
+    ##  952.77226 1583.10086    20   b
+    ##   56.63087   67.59263    20  a
+}
+
+
+## TODO:
+## + Add more unit tests for the mapToGenome,Proteins,EnsDb (uniprot, tx_id etc)
+## + issue: Proteins with uniprot_id: problem is the 1:n mapping from protein_id
+##   to uniprot_id in Ensembl. Solution is to return a redundant list of proteins
+##   i.e. replicate the protein_id, one for each uniprot_id.

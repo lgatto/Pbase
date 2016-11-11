@@ -38,9 +38,10 @@ setMethod("Proteins",
 ##'
 ##' @param uniprotIds missing.
 ##'
-##' @param loadProteinDomains Logical whether protein domains within the
-##' proteins' sequences should be loaded too. If \code{TRUE}, protein domains
-##' are loaded and added into the \code{@pranges} slot of the object.
+##' @param loadProteinDomains Logical of length 1 defining whether protein
+##' domains within the proteins' sequences should be loaded too. If \code{TRUE},
+##' protein domains are loaded and added into the \code{@pranges} slot of the
+##' object.
 ##'
 ##' @param filter Single object extending
 ##' \code{\linkS4Object[ensembldb]{BasicFilter}} or \code{list} of such objects
@@ -110,7 +111,8 @@ setMethod("Proteins",
               aa <- AAStringSet(prt$protein_sequence)
               names(aa) <- prt$protein_id
               mcols(aa) <- prt[, !colnames(prt) %in% c("protein_id",
-                                                       "protein_sequence")]
+                                                       "protein_sequence"),
+                               drop = FALSE]
               ## Fetch protein domain data
               if (loadProteinDomains) {
                   prng <- IRangesList(list())
@@ -319,7 +321,8 @@ setMethod("show", "Proteins",
 
 
 ## New suggested methods:
-## width: return the width(x@aa)
+## + width: return the width(x@aa)
+## + names,Proteins: returns seqnames,Proteins
 
 ## internal use only; not exported
 

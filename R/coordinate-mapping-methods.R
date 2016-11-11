@@ -2,6 +2,8 @@
 ### j: a logical, typically mcols(gr)$exonJunctions
 ### ex: a GRanges object with exonsx
 ## Update jo: ensure that names are not dropped for spliced features.
+## 2nd Update jo: the .mapToGenome2 function does no longer need this function
+## as it uses an eventually faster implementation without sapply and for.
 splitExonJunctions <- function(gr, j, ex) {
     ## (1) the ranges to be split
     gr2split <- gr[j]
@@ -133,6 +135,8 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 ##'    all of the mcols that are associated to genes or transcripts.
 ##' b) Ensure that coordinate conversion for - strand transcripts works.
 ##' c) Doesn't need splitExonJunctions and thus might be faster.
+##' d) Does not throw an error but returns GRanges() if no peptide features
+##'    available to map.
 ##' @param pObj is a Proteins of length 1
 ##' @param grObj is a GRanges representing the start and end coordinates of the
 ##' (CDS!) exons of the transcript encoding the protein sequence. Exons HAVE to
@@ -177,6 +181,8 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 
     ## peptide position on protein
     peprngProt <- pranges(pObj)[[1]]
+    if (length(peprngProt) == 0)
+        return(GRanges())
     ## peptide positions on cdna (2)
     peprngCdna <- IRanges(start = 1 + (start(peprngProt)-1) * 3,
                           width = width(peprngProt) * 3)
@@ -228,6 +234,8 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
                  strand = strand(grObj)@values,
                  mcol)
     names(x) <- names(peprngProt)
+    ## lifting seqinfo over
+    seqinfo(x) <- seqinfo(grObj)[chr]
 
     if (any(mcols(x)$exonJunctions)) {
         rep_num <- (end_ex - start_ex) + 1
@@ -256,6 +264,27 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
               names(l) <- names(genome)
               for (i in seq_len(length(x)))
                   l[[i]] <- tryCatchMapToGenome(x[i], genome[[i]], ...)
+              ans <- GRangesList(l)
+              if (drop.empty.ranges)
+                  ans <- ans[elementNROWS(ans) > 0]
+              if (validObject(ans))
+                  return(ans)
+          })
+
+
+## Testing a parallel implementation of the mapping (see issue #)
+## benchmarking results are however not that promising (see
+## benchmark_pmapToGenome function in test_mapToGenome-ensembldb.R).
+setGeneric("pmapToGenome2",
+           function(x, genome, ...) standardGeneric("pmapToGenome2"))
+setMethod("pmapToGenome2", c("Proteins", "GRangesList"),
+          function(x, genome, drop.empty.ranges = TRUE, ...) {
+              if (length(x) != length(genome))
+                  stop("'x' and 'genome' must have the same length")
+              l <- bpmapply(split(x, 1:length(x)), genome,
+                            FUN = tryCatchMapToGenome, ...)
+              ## Or better use seqnames(x)?
+              names(l) <- names(genome)
               ans <- GRangesList(l)
               if (drop.empty.ranges)
                   ans <- ans[elementNROWS(ans) > 0]
@@ -305,3 +334,123 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
                   return(ans)
 
           })
+
+
+## The method first tries to fetch GRanges representing the CDS encoding the
+## proteins from the database and subsequently performs the mapping.
+##'
+##' @title Map proteins to genomic coordinates using ensembldb
+##'
+##' @description This method enables the mapping of peptide features within a
+##' \code{\linkS4class{Proteins}} object to the genome using annotations
+##' provided in an \code{\link[ensembldb]{EnsDb}} object.
+##'
+##' @details The method tries first to fetch the exons representing the region
+##' encoding each of the proteins in \code{x} from the
+##' \code{\link[ensembldb]{EnsDb}} provided with parameter \code{genome} and
+##' performs then the mapping. To this end, the \code{\linkS4class{Proteins}}
+##' object has to provide the necessary IDs that can be used to query the
+##' database. Ideally, these should be Ensembl protein IDs.
+##'
+##' @param x A \code{\linkS4class{Proteins}} object providing the proteins,
+##' peptide features to map and IDs to identify the proteins and that can be
+##' used to query the database.
+##'
+##' @param genome A \code{\link[ensembldb]{EnsDb}} object providing the required
+##' annotations to perform the mapping.
+##'
+##' @param id A character vector of length one indicating which metadata columns
+##' in \code{x} provide the IDs for the mapping to the transcripts encoding the
+##' proteins. Can be the name of any column in \code{acols(x)} or \code{"name"}
+##' in which case the \code{seqnames(x)} will be used.
+##'
+##' @param idType A character vector of length one specifying the type of the
+##' provided IDs. Supported are \code{"protein_id"} (Ensembl protein ID),
+##' \code{"tx_id"} (Ensembl transcript ID) or \code{"uniprot_id"} (Uniprot ID).
+##'
+##' @param drop.empty.ranges Wheter empty \code{\link[GenomicFeatures]{GRanges}}
+##' should be dropped.
+##'
+##' @return A \code{\link[GenomicFeatures]{GRangesList}} (names representing the
+##' Ensembl transcript IDs) with \code{\link[GenomicFeatures]{GRanges}}
+##' representing the genomic coordinates for each peptide feature in \code{x}.
+##' The ordering of the results matches the ordering of \code{x}, unless
+##' \code{drop.empty.ranges = TRUE} in which case no \code{GRanges} will be
+##' returned for proteins that either have no peptide features, or for which
+##' the mapping failed. The \code{group} metadata columns of the \code{GRanges}
+##' links ranges for peptide features spanning two or more exons.
+##'
+##' @author Johannes Rainer
+##' @noRd
+setMethod("mapToGenome", c("Proteins", "EnsDb"),
+          function(x, genome, id = "name", idType = "protein_id",
+                   drop.empty.ranges = TRUE, ...) {
+              if (!hasProteinData(genome))
+                  stop("The submitted database does not provide protein",
+                       " annotations.")
+              ## Check other input arguments.
+              id <- match.arg(id, c("name", avarLabels(x)))
+              idType <- match.arg(idType, c("protein_id", "uniprot_id", "tx_id"))
+
+              if (idType == "uniprot_id")
+                  warning("Uniprot ID support is very experimental at present!")
+
+              ## (1) Fetch coding regions for the proteins.
+              if (id == "name") {
+                  got_id <- seqnames(x)
+              } else {
+                  got_id <- acols(x)[, id]
+              }
+              message("Fetch coding region for proteins ... ", appendLF = FALSE)
+              cdss <- cdsBy(edb, by = "tx",
+                            filter = .featureToFilter(x = idType, got_id),
+                            columns = unique(c(idType, "tx_id", "protein_id")))
+              message("OK")
+
+              if (length(cdss) == 0)
+                  stop("Could not find any coding region for the specified IDs.")
+
+              ## (2) Check if we've got results for all input IDs and re-order
+              ##     the results
+              cdss <- unlist(cdss, use.names = FALSE)
+              db_id <- unique(mcols(cdss)[, idType])
+              if (!all(got_id %in% db_id))
+                  warning("From the ", length(got_id), " provided IDs, ",
+                          sum(!(got_id %in% db_id)), " could not be found in ",
+                          "database! Peptide features for those can thus not ",
+                          "be mapped.")
+              common_id <- intersect(got_id, db_id)
+
+              cdss <- split(cdss, f = mcols(cdss)[, idType])
+              ## How to handle Uniprot: uniprot could be encoded by more than
+              ## one tx and each tx can be assigned to more than one uniprot!
+              ## Split by uniprot and lapply to return all entries for the first
+              ## transcript!
+              if (idType == "uniprot") {
+                  ## Now select for each Uniprot the first tx only
+                  cdss <- endoapply(cdss, function(z) {
+                      return(z[z$tx_id == z$tx_id[1]])
+                  })
+              }
+              ## Subset the input object and re-order the results.
+              x <- x[got_id %in% common_id]
+              cdss <- cdss[common_id]
+
+              ans <- pmapToGenome(x, cdss, drop.empty.ranges, ...)
+
+              if (validObject(ans))
+                  return(ans)
+
+          })
+
+
+
+.featureToFilter <- function(x, ...) {
+    if (x == "tx_id")
+        return(TxidFilter(...))
+    if (x == "protein_id")
+        return(ProteinidFilter(...))
+    if (x == "uniprot_id")
+        return(UniprotidFilter(...))
+    stop("No filter object for feature ", x)
+}

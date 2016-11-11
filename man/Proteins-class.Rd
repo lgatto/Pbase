@@ -186,7 +186,7 @@
       of proteins. }
 
     \item{[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
-      Creates a subset of the \code{Proteins} insance.}
+      Creates a subset of the \code{Proteins} instance.}
 
     \item{[[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
       Returns an \code{\linkS4class{AAString}} instance representing the
