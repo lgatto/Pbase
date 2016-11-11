@@ -20,11 +20,6 @@ setClass("Proteins",
     ## TODO: extend validity checks and write unit tests
     msg <- validMsg(NULL, isCurrent(object))
 
-    if (anyDuplicated(seqnames(object))) {
-        msg <- validMsg(msg, paste0("Duplicated names in ", sQuote("seqnames"),
-                                    " are not allowed!"))
-    }
-
     if (length(object@pranges) != length(object@aa)) {
         msg <- validMsg(msg, paste0("Number of IRanges in @pranges and the ",
                                     "number of sequences in @aa do not match!"))
