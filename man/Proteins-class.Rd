@@ -40,6 +40,7 @@
 
 \alias{length,Proteins-method}
 \alias{seqnames,Proteins-method}
+\alias{names,Proteins-method}
 \alias{show,Proteins-method}
 
 \alias{cleave,Proteins-method}
@@ -181,6 +182,10 @@
 
     \item{seqnames}{\code{signature(x = "Proteins")}: Returns the
       protein sequence names defined as UniProt accession numbers. }
+
+    \item{names}{\code{signature(x = "Proteins")}: Returns the
+      protein sequence names defined as UniProt accession numbers.
+      It is just a synonym for \code{seqnames}. }
 
     \item{length}{\code{signature(x = "Proteins")}: Returns the number
       of proteins. }

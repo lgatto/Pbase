@@ -15,6 +15,7 @@ test_that("fasta constructor", {
     "FKGHD",
   "td|P3|P3_TEST protein 3, length 15 OS=machina arithmetica GN=g3 PE=1 SV=1" =
     "JKKLMKNKDOPQRST"))
+  names(aa) <- c("P1", "P2", "P3")
 
   p <- Proteins(f)
   p2 <- p
@@ -29,8 +30,6 @@ test_that("fasta constructor", {
 
   expect_identical(seqnames(p), c("P1", "P2", "P3"))
 
-  ## could not be compare directly because testthat throws an error:
-  ##  "cannot unclass an external pointer"
   expect_identical(as.character(p@aa), as.character(aa))
   expect_identical(as.character(p[[1]]), as.character(aa[[1]]))
   expect_identical(as.character(p[1:2]@aa), as.character(p2@aa))
