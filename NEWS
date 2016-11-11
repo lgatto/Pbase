@@ -1,5 +1,16 @@
 CHANGES IN VERSION 0.15.1
 -------------------------
+ o Proteins,EnsDb method allowing to fetch a Proteins object from an EnsDb
+   database.
+ o Fixes in the mapToGenome method:
+   - Works also for negative strand encoded proteins (issue #29).
+   - Supports a GRangesList object with arbitrary mcols.
+   - Faster implementation (issue #30).
+ o mapToGenome,Proteins,EnsDb and pmapToGenome,Proteins,EnsDb methods that
+   map peptide features to the genome using annotations fetched from an EnsDb.
+
+CHANGES IN VERSION 0.15.1
+-------------------------
  o Drop unique `seqnames` requirement; see #28, #32
  o Create `names` as synonym for `seqnames`; close #32
 
