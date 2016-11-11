@@ -90,6 +90,8 @@ setMethod("ametadata", "Proteins",
 setMethod("seqnames","Proteins",
           function(x) names(aa(x)))
 
+setMethod("names","Proteins",
+          function(x) seqnames(x))
 
 setMethod("avarLabels", "Proteins",
           function(object) names(aa(object)@elementMetadata))

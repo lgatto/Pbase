@@ -1,6 +1,7 @@
 CHANGES IN VERSION 0.15.1
 -------------------------
  o Drop unique `seqnames` requirement; see #28, #32
+ o Create `names` as synonym for `seqnames`; close #32
 
 CHANGES IN VERSION 0.13.3
 -------------------------
