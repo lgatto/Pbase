@@ -178,10 +178,27 @@ plotTracks(list(gat,
 
 ```
 
-Mapping peptide features from multiple transcripts/proteins to the genome.
+A much simpler way to map peptide features, also for several proteins, to the
+genome is shown below.
 
-```{r genome_map_ensdb}
+In addition, we can also pass the `EnsDb` object directly as `genome` parameter
+to the `mapToGenome` method. The retrieval of the coding region for the
+respective proteins is then performed internally. We just have to specify the
+type of identifier we're going to pass and in which column of the `Proteins`
+object these can be found. For the example above, we can either specify `idType
+= "protein_id"` and `id = "name"` which would use the Ensembl protein IDs
+available through `seqnames(zbtb16)`, or `idType = "tx_id"` and `id = "tx_id"`
+which will use the Ensembl transcript IDs associated with the proteins and
+available in `acols(zbtb16)$tx_id` to fetch the coding regions. Note that
+fetching transcript annotations from the `EnsDb` database will be faster if
+transcript IDs are provided, since, for protein IDs more expensive database
+table joins have to be performed.
 
+```{r mapToGenome-ensdb}
+
+res_all <- mapToGenome(zbtb16, edb, id = "tx_id", idType = "tx_id")
+
+lengths(res_all)
 ```
 
 

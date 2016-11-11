@@ -261,7 +261,7 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
                   stop("'x' and 'genome' must have the same length")
 
               l <- vector("list", length = length(x))
-              names(l) <- names(genome)
+              names(l) <- seqnames(x)
               for (i in seq_len(length(x)))
                   l[[i]] <- tryCatchMapToGenome(x[i], genome[[i]], ...)
               ans <- GRangesList(l)
@@ -284,7 +284,7 @@ setMethod("pmapToGenome2", c("Proteins", "GRangesList"),
               l <- bpmapply(split(x, 1:length(x)), genome,
                             FUN = tryCatchMapToGenome, ...)
               ## Or better use seqnames(x)?
-              names(l) <- names(genome)
+              names(l) <- seqnames(x)
               ans <- GRangesList(l)
               if (drop.empty.ranges)
                   ans <- ans[elementNROWS(ans) > 0]
@@ -301,7 +301,7 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
                       ans <- GRangesList()
                   else {
                       ans <- GRangesList(ans)
-                      names(ans) <- names(genome)
+                      names(ans) <- seqnames(x)
                   }
               } else {
                   ## Proteins[n] and genome[m] and mapp all against all

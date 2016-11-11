@@ -8,6 +8,8 @@ CHANGES IN VERSION 0.15.1
    - Faster implementation (issue #30).
  o mapToGenome,Proteins,EnsDb and pmapToGenome,Proteins,EnsDb methods that
    map peptide features to the genome using annotations fetched from an EnsDb.
+ o The seqnames of the Proteins object are used as names for the resulting
+   GRangesList object from the mapToGenome and pmapToGenome methods (issue #34).
 
 CHANGES IN VERSION 0.15.1
 -------------------------

@@ -133,28 +133,20 @@ test_that("mapToGenome,Proteins,EnsDb", {
     zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
 
     ## Do the mapping using EnsDb, using the protein_id
-    res <- mapToGenome(zbtb16, edb)
+    res <- mapToGenome(zbtb16, edb, drop.empty.ranges = FALSE)
+    expect_equal(names(res), names(zbtb16))
+    res <- res[lengths(res) > 0]
     ## Check if we get what we expect:
     for (i in 1:length(res)) {
         ## tx_id, protein_id from Proteins and result have to match
         expect_equal(unique(res[[i]]$tx_id), acols(zbtb16[i])$tx_id)
         expect_equal(unique(res[[i]]$accession), seqnames(zbtb16)[i])
         expect_equal(res[[i]],
-                    mapToGenome(zbtb16[i], zbtb16_cds[i])[[1]])
+                     mapToGenome(zbtb16[i], zbtb16_cds[i])[[1]])
     }
     ## Use tx_id as identifiers.
     res_2 <- mapToGenome(zbtb16, edb, id = "tx_id", idType = "tx_id")
-    ## expect_equal(res, res_2) ## fails at present due to different names!
-
-
-    ## Got a strange error for A4UGR9 and P02545
-    prts <- proteins(edb, filter = UniprotidFilter("A4UGR9"),
-                     columns = c("tx_id", "protein_id", "uniprot_id"),
-                     return.type = "data.frame")
-    cdss <- cdsBy(edb, by = "tx",
-                  filter = TxidFilter(prts$tx_id),
-                  columns = c("tx_id", "protein_id", "uniprot_id", "tx_biotype"))
-    prt <- p["A4UGR9"]
+    expect_equal(res, res_2) ## fails at present due to different names!
 
     ##
     uniprts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
