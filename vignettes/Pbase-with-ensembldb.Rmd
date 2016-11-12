@@ -178,9 +178,6 @@ plotTracks(list(gat,
 
 ```
 
-A much simpler way to map peptide features, also for several proteins, to the
-genome is shown below.
-
 In addition, we can also pass the `EnsDb` object directly as `genome` parameter
 to the `mapToGenome` method. The retrieval of the coding region for the
 respective proteins is then performed internally. We just have to specify the
@@ -212,7 +209,7 @@ coding sequences. In the example below we use the test `Proteins` data from the
 `Pbase` package and perform the mapping of the peptide features using the
 provided Uniprot IDs of the proteins.
 
-```{r mapToGenome-ensdb-uniprot, message = FALSE}
+```{r mapToGenome-ensdb-uniprot, message=FALSE}
 data(p)
 
 ## What identifiers do we have

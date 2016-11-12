@@ -47,7 +47,7 @@ test_that("Proteins,EnsDb,missing constructor", {
     expect_true(all(unlist(lengths(pranges(prots))) == 0))
 
     ## Other gene: BCL2L11
-    prots <- Proteins(edb, filter = GenenameFilter("BCL2L11"))
+    prots <- Proteins(edb, filter = GenenameFilter("BCL2L11"), fetchLRG = TRUE)
     ## Check that we've got all proteins.
     txs <- transcripts(edb, filter = GenenameFilter("BCL2L11"))
     res <- dbGetQuery(dbconn(edb),
@@ -72,12 +72,34 @@ test_that("Proteins,EnsDb,missing constructor", {
     })
     ## Without protein domains.
     prots <- Proteins(file = edb, filter = GenenameFilter("BCL2L11"),
-                      loadProteinDomains = FALSE)
+                      loadProteinDomains = FALSE, fetchLRG = TRUE)
     expect_identical(sort(seqnames(prots)), sort(res$protein_id))
     expect_identical(seqnames(prots), names(pranges(prots)))
     ## Lenght (nrow) of pranges/pcols is 0
     expect_true(all(unlist(lapply(pcols(prots), nrow)) == 0))
     expect_true(all(unlist(lengths(pranges(prots))) == 0))
+})
+
+test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
+    dat <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+                    columns = c("tx_id", "protein_id", "uniprot_id"),
+                    return.type = "data.frame")
+    uniprts <- unique(dat$uniprot_id)
+    prts <- Proteins(edb, filter = UniprotidFilter(uniprts))
+
+    ## Check content; ordering should be the same.
+    expect_equal(seqnames(prts), dat$protein_id)
+    expect_equal(acols(prts)$tx_id, dat$tx_id)
+    expect_equal(acols(prts)$uniprot_id, dat$uniprot_id)
+    ## Protein domains.
+    for (i in 1:length(acols)) {
+        res <- proteins(edb, filter = ProteinidFilter(seqnames(prts)[i]),
+                        columns = listColumns(edb, "protein_domain"))
+        expect_equal(start(pranges(prts)[[i]]), res$prot_dom_start)
+        expect_equal(end(pranges(prts)[[i]]), res$prot_dom_end)
+        expect_equal(mcols(pranges(prts)[[i]])$interpro_accession,
+                     res$interpro_accession)
+    }
 })
 
 dontrun_test_multi_unitprot <- function() {

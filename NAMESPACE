@@ -14,7 +14,7 @@ import(biomaRt)
 
 importFrom(GenomicRanges, GRanges, GRangesList)
 importFrom(rtracklayer, chrom)
-
+importMethodsFrom(GenomicRanges, "seqinfo<-")
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
 

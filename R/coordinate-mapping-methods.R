@@ -426,7 +426,7 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
                   got_id <- acols(x)[, id]
               }
               message("Fetch coding region for proteins ... ", appendLF = FALSE)
-              cdss <- cdsBy(edb, by = "tx",
+              cdss <- cdsBy(genome, by = "tx",
                             filter = .featureToFilter(x = idType, got_id),
                             columns = unique(c(idType, "tx_id", "protein_id")))
               message("OK")

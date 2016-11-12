@@ -143,11 +143,13 @@ setMethod("Proteins",
                       names(tmp) <- miss_prt
                       prng <- c(prng, IRangesList(tmp))
                   }
-                  ## Ensure correct ordering.
-                  prng <- prng[pids]
+                  ## Ensure correct ordering and ensure correct mapping e.g.
+                  ## if we have 1:n mapping for protein_id to uniprot_id.
+                  ## issue #35
+                  prng <- prng[names(aa)]
               } else {
-                  prng <- IRangesList(replicate(length(pids), IRanges()))
-                  names(prng) <- pids
+                  prng <- IRangesList(replicate(length(aa), IRanges()))
+                  names(prng) <- names(aa)
               }
               ## Create the Proteins object.
               pr <- new("Proteins", aa = aa, pranges = prng,

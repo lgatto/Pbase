@@ -153,7 +153,9 @@ test_that("mapToGenome,Proteins,EnsDb", {
                         columns = "uniprot_id", return.type = "data.frame")
     uniprts <- unique(uniprts$uniprot_id)
     prts <- Proteins(edb, filter = UniprotidFilter(uniprts))
-    ## FIX this does not return the uniprot ids.
+    res_3 <- mapToGenome(prts, edb, id = "tx_id", idType = "tx_id",
+                         drop.empty.ranges = FALSE)
+    expect_equal(names(res_3), seqnames(prts))
 
     ## Check errors:
     expect_error(mapToGenome(zbtb16, edb, id = "other"))
