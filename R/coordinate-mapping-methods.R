@@ -471,6 +471,7 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
               ## Re-order and ensure that the lengths of cdss and x match.
               cdss <- cdss[got_id]
 
+              ## Use parallel processing instead?
               ans <- pmapToGenome(x, cdss, drop.empty.ranges, ...)
 
               if (validObject(ans))

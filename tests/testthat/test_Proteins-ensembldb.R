@@ -100,7 +100,22 @@ test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
         expect_equal(mcols(pranges(prts)[[i]])$interpro_accession,
                      res$interpro_accession)
     }
+    idmap <- unique(cbind(names(prts), acols(prts)$uniprot_id))
+    ## We have an n:m mapping:
+    expect_true(length(unique(idmap[, 1])) < nrow(idmap))
+    expect_true(length(unique(idmap[, 2])) < nrow(idmap))
+
+    ## We can use a UniprotmappingFilter to restrict to good quality maps.
+    prts_2 <- Proteins(edb, filter = list(GenenameFilter("ZBTB16"),
+                                          UniprotmappingtypeFilter("DIRECT")),
+                       columns = c("uniprot_id", "protein_id"))
+    ## That way we reduce it to a n:1 mapping between Ensembl protein ID and
+    ## Uniprot ID.
+    idmap <- unique(cbind(names(prts_2), acols(prts_2)$uniprot_id))
+    expect_true(length(unique(idmap[, 1])) == nrow(idmap))
+    expect_true(length(unique(idmap[, 2])) < nrow(idmap))
 })
+
 
 dontrun_test_multi_unitprot <- function() {
     library(EnsDb.Hsapiens.v86)

@@ -163,6 +163,8 @@ test_that("mapToGenome,Proteins,EnsDb", {
 })
 
 test_that("mapToGenome,Proteins,EnsDb with Uniprot IDs", {
+    library(EnsDb.Hsapiens.v86)
+    edb <- EnsDb.Hsapiens.v86
     ## Use uniprot ID.
     ## First use the build-in Proteins object.
     data(p)
@@ -192,6 +194,7 @@ benchmark_pmapToGenome <- function() {
 
     ## Fetch a bunch of proteins.
     gnf <- GenenameFilter(c("ZBTB16", "BCL2", "BCL2L11"))
+    snf <- SeqnameFilter(2)
     cdss <- cdsBy(edb, by = "tx", columns = c("tx_id", "protein_id"),
                   filter = gnf)
     prts <- Proteins(edb, filter = gnf)
