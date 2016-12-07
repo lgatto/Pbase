@@ -14,7 +14,7 @@ import(biomaRt)
 
 importFrom(GenomicRanges, GRanges, GRangesList)
 importFrom(rtracklayer, chrom)
-
+importMethodsFrom(GenomicRanges, "seqinfo<-")
 importClassesFrom(Biobase, Versioned)
 importFrom(Biobase, classVersion, isCurrent, validMsg)
 
@@ -26,6 +26,13 @@ importFrom(mzR, openIDfile, psms)
 importFrom(mzID, mzID, flatten)
 
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
+
+## ensembldb
+importFrom(ensembldb, listProteinColumns, TxidFilter, ProteinidFilter,
+           UniprotidFilter)
+importMethodsFrom(ensembldb, hasProteinData, listColumns, proteins,
+                  ensemblVersion, cdsBy)
+importClassesFrom(ensembldb, EnsDb, TxidFilter, ProteinidFilter, UniprotidFilter)
 
 exportClasses(Proteins,
               Pparams)
