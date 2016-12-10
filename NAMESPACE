@@ -5,6 +5,7 @@ importFrom(stats, setNames)
 
 import(Rcpp)
 import(BiocGenerics)
+import(BiocParallel)
 import(Biostrings)
 import(IRanges)
 import(S4Vectors)

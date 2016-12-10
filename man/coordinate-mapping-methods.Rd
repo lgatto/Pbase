@@ -5,6 +5,7 @@
 \alias{mapToGenome-methods}
 \alias{mapToGenome,ANY,ANY-method}
 \alias{mapToGenome,Proteins,GRangesList-method}
+\alias{mapToGenome,Proteins,EnsDb-method}
 
 \alias{pmapToGenome}
 \alias{pmapToGenome-methods}

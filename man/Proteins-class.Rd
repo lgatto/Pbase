@@ -9,6 +9,7 @@
 \alias{Proteins,character,missing-method}
 \alias{Proteins,missing,character-method}
 \alias{Proteins,missing,missing-method}
+\alias{Proteins,EnsDb,missing-method}
 
 \alias{[,Proteins,ANY,ANY-method}
 \alias{[,Proteins,ANY,ANY,ANY-method}
