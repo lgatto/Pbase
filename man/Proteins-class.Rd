@@ -9,6 +9,7 @@
 \alias{Proteins,character,missing-method}
 \alias{Proteins,missing,character-method}
 \alias{Proteins,missing,missing-method}
+\alias{Proteins,EnsDb,missing-method}
 
 \alias{[,Proteins,ANY,ANY-method}
 \alias{[,Proteins,ANY,ANY,ANY-method}
@@ -40,6 +41,7 @@
 
 \alias{length,Proteins-method}
 \alias{seqnames,Proteins-method}
+\alias{names,Proteins-method}
 \alias{show,Proteins-method}
 
 \alias{cleave,Proteins-method}
@@ -182,11 +184,15 @@
     \item{seqnames}{\code{signature(x = "Proteins")}: Returns the
       protein sequence names defined as UniProt accession numbers. }
 
+    \item{names}{\code{signature(x = "Proteins")}: Returns the
+      protein sequence names defined as UniProt accession numbers.
+      It is just a synonym for \code{seqnames}. }
+
     \item{length}{\code{signature(x = "Proteins")}: Returns the number
       of proteins. }
 
     \item{[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
-      Creates a subset of the \code{Proteins} insance.}
+      Creates a subset of the \code{Proteins} instance.}
 
     \item{[[}{\code{signature(x = "Proteins", i = "ANY", j = "missing")}:
       Returns an \code{\linkS4class{AAString}} instance representing the

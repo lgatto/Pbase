@@ -1,0 +1,249 @@
+---
+title: "Using ensembldb to retrieve protein annotations and map peptide
+sequences to genomic coordinates"
+output:
+  BiocStyle::html_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Retrieve and map proteins using ensembldb}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{ensembldb,EnsDb.Hsapiens.v86,BiocStyle}
+  %\VignettePackage{Pbase}
+---
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+**Package:** [`Pbase`](http://bioconductor.org/packages/devel/bioc/html/Pbase.html)<br />
+**Author:** Johannes Rainer, [Laurent Gatto](http://cpu.sysbiol.cam.ac.uk/) <br />
+**Last compiled:** `r date()` <br />
+**Last modified:** `r file.info("Pbase-with-ensembldb.Rmd")$mtime`
+
+```{r env, message=FALSE, echo=FALSE, cache=FALSE, warning=FALSE}
+library("Pbase")
+library("ensembldb")
+```
+
+# Introduction
+
+This vignette describes how the `r Biocpkg("ensembldb")` package can be used to
+retrieve protein annotations and to map peptides within protein sequences to the
+genomic coordinates. `EnsDb` databases and packages created by the `ensembldb`
+package version > 1.99.0 _can_ provide protein annotations, but don't necessarily
+have too. Only `EnsDb` packages created using the Ensembl Perl API contain
+protein annotations, while databases created from GTF or GFF files or from
+`GRanges` objects or using the `r Biocpkg("AnnotationHub")` don't.
+
+Below we load the `EnsDb` object with for all human genes defined in the Ensembl
+database version 86 and use the `hasProteinData` method to evaluate whether
+protein annotations are available.
+
+```{r loadlib, message = FALSE}
+library(ensembldb)
+library(EnsDb.Hsapiens.v86)
+## Make a shortcut to the object
+edb <- EnsDb.Hsapiens.v86
+hasProteinData(edb)
+```
+
+# Fetch protein annotations from the database
+
+`ensembldb` provides the `proteins` method to fetch protein annotations from an
+`EnsDb` database (along eventual transcript or gene annotations) and, depending
+on the value of the `return.type` parameter, return the results as a
+`data.frame`, `DataFrame` or `AAStringSet`. Below we use the function to
+retrieve all proteins encoded by the gene _ZBTB16_. We use a `GenenameFilter` to
+select entries for that gene. In the simple example below only protein
+annotations were retrieved (i.e. the Ensembl protein ID, the amino acid
+sequence, the ID of the transcript encoding the protein and the gene name; the
+latter two stored in the `AAStringSet`'s `mcols`), but `EnsDb`s provide in
+addition also the mapping between Ensembl protein IDs and Uniprot IDs and all
+protein domains within the protein sequence. For more information on available
+filters, methods and annotation columns see the `ensembldb` vignette.
+
+```{r proteins_method}
+prts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+                 return.type = "AAStringSet")
+prts
+
+## Get access to the additional annotation data
+mcols(prts)
+
+```
+
+In `Pbase`, a `Proteins` method is also implemented for `EnsDb` objects that
+enables to load a `Proteins` object from an `EnsDb` database and optionally load
+all protein domains as peptide ranges in the `pranges` slot (using the
+`loadProteinDomains` parameter which is by default `TRUE`).
+
+```{r Proteins_method, message = FALSE}
+library(Pbase)
+zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+```
+
+The proteins' sequences are stored in the `aa` slot and the protein domains in
+the `pranges` slot:
+
+```{r Proteins_aa_pranges}
+## Get the protein sequences.
+aa(zbtb16)
+
+## Get the protein domains stored as peptide features.
+pranges(zbtb16)
+```
+
+Also the `Proteins` method supports to retrieve additional annotation columns
+from the database. Below we repeat the call but fetch in addition also the
+Uniprot IDs for the proteins. With that a property of the provided annotation
+becomes apparent: while the mapping between Ensembl transcript ID and Ensembl
+protein ID is always 1:1, each Ensembl protein can be annotated to more than one
+Uniprot ID and each Uniprot ID can be assigned one or more Ensembl protein IDs.
+
+```{r Proteins_uniprot_1}
+## Loading in addition Uniprot ID annotations
+zbtb16_2 <- Proteins(edb, columns = c("uniprot_id", "uniprot_db",
+                                      "uniprot_mapping_type"),
+                     filter = GenenameFilter("ZBTB16"))
+
+acols(zbtb16_2)
+```
+
+As we can see two transcript IDs (ENST00000335953 and ENST00000392996) and hence
+Ensembl protein IDs are each annotated to two Uniprot IDs. To avoid some of
+these multi-mappings, we can use an `UniprotmappingtypeFilter` to retrieve only
+presumably higher quality annotations by selecting only Uniprot IDs mapped to
+Ensembl protein IDs using the `"DIRECT"` mapping type. We get hence again unique
+Ensembl protein IDs respectively transcript IDs.
+
+```{r Proteins_uniprot_2}
+acols(Proteins(edb, columns = c("uniprot_id", "uniprot_db"),
+               filter = list(GenenameFilter("ZBTB16"),
+                             UniprotmappingtypeFilter("DIRECT"))))
+```
+
+Note that without specifying a filter we can also retrieve all proteins from the database.
+
+
+# Protein and genome data
+
+`EnsDb` databases provide both, protein annotations and gene/transcript
+annotations including their genomic coordinates. Peptide features along amino
+acid sequences within a `Proteins` objects can hence be mapped to the genome
+directly using the `mapToGenome` method by providing an `EnsDb` instance with
+the `genome` parameter. The `Proteins` object has to provide IDs that allow to
+identify the encoding transcripts. Supported IDs are Ensembl protein ID (`idType
+= "protein_id"`), transcript ID (`idType = "tx_id"`) or Uniprot ID (`idType =
+"uniprot_id"`) which can be provided either as the `names` of the `Proteins`
+object, or in one of the `acols` metadata columns.
+
+In the example below we use the `Proteins` object with all proteins of the gene
+*ZBTB16* that we fetched from the database in the previous section. To identify
+the encoding transcripts, we use the Ensembl protein IDs that are provided with
+the names of the object.
+
+```{r map_edb, message = FALSE}
+## We use the Ensembl protein IDs to identify the transcripts in the database
+names(zbtb16)
+
+## Map all peptide features within the object to the genome.
+zbtb16_map <- mapToGenome(zbtb16, edb, idType = "protein_id", id = "name")
+
+zbtb16_map
+```
+
+The result is a `GRangesList` one element for each protein with `GRanges` for
+the genomic positions of the mapped peptide features (in our example protein
+domains within the protein sequence). Below we plot the genomic alignments for
+the protein domains of the first protein.
+
+```{r plot-zbtb16-with-prot-domains, fig.align = 'center'}
+library(Gviz)
+
+## Define a genome axis track
+gat <- GenomeAxisTrack()
+
+## Get the transcript ID of the first transcript:
+txid <- acols(zbtb16)$tx_id[1]
+## Get a GRanges for the first transcript
+trt <- getGeneRegionTrackForGviz(edb, filter = TxidFilter(txid))
+
+## Add the protein domain name as column "id" to the mcols so it
+## can be used in the plot to identify the features.
+map_1 <- zbtb16_map[[1]]
+map_1$id <- names(map_1)
+
+## Plotting the transcript and the mapped protein domains.
+plotTracks(list(gat,
+                GeneRegionTrack(trt, name = "tx"),
+                AnnotationTrack(map_1, groupAnnotation = "id",
+                                just.group = "above",
+                                name = "Protein domains")),
+           transcriptAnnotation = "transcript")
+
+```
+
+While the `mapToGenome,Proteins,EnsDb` method used above performs all of the
+mapping and supports mapping of multiple proteins, we could also fetch the
+genomic positions of the encoding transcripts' CDS using the `cdsBy` method and
+provide the resulting `GRangesList` to the `mapToGenome,Proteins,GRangesList`
+method.
+
+In addition to Ensembl transcript or protein IDs, it is also possible to provide
+Uniprot IDs. While the mapping between Ensembl protein IDs and transcript IDs is
+1:1, multiple Ensembl protein IDs can be assigned to a single Uniprot ID hence
+the mappoing between Uniprot IDs and Ensembl transcript IDs is also 1:n. In
+cases in which a Uniprot ID is annotated to multiple transcript IDs, the
+`mapToGenome` method will select automatically the _best suited_ transcript by
+comparing the length of the protein sequence with the length of the transcripts'
+coding sequences. In the example below we use the test `Proteins` data from the
+`Pbase` package and perform the mapping of the peptide features using the
+provided Uniprot IDs of the proteins.
+
+```{r mapToGenome-ensdb-uniprot, message = FALSE, warning = FALSE}
+data(p)
+
+## We use the Uniprot IDs provided as names for the mapping
+names(p)
+
+res <- mapToGenome(p, edb, idType = "uniprot_id")
+
+```
+
+Apart from one of the Uniprot IDs, _P04075-2_, for which no corresponding
+transcript could be identified, all peptide features could be mapped
+successfully. As detailed above, the method did select for each Uniprot ID the
+transcript with the best matching CDS. To illustrate this, we select below all
+transcripts that are annotated to the first Uniprot ID.
+
+```{r uniprot_multi_tx}
+txs <- transcripts(edb, filter = UniprotidFilter(names(p)[1]))
+names(txs)
+```
+
+While there are 6 transcripts annotated to the Uniprot ID from only one the
+coding sequence matches the length of the protein:
+
+```{r uniprot_seqlength}
+## Fetch the CDS for each transcript
+cdss <- cdsBy(edb, filter = TxidFilter(names(txs)))
+
+## The protein sequence length:
+width(aa(p)[1])
+
+## The difference between protein sequence and CDS length
+width(aa(p)[1]) - sum(width(cdss)) / 3
+
+```
+
+Thus, the lenght of the coding region of the last transcript matches the length
+of the protein's amino acid sequence (the stop codon, being part of
+the CDS, is not coding for an amino acid).
+
+
+# Session information
+
+```{r si}
+sessionInfo()
+```

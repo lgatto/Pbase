@@ -127,3 +127,43 @@ test_that("acols replacement", {
     expect_error(acols(pm) <- ac[3:1,],
                  "Row names of replacement acols differ from current ones.")
 })
+
+## Unit test for issue #27; thanks to Johannes Rainer (@jotsetung) for
+## reporting and fixing
+test_that("pmetadata", {
+    ## Create the pranges: have a IRange for the 1st and 3rd.
+    ir <- IRanges(start = c(3, 5), end = c(10, 15))
+    mcols(ir) <- DataFrame(AccessionNumber = c("P1", "P3"), OtherMcol = c(1, 3))
+    irL <- split(ir, f = mcols(ir)$AccessionNumber)
+    ## Add the empty one:
+    emptyIr <- IRanges()
+    mcols(emptyIr) <- DataFrame(
+        matrix(ncol = 2, nrow = 0,
+               dimnames = list(rownames = character(),
+                               colnames = c("AccessionNumber", "OtherMcol"))))
+    ## Create the IRangesList
+    irL <- c(irL[1], IRangesList(emptyIr), irL[2])
+    names(irL) <- c("P1", "P2", "P3")
+    ## Add the IRangesList to the Proteins object
+    pranges(p) <- irL
+
+    ## We have 3 sequences, thus we should expect 3 elements:
+    expect_true(length(pcols(p)) == length(p))
+    expect_true(length(p@pranges) == length(p))
+    ## Names and order should match
+    expect_identical(names(pcols(p)), seqnames(p))
+    expect_identical(names(p@pranges), seqnames(p))
+    ## The length of the pcols and pranges have to match
+    expect_identical(lengths(pranges(p)), lengths(pcols(p)))
+    ## nrow of the pcols should be 1, 0, 1:
+    expect_equal(lengths(pcols(p)), setNames(c(1, 0, 1), c("P1", "P2", "P3")))
+    expect_equal(elementNROWS(pranges(p)), setNames(c(1, 0, 1), c("P1", "P2", "P3")))
+})
+
+test_that("pvarLabels", {
+    expect_null(pvarLabels(p))
+    ir <- IRanges(1:3, 2:4)
+    mcols(ir) <- DataFrame(AccessionNumber = c("P1", "P2", "P3"), OtherMcol = 1:3)
+    pranges(p) <- split(ir, mcols(ir)$AccessionNumber)
+    expect_identical(pvarLabels(p), c("AccessionNumber", "OtherMcol"))
+})
