@@ -1,3 +1,7 @@
+.get_pranges_indices <-
+    function(x) sapply(mcols(x@aa), inherits, "IRangesList")
+
+
 .toBeImplemented <- function() {
   parentCall <- sys.call(-1L)
   stop(deparse(parentCall), " is not implemented yet!", call.=FALSE)

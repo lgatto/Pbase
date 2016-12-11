@@ -133,13 +133,13 @@
     \item{\code{aa}:}{ Object of class \code{"AAStringSet"} storing the
       protein sequences, accessed with \code{aa}.
     }
-    \item{\code{pranges}:}{ Object of class
-      \code{"CompressedIRangesList"} containg protein feature ranges
-      such as theoretical (obtain by in silico cleavage) or observed
-      peptides. Accessed as an \code{\linkS4class{IRangesList}} with
-      \code{pranges} or and \code{\linkS4class{AAStringSetList}} with
-      \code{pfeatures}.
-    }
+    %% \item{\code{pranges}:}{ Object of class
+    %%   \code{"CompressedIRangesList"} containg protein feature ranges
+    %%   such as theoretical (obtain by in silico cleavage) or observed
+    %%   peptides. Accessed as an \code{\linkS4class{IRangesList}} with
+    %%   \code{pranges} or and \code{\linkS4class{AAStringSetList}} with
+    %%   \code{pfeatures}.
+    %% }
     \item{\code{.__classVersion__}:}{ Object of class \code{"Versions"}
       documenting the class verions. Intended for developer use and
       debugging.

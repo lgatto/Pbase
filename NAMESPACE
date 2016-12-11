@@ -17,7 +17,7 @@ importFrom(GenomicRanges, GRanges, GRangesList)
 importFrom(rtracklayer, chrom)
 importMethodsFrom(GenomicRanges, "seqinfo<-")
 importClassesFrom(Biobase, Versioned)
-importFrom(Biobase, classVersion, isCurrent, validMsg)
+importFrom(Biobase, classVersion, isCurrent, validMsg, isVersioned)
 
 importFrom(cleaver, cleave, cleavageRanges)
 
@@ -43,17 +43,8 @@ exportMethods(
     Proteins,
     "[",
     "[[",
-    aa,
-    acols,
-    ametadata,
     length,
     metadata,
-    pcols,
-    pfeatures,
-    pmetadata,
-    pranges, "pranges<-",
-    pvarLabels,
-    avarLabels,
     seqnames,
     show,
     ## action methods
@@ -68,17 +59,29 @@ exportMethods(
     ## ranges
     proteinCoding)
 
-export(rmEmptyRanges,
-       Pparams,
-       etrid2grl,
-       isReverse,
-       isForward,
-       ## actions on Proteins
-       isCleaved,
-       proteinCoverage,
-       proteotypic,
-       calculateHeavyLabels,
-       ## plotting
-       plotAsGeneRegionTrack,
-       plotAsAnnotationTrack)
+export(
+    ## were methods
+    aa,
+    acols,
+    ametadata,
+    pcols,
+    pfeatures,
+    pmetadata,
+    pranges, ## "pranges<-",
+    pvarLabels,
+    avarLabels,
+    ## 
+    rmEmptyRanges,
+    Pparams,
+    etrid2grl,
+    isReverse,
+    isForward,
+    ## actions on Proteins
+    isCleaved,
+    proteinCoverage,
+    proteotypic,
+    calculateHeavyLabels,
+    ## plotting
+    plotAsGeneRegionTrack,
+    plotAsAnnotationTrack)
 

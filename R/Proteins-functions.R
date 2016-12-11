@@ -1,16 +1,3 @@
-## constructors
-.ProteinsFromFasta <- function(filenames, ...) {
-  aa <- .readAAStringSet(filenames, ...)
-
-  ## pranges should have the same order and the same names
-  pranges <- IRangesList(replicate(length(aa), IRanges()))
-  names(pranges) <- names(aa)
-
-  metadata <- list(created = date())
-
-  p <- new("Proteins", aa = aa, pranges = pranges, metadata = metadata)
-}
-
 ##' @param x Proteins object
 ##' @param unshift if TRUE the IRanges will shift back to start with 1L
 ##' @return named \code{IRangesList}, \code{length == length(x@@aa)},
@@ -132,33 +119,39 @@
 .plotProteins <- function(object, from = 1L,
                           to = max(elementNROWS(object@aa)), ...) {
 
-  nTracks <- 3L
-  tracks <- vector(mode="list", length=length(object) * nTracks)
-  snms <- seqnames(object)
+    nTracks <- 3L ## ProteinAxisTrack + ProteinSequenceTrack + 1 prange
+    tracks <- vector(mode="list", length=length(object) * nTracks)
+    snms <- seqnames(object)
 
-  for (i in seq(along = object@aa)) {
-    idx <- (i - 1L) * nTracks
-    tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE,
-                                           name = paste0("axis-", snms[i]))
-
-    tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
-                                               name = snms[i])
-
-    if (length(object@pranges[[i]])) {
-      ## TODO: adding an ATrack results in an error if "[" is set:
-      ## Error in callNextMethod(x, i) :
-      ##    bad object found as method (class “function”)
-      tracks[[idx + 3L]] <- ATrack(start = start(object@pranges[[i]]),
-                                   end = end(object@pranges[[i]]),
-                                   name = "peptides",
-                                   ...)
+    isRng <- FALSE
+    if (ncol(pranges(object)) > 0) {
+        isRng <- TRUE
+        prngs <- pranges(object)[[1]] ## take first pranges FIXME: use pcol
     }
-  }
-  ## ProteinAxisTrack returns length == 0L; that's why we are using the
-  ## `is(track[[i]], "NULL")` function here, to exclude empty elements
-  tracks <- tracks[!sapply(tracks, is.null)]
+    
+    for (i in seq(along = object@aa)) {
+        idx <- (i - 1L) * nTracks
+        tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE,
+                                               name = paste0("axis-", snms[i]))
 
-  plotTracks(tracks, from = from, to = to)
+        tracks[[idx + 2L]] <- ProteinSequenceTrack(sequence = object@aa[[i]],
+                                                   name = snms[i])
+
+        if (isRng && length(prngs[[i]])) {
+            ## TODO: adding an ATrack results in an error if "[" is set:
+            ## Error in callNextMethod(x, i) :
+            ##    bad object found as method (class “function”)
+            tracks[[idx + 3L]] <- ATrack(start = start(prngs[[i]]),
+                                         end = end(prngs[[i]]),
+                                         name = "peptides",
+                                         ...)
+        }
+    }
+    ## ProteinAxisTrack returns length == 0L; that's why we are using the
+    ## `is(track[[i]], "NULL")` function here, to exclude empty elements
+    tracks <- tracks[!sapply(tracks, is.null)]
+
+    plotTracks(tracks, from = from, to = to)
 }
 
 proteotypic <- function(x) {
@@ -183,40 +176,40 @@ isCleaved <- function(x, missedCleavages = 0) {
 
 ### Caution: This is based purley on IRanges. No sequence based checks are
 ### involved! You have to make sure that you compare compareable sequences.
-proteinCoverage <- function(x) {
-    stopifnot(is(x, "Proteins"))
-    prtl <- width(aa(x))
-    pepl <- sapply(width(reduce(pranges(x))), sum)
-    addacol(x, "Coverage", pepl/prtl)
-}
+    proteinCoverage <- function(x) {
+        stopifnot(is(x, "Proteins"))
+        prtl <- width(aa(x))
+        pepl <- sapply(width(reduce(pranges(x))), sum)
+        addacol(x, "Coverage", pepl/prtl)
+    }
 
 
-##' @param object An object of class Proteins
-##' @param value A new pranges of class CompressedIRangesList
-##' @return Proteins object with updated pranges
-##' @noRd
-replacePranges <- function(object, value) {
-    if (length(pranges(object)) != length(value))
-        stop("Length of replacement pranges differs from current ones.")
-    if (!identical(names(object@pranges), names(value)))
-        stop("Names of replacement pranges differ from current ones.")
-    object@pranges <- value
-    if (validObject(object))
-        return(object)
-}
+    ##' @param object An object of class Proteins
+    ##' @param value A new pranges of class CompressedIRangesList
+    ##' @return Proteins object with updated pranges
+    ##' @noRd
+    replacePranges <- function(object, value) {
+        if (length(pranges(object)) != length(value))
+            stop("Length of replacement pranges differs from current ones.")
+        if (!identical(names(object@pranges), names(value)))
+            stop("Names of replacement pranges differ from current ones.")
+        object@pranges <- value
+        if (validObject(object))
+            return(object)
+    }
 
-##' @param object An object of class Proteins
-##' @param value A new acols of class DataFrame
-##' @return Proteins object with updated pranges
-##' @noRd
-replaceAcols <- function(object, value) {
-    if (nrow(acols(object)) != nrow(value))
-        stop("Number of rows of replacement acols differ from current ones.")
-    if (!is.null(rownames(acols(object))) &&
-         !identical(rownames(acols(object)), rownames(values)))
-        stop("Row names of replacement acols differ from current ones.")
-    mcols(object@aa) <- value
-    if (validObject(object))
-        return(object)
-}
+    ##' @param object An object of class Proteins
+    ##' @param value A new acols of class DataFrame
+    ##' @return Proteins object with updated pranges
+    ##' @noRd
+    replaceAcols <- function(object, value) {
+        if (nrow(acols(object)) != nrow(value))
+            stop("Number of rows of replacement acols differ from current ones.")
+        if (!is.null(rownames(acols(object))) &&
+            !identical(rownames(acols(object)), rownames(values)))
+            stop("Row names of replacement acols differ from current ones.")
+        mcols(object@aa) <- value
+        if (validObject(object))
+            return(object)
+    }
 
