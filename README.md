@@ -118,7 +118,7 @@ See Pavel's [idea](https://github.com/sgibb/cleaver/issues/5).
 
 ### Protein domains
 
-Maybe support for the annotation of detection of protein domains.
+Available through the integration with the `EnsmbleDb` package. See the `Pbase-with-ensembldb` vignette.
 
 ### Mapping a Protein Sequence to a Genome Sequence
 
