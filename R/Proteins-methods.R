@@ -189,8 +189,13 @@ setMethod("[", "Proteins",
 
 
 ## accessors
-setMethod("pfeatures", "Proteins",
-          function(x) extractAt(aa(x), unname(pranges(x))))
+## setMethod("pfeatures", "Proteins",
+##           function(x) extractAt(aa(x), unname(pranges(x))))
+
+pfeatures <- function(x, pcol) {    
+    stopifnot(pcol %in% pvarLabels(x))
+    extractAt(aa(x), unname(pranges(x)[[pcol]]))
+}
 
 ## setMethod("pranges", "Proteins", function(x) x@pranges)
 pranges <- function(x) {
@@ -260,6 +265,10 @@ aa <- function(x) x@aa
 setMethod("addIdentificationData",
           c("Proteins", "character"),
           function(object, id, rmEmptyRanges = TRUE, par = Pparams()) {
+              if ("Peptides" %in% names(object@aa@elementMetadata)) {
+                  warning("Peptides pranges already present. Keeping as is.")
+                  return(object)
+              }
               .addIdentificationDataProteins(object, filenames = id,
                                              rmEmptyRanges = rmEmptyRanges,
                                              par = par)

@@ -16,66 +16,60 @@
 ##' @return a modified Proteins object
 ##' @noRd
 .addIdentificationDataProteins <- function(x, filenames, rmEmptyRanges, par) {
-  if (!isEmpty(x@pranges)) {
-    stop("The ", sQuote("pranges"), " slot is not empty! ",
-         "No ranges and metadata could be added.")
-  }
+    if (par@IdReader == "mzID") {
+        y <- mzID(filenames)
+        y <- flatten(y)
 
-  if (par@IdReader == "mzID") {
-      y <- mzID(filenames)
-      y <- flatten(y)
+        an <- y$accession
+        ir <- IRanges(start = y$start, end = y$end)
+        names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
+        fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
+        meta <- as(y[, !colnames(y) %in% c("accession", "description")],
+                   "DataFrame")
+        mcols(ir) <- cbind(fasta, meta)
+        mcols(ir)$filenames <-
+                    mcols(ir)$spectrumFile <- Rle(factor(mcols(ir)$spectrumFile))
+        mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
+    } else { ## mzR
+        .ir <- function(f) {
+            if (v) message("  ", k, ". ", f)
+            k <<- k + 1
+            tmp <- openIDfile(f)
+            on.exit(rm(tmp))
+            ir <- IRanges()
+            if (length(tmp) > 0) {
+                y <- psms(tmp)
+                an <- as.character(y$DatabaseAccess)
+                ir <- IRanges(start = y$start, end = y$end)
+                names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
 
-      an <- y$accession
-      ir <- IRanges(start = y$start, end = y$end)
-      names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
-      fasta <- .fastaComments2DataFrame(paste(y$accession, y$description))
-      meta <- as(y[, !colnames(y) %in% c("accession", "description")],
-                 "DataFrame")
-      mcols(ir) <- cbind(fasta, meta)
-      mcols(ir)$filenames <-
-          mcols(ir)$spectrumFile <- Rle(factor(mcols(ir)$spectrumFile))
-      mcols(ir)$databaseFile <- Rle(factor(mcols(ir)$databaseFile))
-  } else { ## mzR
+                fasta <- .fastaComments2DataFrame(paste(an, y$DatabaseDescription))
+                meta <-
+                    as(y[, !colnames(y) %in% c("DatabaseAccession", "DatabaseDescription")],
+                       "DataFrame")
+                mcols(ir) <- cbind(fasta, meta)
+            }
+            ir
+        }
+        v <- par@verbose
+        k <- 1
+        if (v) message("Reading ", length(filenames), " identification files:")
+        irl <- lapply(filenames, .ir)
+        if (v) message("done.")
 
-      .ir <- function(f) {
-          if (v) message("  ", k, ". ", f)
-          k <<- k + 1
-          tmp <- openIDfile(f)
-          on.exit(rm(tmp))
-          ir <- IRanges()
-          if (length(tmp) > 0) {
-              y <- psms(tmp)
-              an <- as.character(y$DatabaseAccess)
-              ir <- IRanges(start = y$start, end = y$end)
-              names(ir) <- unlist(lapply(strsplit(an, "\\|"), "[", 2))
+        ir <- Reduce(c, irl)
+        ir@elementMetadata$filenames <- Rle(factor(filenames),
+                                            lengths = lengths(irl))
+    }
 
-              fasta <- .fastaComments2DataFrame(paste(an, y$DatabaseDescription))
-              meta <-
-                  as(y[, !colnames(y) %in% c("DatabaseAccession", "DatabaseDescription")],
-                     "DataFrame")
-              mcols(ir) <- cbind(fasta, meta)
-          }
-          ir
-      }
-      v <- par@verbose
-      k <- 1
-      if (v) message("Reading ", length(filenames), " identification files:")
-      irl <- lapply(filenames, .ir)
-      if (v) message("done.")
+    nms <- sort(unique(names(ir)))
+    mcols(x@aa)$Peptides <- split(ir, names(ir))
+    x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
 
-      ir <- Reduce(c, irl)
-      ir@elementMetadata$filenames <- Rle(factor(filenames),
-                                          lengths = lengths(irl))
-  }
-
-  nms <- sort(unique(names(ir)))
-  x@pranges[nms] <- split(ir, names(ir))
-  x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
-
-  if (rmEmptyRanges) {
-      x <- rmEmptyRanges(x)
-  }
-  x
+    if (rmEmptyRanges) {
+        x <- rmEmptyRanges(x)
+    }
+    x
 }
 
 ##' @param x
@@ -176,40 +170,40 @@ isCleaved <- function(x, missedCleavages = 0) {
 
 ### Caution: This is based purley on IRanges. No sequence based checks are
 ### involved! You have to make sure that you compare compareable sequences.
-    proteinCoverage <- function(x) {
-        stopifnot(is(x, "Proteins"))
-        prtl <- width(aa(x))
-        pepl <- sapply(width(reduce(pranges(x))), sum)
-        addacol(x, "Coverage", pepl/prtl)
-    }
+proteinCoverage <- function(x) {
+    stopifnot(is(x, "Proteins"))
+    prtl <- width(aa(x))
+    pepl <- sapply(width(reduce(pranges(x))), sum)
+    addacol(x, "Coverage", pepl/prtl)
+}
 
 
-    ##' @param object An object of class Proteins
-    ##' @param value A new pranges of class CompressedIRangesList
-    ##' @return Proteins object with updated pranges
-    ##' @noRd
-    replacePranges <- function(object, value) {
-        if (length(pranges(object)) != length(value))
-            stop("Length of replacement pranges differs from current ones.")
-        if (!identical(names(object@pranges), names(value)))
-            stop("Names of replacement pranges differ from current ones.")
-        object@pranges <- value
-        if (validObject(object))
-            return(object)
-    }
+##' @param object An object of class Proteins
+##' @param value A new pranges of class CompressedIRangesList
+##' @return Proteins object with updated pranges
+##' @noRd
+replacePranges <- function(object, value) {
+    if (length(pranges(object)) != length(value))
+        stop("Length of replacement pranges differs from current ones.")
+    if (!identical(names(object@pranges), names(value)))
+        stop("Names of replacement pranges differ from current ones.")
+    object@pranges <- value
+    if (validObject(object))
+        return(object)
+}
 
-    ##' @param object An object of class Proteins
-    ##' @param value A new acols of class DataFrame
-    ##' @return Proteins object with updated pranges
-    ##' @noRd
-    replaceAcols <- function(object, value) {
-        if (nrow(acols(object)) != nrow(value))
-            stop("Number of rows of replacement acols differ from current ones.")
-        if (!is.null(rownames(acols(object))) &&
-            !identical(rownames(acols(object)), rownames(values)))
-            stop("Row names of replacement acols differ from current ones.")
-        mcols(object@aa) <- value
-        if (validObject(object))
-            return(object)
-    }
+##' @param object An object of class Proteins
+##' @param value A new acols of class DataFrame
+##' @return Proteins object with updated pranges
+##' @noRd
+replaceAcols <- function(object, value) {
+    if (nrow(acols(object)) != nrow(value))
+        stop("Number of rows of replacement acols differ from current ones.")
+    if (!is.null(rownames(acols(object))) &&
+        !identical(rownames(acols(object)), rownames(values)))
+        stop("Row names of replacement acols differ from current ones.")
+    mcols(object@aa) <- value
+    if (validObject(object))
+        return(object)
+}
 
