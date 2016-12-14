@@ -70,9 +70,18 @@
 \section{Objects from the Class}{
 
   Objects can be created using its constructor \code{Proteins}. The
-  constructor either takes a \code{fasta} file name as first argument
-  or, alternatively a named \code{uniprotIds} argument with valid
-  UniProt accession numbers (not yet implemented).
+  constructor either takes a \code{fasta} file name as first argument,
+  an \code{\link[ensembldb]{EnsDb}} object or a named \code{uniprotIds}
+  argument with valid UniProt accession numbers (not yet implemented).
+
+  The \code{Proteins} constructor with the \code{EnsDb} loads protein data
+  directly from the \code{EnsDb} object. The additional arguments
+  \code{filter}, \code{loadProteinDomains}, \code{columns} and
+  \code{fetchLRG} allow to additionally specify if only proteins
+  matching a certain criteria should be fetched, whether all protein
+  domains should be added as \code{pranges}, optional additional
+  annotation columns that should be retrieved and whether proteins from
+  Locus Reference Genes (LRG) should also be retrieved from the database.
 
 }
 
@@ -82,7 +91,7 @@
   multiple protein sequences that can be accessed as \code{AAStringSet}
   with the \code{aa} accessor. Sequence-specific annotation, such as
   accession numbers, protein and gene names, ... is available with the
-  \code{ametadata} or \code{acols} methods. General metadata such as the
+  \code{acols} method. General metadata such as the
   data of creation of the instance are stored as a \code{list} returned
   by the \code{metadata} accessor, which would typically contain a
   \code{created} character that documents when the object was created, a
@@ -97,10 +106,27 @@
   sequences (a \code{list} of \code{IRanges}) that can be extracted with
   the \code{pranges} function. These peptide features have their own
   metadata describing for example peptide identification scores, number
-  of missed cleavages, ... available with the \code{pmetadata} or
-  \code{pcols} methods.
+  of missed cleavages, ... available with the \code{pcols} methods.
 
   See also the \code{Pbase-data} vignette.
+
+  The \code{Proteins} constructor with argument \code{file} being an
+  \code{\link[ensembldb]{EnsDb}} object allows to retrieve protein
+  sequences along with all their related protein domains from an
+  \code{EnsDb} annotation database. The optional \code{filter} argument
+  can be used to fetch only proteins matching the filtering criteria
+  from the database. The \code{filter} argument takes a single object or a
+  \code{list} of objects extending the
+  \code{\link[ensembldb]{BasicFilter}} class. Additional annotation
+  columns from the database that should be retrieved from the database
+  and included into \code{acols} can be specified with the
+  \code{columns} argument. The \code{\link[ensembldb]{listColumns}} can
+  be used to list all available annotation columns from the
+  database.
+  Ensembl protein IDs will be used as the \code{names} of the returned
+  \code{Proteins} object. See the vignette from the \code{ensembldb}
+  package for an overview of supported filters or below for some
+  examples.
 
 }
 
@@ -266,7 +292,8 @@
 }
 
 \author{
-  Laurent Gatto <lg390@cam.ac.uk> and Sebastian Gibb <mail@sebastiangibb.de>
+  Laurent Gatto <lg390@cam.ac.uk>, Sebastian Gibb
+  <mail@sebastiangibb.de> and Johannes Rainer <johannes.rainer@eurac.edu>
 }
 
 \examples{
@@ -310,6 +337,36 @@ pfeatures(p)
 plot(p[1])
 plot(p[1], # the first protein has 36 peptides
      fill = c(rep("orange", 13), rep("steelblue", 13)))
+
+## Retrieve a Proteins object from an EnsDb object: first load the annotation
+## database for all human genes defined in Ensembl version 86.
+library(ensembldb)
+library(EnsDb.Hsapiens.v86)
+edb <- EnsDb.Hsapiens.v86
+
+## Define a filter to retrieve all genes from chromosome Y
+sqnf <- SeqnameFilter("Y")
+## Retrieve the proteins without protein domains but specify to retrieve in
+## addition the transcript biotype for the encoding transcripts and the gene
+## names
+prts <- Proteins(edb, filter = sqnf, loadProteinDomains = FALSE,
+                 columns = c("tx_biotype", "gene_name"))
+aa(prts)
+acols(prts)
+
+## The listColumns method lists all available columns from the database.
+listColumns(edb)
+
+## Load all proteins from the gene ZBTB16 including all protein domains from
+## the database.
+prts <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+
+## List available pranges
+pcols(prts)
+
+## Access the protein domains
+pcols(prts)$ProteinDomains
+
 }
 
 

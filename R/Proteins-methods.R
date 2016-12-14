@@ -31,7 +31,6 @@ setMethod("Proteins",
 ## Proteins, EnsDb, missing
 ##
 ## o Fetch all proteins from the EnsDb database.
-## TODO @jo: don't know yet how to handle Uniprot IDs and uniprot table data.
 ##'
 ##' @param file EnsDb database from which protein data should/can be
 ##'     retrieved.
@@ -153,7 +152,7 @@ setMethod("Proteins",
                   ## if we have 1:n mapping for protein_id to uniprot_id.
                   ## issue #35
                   prng <- prng[names(aa)]
-                  mcols(pr)$ProteinDomains <- prng
+                  acols(pr)$ProteinDomains <- prng
               }
               if (validObject(pr))
                   return(pr)
@@ -192,7 +191,7 @@ setMethod("[", "Proteins",
 ## setMethod("pfeatures", "Proteins",
 ##           function(x) extractAt(aa(x), unname(pranges(x))))
 
-pfeatures <- function(x, pcol) {    
+pfeatures <- function(x, pcol) {
     stopifnot(pcol %in% pvarLabels(x))
     extractAt(aa(x), unname(pranges(x)[[pcol]]))
 }
@@ -237,7 +236,7 @@ acols <- ametadata <- function(x) {
     i <- .get_pranges_indices(x)
     mcols(x@aa)[!i]
 }
-    
+
 
 
 setMethod("seqnames","Proteins",
@@ -312,7 +311,7 @@ setMethod("pfilter",
 
 setMethod("show", "Proteins",
           function (object) {
-              topics <- c("S4 class type", "Class version", "Created", 
+              topics <- c("S4 class type", "Class version", "Created",
                           "Number of Proteins")
               topics <- format(topics, justify = "left")
               n <- length(object)
