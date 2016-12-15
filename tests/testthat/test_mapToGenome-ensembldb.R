@@ -10,11 +10,20 @@ test_that(".mapToGenome2 internal function", {
     zbtb16_cds <- cdsBy(edb,
                         filter = TxidFilter(acols(zbtb16)$tx_id))
     zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
+    ## Check errors
+    expect_error(Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]],
+                                       pcol = "dunno"))
+    ## different pcol settings:
     res <- Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]])
+    rs <- Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]], pcol = NULL)
+    expect_equal(res, rs)
+    rs <- Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]],
+                                pcol = "ProteinDomains")
+    expect_equal(res, rs)
     ## Check the mcols.
     expect_true(all(res$tx_id == acols(zbtb16)$tx_id[1]))
     ## Check that names are correct and match the sequence:
-    pfeat <- pfeatures(zbtb16)[[1]]
+    pfeat <- pfeatures(zbtb16, pcol = "ProteinDomains")[[1]]
     ## All sequences have to be present in res:
     expect_true(all(as.character(pfeat) %in% res$pepseq))
     ## The names have to match the peptide sequences.
@@ -68,7 +77,8 @@ test_that(".mapToGenome2 internal function", {
     prng <- IRangesList(IRanges(start = c(2, 15), end = c(8, 18)))
     names(prng[[1]]) <- c("pf_1", "pf_2")
     mcols(prng[[1]]) <- DataFrame(source = c("manual", "manual"))
-    prt <- new("Proteins", aa = aa, pranges = prng)
+    mcols(aa)$ProteinFeatures <- prng
+    prt <- new("Proteins", aa = aa)
     ## What do we expect:
     ## first peptide feature: 14-20, 25-38
     ## second peptide feature: 66-77
@@ -101,7 +111,8 @@ test_that(".mapToGenome2 internal function", {
     prng <- IRangesList(IRanges(start = c(3, 6, 7), end = c(5, 7, 10)))
     names(prng[[1]]) <- c("pf_1", "pf_2", "pf_3")
     mcols(prng[[1]]) <- DataFrame(source = rep("manual", 3))
-    prt <- new("Proteins", aa = aa, pranges = prng)
+    mcols(aa)$ProteinDomains <- prng
+    prt <- new("Proteins", aa = aa)
     ## The tricky thing with the negative strand is that we have to swith
     ## start and end coordinates of the exons to calculate from positions within
     ## the cDNA to DNA.
