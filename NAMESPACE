@@ -63,10 +63,8 @@ export(
     ## were methods
     aa,
     acols,
-    ametadata,
     pcols,
     pfeatures,
-    pmetadata,
     pranges, ## "pranges<-",
     pvarLabels,
     avarLabels,

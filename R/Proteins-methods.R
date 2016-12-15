@@ -12,7 +12,7 @@ setMethod("Proteins",
           function(file, uniprotIds, ...) {
               aa <- .readAAStringSet(file, ...)
               metadata <- list(created = date())
-              new("Proteins", aa = aa, metadata = metadata)
+              new("Proteins", metadata = metadata, aa = aa)
           })
 
 setMethod("Proteins",
@@ -228,12 +228,12 @@ setReplaceMethod("metadata", "Proteins",
                    x
                })
 
-pcols <- pmetadata <- function(x) {
+pcols <- function(x) {
     i <- .get_pranges_indices(x)
     mcols(x@aa)[i]
 }
 
-acols <- ametadata <- function(x) {
+acols <- function(x) {
     i <- .get_pranges_indices(x)
     mcols(x@aa)[!i]
 }
