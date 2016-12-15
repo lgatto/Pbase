@@ -23,10 +23,9 @@
 
 
 \usage{
-\S4method{mapToGenome}{Proteins,GRangesList}(x, genome, drop.empty.ranges = TRUE, ...)
-\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome,
-drop.empty.ranges = TRUE, ...)
-\S4method{mapToGenome}{Proteins,EnsDb}(x, genome, id = "name", idType =
+\S4method{mapToGenome}{Proteins,GRangesList}(x, genome, pcol, drop.empty.ranges = TRUE, ...)
+\S4method{pmapToGenome}{Proteins,GRangesList}(x, genome, pcol, drop.empty.ranges = TRUE, ...)
+\S4method{mapToGenome}{Proteins,EnsDb}(x, genome, pcol, id = "name", idType =
 "protein_id", drop.empty.ranges = TRUE, ...)
 }
 
@@ -42,6 +41,13 @@ drop.empty.ranges = TRUE, ...)
     \code{\link[ensembldb]{EnsDb}} object providing the required
     annotation for the mapping, i.e. the annotation of proteins to
     transcripts and the genomic coordinates of the transcripts' exons.}
+
+  \item{pcol}{character(1) specifying the name of the column in
+    \code{\link{pcols}} that contains the \code{IRanges} (ranges within the
+    protein sequence) that should be mapped to the genome. If not
+    specifyed the first column is used. If provided has to be one of
+    \code{\link{pvarLabels}}.
+  }
 
   \item{drop.empty.ranges}{\code{TRUE} (default) or \code{FALSE}. Should
     empty ranges be dropped?}
