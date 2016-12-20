@@ -192,7 +192,8 @@ setMethod("[", "Proteins",
 ##           function(x) extractAt(aa(x), unname(pranges(x))))
 
 pfeatures <- function(x, pcol) {
-    stopifnot(pcol %in% pvarLabels(x))
+    pcol <- .checkPcol(x, pcol)
+    ## stopifnot(pcol %in% pvarLabels(x))
     extractAt(aa(x), unname(pranges(x)[[pcol]]))
 }
 

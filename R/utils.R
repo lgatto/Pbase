@@ -163,3 +163,26 @@ plotRanges <- function(x, xlim = x, main = "",
     title(main)
     axis(1)
 }
+
+##' @title Evaluate pcol function parameter
+##'
+##' Checks if the provided pcol parameter is valid, i.e.:
+##' 1) if the Proteins object has Protein ranges,
+##' 2) if pcol is not empty it checks that pcol is available in pvarLabels.
+##' 3) if pcol is empty or NULL it returns the first pvarLabels.
+##' If any of the first two cases above is TRUE the function throws an error,
+##' otherwise it returns the \code{pcol} parameter.
+##'
+##' @param x A \code{Proteins} object.
+##' @param pcol character(1) with the \code{pcol} parameter to evaluate for
+##' validity.
+##' @return Returns a character(1) with the valid \code{pcol} parameter.
+.checkPcol <- function(x, pcol) {
+    if (length(pcols(x)) == 0)
+        stop("Protein ranges are empty!")
+    if (missing(pcol) || length(pcol) == 0)
+        pcol <- pvarLabels(x)[1]
+    if (!(pcol) %in% pvarLabels(x))
+        stop("No column '", pcol, "' containing protein ranges available in 'pcol'")
+    return(pcol)
+}

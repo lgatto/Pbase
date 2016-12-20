@@ -167,3 +167,17 @@ test_that("pvarLabels", {
     pranges(p) <- split(ir, mcols(ir)$AccessionNumber)
     expect_identical(pvarLabels(p), c("AccessionNumber", "OtherMcol"))
 })
+
+test_that("pfeatures", {
+    ## Empty Proteins
+    p_1 <- new("Proteins")
+    expect_error(pfeatures(p_1))
+    ## Get one from the database.
+    library(EnsDb.Hsapiens.v86)
+    library(ensembldb)
+    edb <- EnsDb.Hsapiens.v86
+    p_2 <- Proteins(edb, filter = TxidFilter("ENST00000335953"))
+    expect_equal(length(pfeatures(p_2, "ProteinDomains")), 1)
+    ## If pcol is not provided we expect it to pick the first one.
+    expect_equal(length(pfeatures(p_2)), 1)
+})

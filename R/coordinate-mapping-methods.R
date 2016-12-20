@@ -155,13 +155,7 @@ tryCatchMapToGenome <- function(pObj, grObj, pcol, ...)
         pObj <- pObj[1]
     }
     ## Check Proteins object var presence of features.
-    if (length(pcols(pObj)) == 0)
-        stop("'pcols' of the provided Proteins object is empty!")
-    if (missing(pcol) || length(pcol) == 0) {
-        pcol <- pvarLabels(pObj)[1]
-    }
-    if (!(pcol %in% pvarLabels(pObj)))
-        stop("No column named '", pcol, "' present in 'pcol'")
+    pcol <- .checkPcol(pObj, pcol)
     ## DROP THAT TEST FOR NOW - eventually implement later.
     ## ## Check that the length of the CDS corresponds to the length of the AA:
     ## ## AA length should be (length(CDS) - 1) / 3, -1 because stop codon is not
