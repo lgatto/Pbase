@@ -30,42 +30,48 @@ setMethod("Proteins",
 ############################################################
 ## Proteins, EnsDb, missing
 ##
-## o Fetch all proteins from the EnsDb database.
+##' @title Fetch a Proteins object from an EnsDb database
 ##'
+##' @description Fetch a \code{Proteins} object from an
+##'     \code{\linkS4class[ensembldb]{EnsDb}} database.
+##' 
 ##' @param file EnsDb database from which protein data should/can be
 ##'     retrieved.
 ##'
 ##' @param uniprotIds missing.
 ##'
-##' @param loadProteinDomains Logical of length 1 defining whether
+##' @param loadProteinDomains \code{logical(1)} defining whether
 ##'     protein domains within the proteins' sequences should be
 ##'     loaded too. If \code{TRUE}, protein domains are loaded and
 ##'     added a \code{pranges} named \textit{ProteinDomains}.
 ##'
-##' @param filter Single object extending
-##'     \code{\linkS4Object[ensembldb]{BasicFilter}} or \code{list} of
-##'     such objects to retrieve only specific proteins from the
-##'     database. See \code{\link[ensembldb]{proteins}} for more
-##'     information.
+##' @param filter An object extending
+##'     \code{\linkS4Object[AnnotationFilter]{AnnotationFilter}} an
+##'     \code{\link[AnnotationFilter]{AnnotationFilterList}} object combining
+##'     such objects or a \code{formula} representing a filter expression. See
+##'     documentation on \code{\link[ensembldb]{proteins}} for more details and
+##'     examples.
 ##'
 ##' @param columns Character vector specifying the columns that should be
-##' returned from the database. By default, all columns from the \emph{protein}
-##' database table are returned. Use the \code{\link[ensembldb]{listColumns}}
-##' function to get a list of all supported columns. Note that exon-related
-##' columns are not supported for the \code{Proteins} method.
+##'     returned from the database. By default, all columns from the
+##'     \emph{protein} database table are returned. Use the
+##'     \code{\link[ensembldb]{listColumns}} function to get a list of all
+##'     supported columns. Note that exon-related columns are not supported for
+##'     the \code{Proteins} method.
 ##'
 ##' @param fetchLRG Logical indicating whether proteins for Locus Reference
-##' Genes (LRG) should be retrieved too. By default LRG genes will not be
-##' fetched as they do have a 1:n mapping between transcripts and proteins.
+##'     Genes (LRG) should be retrieved too. By default LRG genes will not be
+##'     fetched as they do have a 1:n mapping between transcripts and proteins.
 ##'
 ##' @param ... Additional arguments to be passed to the
-##' \code{\link[ensembldb]{proteins}} method that is used to fetch the data.
+##'     \code{\link[ensembldb]{proteins}} method that is used to fetch the data.
 ##'
 ##' @noRd
 setMethod("Proteins",
           signature(file = "EnsDb", uniprotIds = "missing"),
           function(file, uniprotIds, loadProteinDomains = TRUE,
-                   filter = list(), columns = NULL, fetchLRG = FALSE, ...) {
+                   filter = AnnotationFilterList(), columns = NULL,
+                   fetchLRG = FALSE, ...) {
               ## Get the data from EnsDb.
               if (!hasProteinData(file))
                   stop("The provided 'EnsDb' does not contain protein annotations!")
@@ -88,9 +94,12 @@ setMethod("Proteins",
                                       listColumns(file, "protein_domain")))
               }
               if (!fetchLRG) {
+                  if (is(filter, "formula"))
+                      filter <- AnnotationFilter(filter)
                   ## Add a filter to fetch only transcripts starting with ENS
-                  filter <- c(list(TxidFilter("ENS%", condition = "like")),
-                              filter)
+                  filter <- AnnotationFilterList(
+                      TxIdFilter("ENS", condition = "startsWith"),
+                      filter)
               }
               ## Now fetch the data:
               res <- ensembldb::proteins(file, filter = filter,
@@ -166,7 +175,6 @@ setMethod("Proteins",
     mcols(res) <- tmp
     return(res)
 }
-
 
 setMethod("[", "Proteins",
           function(x, i, j = "missing", ..., drop) {

@@ -11,9 +11,16 @@
   irl
 }
 
+##' @title Simple function to
+##' 
+##' @description Some description.
+##'
 ##' @param x
+##' 
 ##' @param filenames mzIdentML filenames
+##' 
 ##' @return a modified Proteins object
+##'
 ##' @noRd
 .addIdentificationDataProteins <- function(x, filenames, rmEmptyRanges, par) {
     if (par@IdReader == "mzID") {
@@ -72,9 +79,16 @@
     x
 }
 
+##' @title Some fun
+##' 
+##' @description Some desc
+##' 
 ##' @param x
+##' 
 ##' @param filenames fasta files
+##'
 ##' @return a modified Proteins object
+##'
 ##' @noRd
 .addPeptideFragmentsProteins <- function(x, filenames, rmEmptyRanges, par) {
     if (!isEmpty(x@pranges)) {

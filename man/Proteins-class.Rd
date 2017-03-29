@@ -114,15 +114,20 @@
   \code{\link[ensembldb]{EnsDb}} object allows to retrieve protein
   sequences along with all their related protein domains from an
   \code{EnsDb} annotation database. The optional \code{filter} argument
-  can be used to fetch only proteins matching the filtering criteria
-  from the database. The \code{filter} argument takes a single object or a
-  \code{list} of objects extending the
-  \code{\link[ensembldb]{BasicFilter}} class. Additional annotation
-  columns from the database that should be retrieved from the database
-  and included into \code{acols} can be specified with the
-  \code{columns} argument. The \code{\link[ensembldb]{listColumns}} can
-  be used to list all available annotation columns from the
-  database.
+  can be used to fetch only proteins matching the defined filtering criteria
+  from the database. The \code{filter} argument takes an object
+  extending the \code{\link[AnnotationFilter]{AnnotationFilter}}
+  class, an \code{\link[AnnotationFilter]{AnnotationFilterList}}
+  combining such objects or a filter expression in form of a
+  \code{formula}. See the 
+  \code{\link[AnnotationFilter]{AnnotationFilter}} and
+  \code{\link[ensembldb]{proteins}} documentation for more details.
+  
+  Additional annotation columns from the database that should be
+  retrieved from the database and included into \code{acols} can be
+  specified with the \code{columns} argument. The
+  \code{\link[ensembldb]{listColumns}} can be used to list all available
+  annotation columns from the database.
   Ensembl protein IDs will be used as the \code{names} of the returned
   \code{Proteins} object. See the vignette from the \code{ensembldb}
   package for an overview of supported filters or below for some
@@ -345,7 +350,7 @@ library(EnsDb.Hsapiens.v86)
 edb <- EnsDb.Hsapiens.v86
 
 ## Define a filter to retrieve all genes from chromosome Y
-sqnf <- SeqnameFilter("Y")
+sqnf <- SeqNameFilter("Y")
 ## Retrieve the proteins without protein domains but specify to retrieve in
 ## addition the transcript biotype for the encoding transcripts and the gene
 ## names
@@ -358,8 +363,8 @@ acols(prts)
 listColumns(edb)
 
 ## Load all proteins from the gene ZBTB16 including all protein domains from
-## the database.
-prts <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+## the database. Here we pass the filter criteria as a formula to the method
+prts <- Proteins(edb, filter = ~ genename == "ZBTB16")
 
 ## List available pranges
 pcols(prts)

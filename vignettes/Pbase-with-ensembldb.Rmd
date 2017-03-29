@@ -76,11 +76,12 @@ mcols(prts)
 In `Pbase`, a `Proteins` method is also implemented for `EnsDb` objects that
 enables to load a `Proteins` object from an `EnsDb` database and optionally load
 all protein domains as peptide ranges in the `pranges` slot (using the
-`loadProteinDomains` parameter which is by default `TRUE`).
+`loadProteinDomains` parameter which is by default `TRUE`). Below we use also a
+filter expression in form of a `formula` instead of an `AnnotationFilter` class.
 
 ```{r Proteins_method, message = FALSE}
 library(Pbase)
-zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+zbtb16 <- Proteins(edb, filter = ~ genename == "ZBTB16")
 ```
 
 The proteins' sequences are stored in the `aa` slot and the protein domains in
@@ -112,15 +113,16 @@ acols(zbtb16_2)
 
 As we can see two transcript IDs (ENST00000335953 and ENST00000392996) and hence
 Ensembl protein IDs are each annotated to two Uniprot IDs. To avoid some of
-these multi-mappings, we can use an `UniprotmappingtypeFilter` to retrieve only
+these multi-mappings, we can use an `UniprotMappingTypeFilter` to retrieve only
 presumably higher quality annotations by selecting only Uniprot IDs mapped to
 Ensembl protein IDs using the `"DIRECT"` mapping type. We get hence again unique
 Ensembl protein IDs respectively transcript IDs.
 
 ```{r Proteins_uniprot_2}
 acols(Proteins(edb, columns = c("uniprot_id", "uniprot_db"),
-               filter = list(GenenameFilter("ZBTB16"),
-                             UniprotmappingtypeFilter("DIRECT"))))
+               filter = AnnotationFilterList(
+                   GenenameFilter("ZBTB16"),
+                   UniprotMappingTypeFilter("DIRECT"))))
 ```
 
 Note that without specifying a filter we can also retrieve all proteins from the database.
@@ -167,7 +169,7 @@ gat <- GenomeAxisTrack()
 ## Get the transcript ID of the first transcript:
 txid <- acols(zbtb16)$tx_id[1]
 ## Get a GRanges for the first transcript
-trt <- getGeneRegionTrackForGviz(edb, filter = TxidFilter(txid))
+trt <- getGeneRegionTrackForGviz(edb, filter = TxIdFilter(txid))
 
 ## Add the protein domain name as column "id" to the mcols so it
 ## can be used in the plot to identify the features.
@@ -218,7 +220,7 @@ transcript with the best matching CDS. To illustrate this, we select below all
 transcripts that are annotated to the first Uniprot ID.
 
 ```{r uniprot_multi_tx}
-txs <- transcripts(edb, filter = UniprotidFilter(names(p)[1]))
+txs <- transcripts(edb, filter = UniprotFilter(names(p)[1]))
 names(txs)
 ```
 
@@ -227,7 +229,7 @@ coding sequence matches the length of the protein:
 
 ```{r uniprot_seqlength}
 ## Fetch the CDS for each transcript
-cdss <- cdsBy(edb, filter = TxidFilter(names(txs)))
+cdss <- cdsBy(edb, filter = TxIdFilter(names(txs)))
 
 ## The protein sequence length:
 width(aa(p)[1])

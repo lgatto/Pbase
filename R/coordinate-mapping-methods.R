@@ -332,7 +332,7 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
                   k <- match(names(genome), seqnames(x))
                   x <- x[k]
                   ans <- pmapToGenome(x = x, genome = genome, pcol = pcol,
-                                      drop.empty.ranges = drop.emtpy.ranges, ...)
+                                      drop.empty.ranges = drop.empty.ranges, ...)
                   ## get original seqnames order
                   ans <- ans[order(match(names(ans), nmsx))]
               }
@@ -489,10 +489,10 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
 
 .featureToFilter <- function(x, ...) {
     if (x == "tx_id")
-        return(TxidFilter(...))
+        return(TxIdFilter(...))
     if (x == "protein_id")
-        return(ProteinidFilter(...))
+        return(ProteinIdFilter(...))
     if (x == "uniprot_id")
-        return(UniprotidFilter(...))
+        return(UniprotFilter(...))
     stop("No filter object for feature ", x)
 }

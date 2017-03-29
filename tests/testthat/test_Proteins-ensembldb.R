@@ -6,7 +6,7 @@ test_that("Proteins,EnsDb,missing constructor", {
     library(ensembldb)
     library(RSQLite)
     ## Load Proteins with protein domains.
-    prots <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+    prots <- Proteins(edb, filter = ~ genename == "ZBTB16")
     ## Check that we've got all proteins.
     txs <- transcripts(edb, filter = GenenameFilter("ZBTB16"))
     res <- dbGetQuery(dbconn(edb),
@@ -21,27 +21,36 @@ test_that("Proteins,EnsDb,missing constructor", {
                      res$protein_sequence)
     ## Check that we have all protein domains and that they are correctly
     ## assigned to their respective protein.
-    expect_identical(seqnames(prots), names(pranges(prots)))
+    tmp <- proteins(edb, filter = ProteinIdFilter(seqnames(prots)),
+                    columns = "tx_id")
+    rownames(tmp) <- tmp$protein_id
+    expect_identical(tmp[seqnames(prots), "tx_id"], mcols(prots@aa)$tx_id)
+    expect_identical(seqnames(prots), names(pcols(prots)[, 1]))
     ## All nrow pcols except 1 should be > 0
-    expect_true(sum(unlist(lapply(pcols(prots), nrow)) == 0) == 1)
+    expect_true(sum(lengths(pcols(prots)[, 1]) == 0) == 1)
     ## Check that the mcols also matches:
-    expect_true(length(pcols(prots)) == length(unique(res$protein_id)))
+    expect_true(nrow(pcols(prots)) == length(unique(res$protein_id)))
     ## Check that we've got all protein domains
     pd <- dbGetQuery(dbconn(edb),
                      paste0("select * from protein_domain where protein_id in (",
                             paste0("'", res$protein_id,"'", collapse = ", "),
                             ")"))
-    pdL <- split(pd, pd$protein_id)
-    tmp <- lapply(pdL, function(z) {
-        tmp <- pranges(prots)[[z$protein_id[1]]]
-        expect_identical(start(tmp), z$prot_dom_start)
-        expect_identical(mcols(tmp)$interpro_accession, z$interpro_accession)
-    })
+    pdL <- split(pd, pd$protein_id)[seqnames(prots)]
+    for (i in 1:length(pdL)) {
+        tmp <- pranges(prots)[i, ][[1]]
+        if (length(tmp) == 0) {
+            expect_true(length(pdL[[i]]) == 0)
+        } else {
+            expect_identical(start(tmp), pdL[[i]]$prot_dom_start)
+            expect_identical(mcols(tmp)$interpro_accession,
+                             pdL[[i]]$interpro_accession)
+        }
+    }
     ## Without protein domains.
     prots <- Proteins(file = edb, filter = GenenameFilter("ZBTB16"),
                       loadProteinDomains = FALSE)
     expect_identical(sort(seqnames(prots)), sort(res$protein_id))
-    expect_identical(seqnames(prots), names(pranges(prots)))
+    expect_identical(length(prots), nrow(pranges(prots)))
     ## Lenght (nrow) of pranges/pcols is 0
     expect_true(all(unlist(lapply(pcols(prots), nrow)) == 0))
     expect_true(all(unlist(lengths(pranges(prots))) == 0))
@@ -57,16 +66,17 @@ test_that("Proteins,EnsDb,missing constructor", {
     expect_identical(sort(acols(prots)$tx_id), sort(res$tx_id))
     expect_identical(unname(as.character(aa(prots)[res$protein_id])),
                      res$protein_sequence)
-    expect_identical(seqnames(prots), names(pranges(prots)))
-    expect_identical(lengths(pranges(prots)),
-                     unlist(lapply(pcols(prots), nrow)))
+    rownames(res) <- res$protein_id
+    expect_identical(res[seqnames(prots), "tx_id"], mcols(prots@aa)$tx_id)
+    expect_identical(seqnames(prots), names(pcols(prots)[, 1]))
+    
     pd <- dbGetQuery(dbconn(edb),
                      paste0("select * from protein_domain where protein_id in (",
                             paste0("'", res$protein_id,"'", collapse = ", "),
                             ")"))
     pdL <- split(pd, pd$protein_id)
     tmp <- lapply(pdL, function(z) {
-        tmp <- pranges(prots)[[z$protein_id[1]]]
+        tmp <- pranges(prots)[, 1][[z$protein_id[1]]]
         expect_identical(start(tmp), z$prot_dom_start)
         expect_identical(mcols(tmp)$interpro_accession, z$interpro_accession)
     })
@@ -74,10 +84,7 @@ test_that("Proteins,EnsDb,missing constructor", {
     prots <- Proteins(file = edb, filter = GenenameFilter("BCL2L11"),
                       loadProteinDomains = FALSE, fetchLRG = TRUE)
     expect_identical(sort(seqnames(prots)), sort(res$protein_id))
-    expect_identical(seqnames(prots), names(pranges(prots)))
-    ## Lenght (nrow) of pranges/pcols is 0
-    expect_true(all(unlist(lapply(pcols(prots), nrow)) == 0))
-    expect_true(all(unlist(lengths(pranges(prots))) == 0))
+    expect_identical(length(prots), nrow(pranges(prots)))
 })
 
 test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
@@ -85,7 +92,7 @@ test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
                     columns = c("tx_id", "protein_id", "uniprot_id"),
                     return.type = "data.frame")
     uniprts <- unique(dat$uniprot_id)
-    prts <- Proteins(edb, filter = UniprotidFilter(uniprts))
+    prts <- Proteins(edb, filter = UniprotFilter(uniprts))
 
     ## Check content; ordering should be the same.
     expect_equal(seqnames(prts), dat$protein_id)
@@ -93,11 +100,11 @@ test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
     expect_equal(acols(prts)$uniprot_id, dat$uniprot_id)
     ## Protein domains.
     for (i in 1:length(acols)) {
-        res <- proteins(edb, filter = ProteinidFilter(seqnames(prts)[i]),
+        res <- proteins(edb, filter = ProteinIdFilter(seqnames(prts)[i]),
                         columns = listColumns(edb, "protein_domain"))
-        expect_equal(start(pranges(prts)[[i]]), res$prot_dom_start)
-        expect_equal(end(pranges(prts)[[i]]), res$prot_dom_end)
-        expect_equal(mcols(pranges(prts)[[i]])$interpro_accession,
+        expect_equal(start(pranges(prts)[, 1][[i]]), res$prot_dom_start)
+        expect_equal(end(pranges(prts)[, 1][[i]]), res$prot_dom_end)
+        expect_equal(mcols(pranges(prts)[, 1][[i]])$interpro_accession,
                      res$interpro_accession)
     }
     idmap <- unique(cbind(names(prts), acols(prts)$uniprot_id))
@@ -106,8 +113,9 @@ test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
     expect_true(length(unique(idmap[, 2])) < nrow(idmap))
 
     ## We can use a UniprotmappingFilter to restrict to good quality maps.
-    prts_2 <- Proteins(edb, filter = list(GenenameFilter("ZBTB16"),
-                                          UniprotmappingtypeFilter("DIRECT")),
+    prts_2 <- Proteins(edb, filter = AnnotationFilterList(
+                                GenenameFilter("ZBTB16"),
+                                UniprotMappingTypeFilter("DIRECT")),
                        columns = c("uniprot_id", "protein_id"))
     ## That way we reduce it to a n:1 mapping between Ensembl protein ID and
     ## Uniprot ID.
