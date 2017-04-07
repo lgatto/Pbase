@@ -79,9 +79,8 @@ calculateHeavyLabels <-
     }
 
     aa <- aa(proteins)
-    pr <- pranges(proteins)
+    pr <- pranges(proteins)[[1]]
     pos <- .peptidePosition(peptides, aa)
-
     l <- vector(mode = "list", length = length(pos))
 
     ## TODO: Because .addOverhangs is only vectorized on peptide level (multiple

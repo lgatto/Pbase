@@ -98,8 +98,8 @@
         stop("The ", sQuote("pranges"), " slot is not empty! ",
             "No ranges and metadata could be added.")
     }
-    fragments <- Pbase:::.readAAStringSet(filenames)
-    ir <- unlist(Pbase:::.peptidePosition(fragments, x@aa))
+    fragments <- .readAAStringSet(filenames)
+    ir <- unlist(.peptidePosition(fragments, x@aa))
     mcols(ir) <- cbind(mcols(fragments)[mcols(ir)$PeptideIndex, ],
                        mcols(ir))
     .fragments <- IRangesList(replicate(length(x), IRanges()))
@@ -196,7 +196,7 @@ rmEmptyRanges <- function(x, pcol) {
 
 isCleaved <- function(x, missedCleavages = 0, pcol = "trypsinCleaved") {
     if (isEmpty(pranges(x))) return(FALSE)        
-    pcol <- Pbase:::.checkPcol(x, pcol)
+    pcol <- .checkPcol(x, pcol)
     pr <- mcols(x@aa)[[pcol]]
     mcl <- mcols(unlist(pr))[, "MissedCleavages"]
     all(missedCleavages %in% runValue(mcl))
