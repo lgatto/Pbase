@@ -74,6 +74,9 @@ calculateHeavyLabels(cleavedProteins,
                                    A4UGR9 = "QGNMYTLSK",
                                    A6H8Y1 = "GSTASNPQR"))
 }
+\author{
+Sebastian Gibb <mail@sebastiangibb.de> and Pavel Shliaha
+}
 \references{
 The complete description of the issue:
 \url{https://github.com/sgibb/cleaver/issues/5}
@@ -83,6 +86,4 @@ mass spectrometric quantification of component stoichiometry of
 multiprotein complexes. Journal of proteome research 6.2 (2007):
 792-800. \url{http://dx.doi.org/10.1021/pr060447s}
 }
-\author{
-Sebastian Gibb <mail@sebastiangibb.de> and Pavel Shliaha
-}
+

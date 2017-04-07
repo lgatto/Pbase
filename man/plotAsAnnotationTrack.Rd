@@ -3,7 +3,6 @@
 \name{plotAsAnnotationTrack}
 \alias{plotAsAnnotationTrack}
 \alias{plotAsGeneRegionTrack}
-\alias{plotAsGeneRegionTrack}
 \title{Plot gene region and annotation tracks}
 \usage{
 plotAsAnnotationTrack(x, ..., genome = "hg38", plot = TRUE)
@@ -44,3 +43,4 @@ grey line. See \code{\link{pmapToGenome}} for example code.
 \author{
 Laurent Gatto
 }
+
