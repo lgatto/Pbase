@@ -292,13 +292,13 @@ setMethod("addPeptideFragments",
 
 setMethod("cleave", "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0, ...) {
-              rng <- cleavageRanges(x = x@aa, enzym = enzym,
-                                    missedCleavages = missedCleavages,
-                                    ...)
               nm <- paste0(enzym, "Cleaved")
               if (nm %in% avarLabels(x)) {
                   message(nm, " already exists. Leaving object as is.")
               } else {
+                  rng <- cleavageRanges(x = x@aa, enzym = enzym,
+                                        missedCleavages = missedCleavages,
+                                        ...)                  
                   mcols(x@aa)[, nm] <- IRangesList(lapply(rng, function(r) {
                       mc <- missedCleavages[cumsum(start(r) == 1L)]
                       mcols(r) <- DataFrame(MissedCleavages = Rle(mc))

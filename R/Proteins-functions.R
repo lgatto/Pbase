@@ -94,19 +94,20 @@
 ##'
 ##' @noRd
 .addPeptideFragmentsProteins <- function(x, filenames, rmEmptyRanges, par) {
-    if (!isEmpty(x@pranges)) {
+    if (!isEmpty(pranges(x))) {
         stop("The ", sQuote("pranges"), " slot is not empty! ",
             "No ranges and metadata could be added.")
     }
-    fragments <- .readAAStringSet(filenames)
-
-    ir <- unlist(.peptidePosition(fragments, x@aa))
+    fragments <- Pbase:::.readAAStringSet(filenames)
+    ir <- unlist(Pbase:::.peptidePosition(fragments, x@aa))
     mcols(ir) <- cbind(mcols(fragments)[mcols(ir)$PeptideIndex, ],
                        mcols(ir))
-    x@pranges[unique(mcols(ir)$ProteinIndex)] <-
-        split(ir, mcols(ir)$ProteinIndex)
-    x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
-
+    .fragments <- IRangesList(replicate(length(x), IRanges()))
+    names(.fragments) <- seqnames(x)   
+    .fragments[names(ir)] <- split(ir, names(ir))
+    mcols(x@aa)$Fragments <- .fragments
+    x@aa@elementMetadata$npeps <- lengths(.fragments)
+    
     if (rmEmptyRanges) {
         x <- rmEmptyRanges(x)
     }
@@ -170,8 +171,6 @@ proteotypic <- function(x) {
     if (length(pvarLabels(x)) == 0) {
         stop("The ", sQuote("pranges"), " slot is empty!")
     }
-    x <- pp
-
     proteotypic <- lapply(pfeatures(x),
            function(xx) {
                .peps <- as.character(xx)
@@ -195,9 +194,12 @@ rmEmptyRanges <- function(x, pcol) {
     x[sel]
 }
 
-isCleaved <- function(x, missedCleavages = 0) {
-    !isEmpty(pranges(x)) &&
-        all(missedCleavages %in% unlist(runValue(pmetadata(x)[, "MissedCleavages"])))
+isCleaved <- function(x, missedCleavages = 0, pcol = "trypsinCleaved") {
+    if (isEmpty(pranges(x))) return(FALSE)        
+    pcol <- Pbase:::.checkPcol(x, pcol)
+    pr <- mcols(x@aa)[[pcol]]
+    mcl <- mcols(unlist(pr))[, "MissedCleavages"]
+    all(missedCleavages %in% runValue(mcl))
 }
 
 ### Caution: This is based purley on IRanges. No sequence based checks are

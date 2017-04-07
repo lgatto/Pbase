@@ -23,9 +23,9 @@ test_that("fasta constructor", {
   p2@aa@elementMetadata <- p@aa@elementMetadata[1:2,, drop=FALSE]
 
   expect_identical(length(p), 3L)
-  expect_identical(nrow(ametadata(p)), 3L)
-  expect_identical(as.integer(ametadata(p)$Filename), rep(1L, 3L))
-  expect_identical(basename(levels(ametadata(p)$Filename)),
+  expect_identical(nrow(acols(p)), 3L)
+  expect_identical(as.integer(acols(p)$Filename), rep(1L, 3L))
+  expect_identical(basename(levels(acols(p)$Filename)),
                    "01_test_database.fasta")
 
   expect_identical(seqnames(p), c("P1", "P2", "P3"))
@@ -34,7 +34,7 @@ test_that("fasta constructor", {
   expect_identical(as.character(p[[1]]), as.character(aa[[1]]))
   expect_identical(as.character(p[1:2]@aa), as.character(p2@aa))
 
-  expect_identical(ametadata(p[1:2]), ametadata(p2))
+  expect_identical(acols(p[1:2]), acols(p2))
 
   expect_true(is.character(metadata(p)$created))
   expect_identical(nchar(metadata(p)$created,), 24L)
