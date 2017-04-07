@@ -69,9 +69,12 @@
                                             lengths = lengths(irl))
     }
 
-    nms <- sort(unique(names(ir)))
-    mcols(x@aa)$Peptides <- split(ir, names(ir))
-    x@aa@elementMetadata$npeps <- elementNROWS(pranges(x))
+    ir <- split(ir, names(ir))
+    .Peptides <- IRangesList(replicate(length(x), IRanges()))
+    names(.Peptides) <- seqnames(x)
+    .Peptides[names(ir)] <- ir
+    mcols(x@aa)$Peptides <- .Peptides
+    x@aa@elementMetadata$npeps <- lengths(.Peptides)
 
     if (rmEmptyRanges) {
         x <- rmEmptyRanges(x)
@@ -164,17 +167,32 @@
 
 proteotypic <- function(x) {
     stopifnot(inherits(x, "Proteins"))
-    if (isEmpty(x@pranges)) {
+    if (length(pvarLabels(x)) == 0) {
         stop("The ", sQuote("pranges"), " slot is empty!")
     }
+    x <- pp
 
-    pp <- as.character(unlist(pfeatures(x)))
-    proteotypic <- Rle(pp %in% .singular(pp))
+    proteotypic <- lapply(pfeatures(x),
+           function(xx) {
+               .peps <- as.character(xx)
+               IRanges(Rle(.peps %in% .singular(.peps)))
+           })
+    proteotypic <- IRangesList(proteotypic)    
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
-rmEmptyRanges <- function(x) {
-    x[as.logical(elementNROWS(pranges(x)))]
+rmEmptyRanges <- function(x, pcol) {
+    ## by default removes empty ranges of all pvarLabels
+    pr <- pranges(x) ## a DataFrame
+    if (!missing(pcol)) {
+        ## only consider pcols in pr
+        stopifnot(all(pcol %in% names(pr)))
+        pr <- pr[, names(pr) %in% pcol]
+    }
+    
+    sel <- sapply(pr, function(x) lengths(x) > 0) ## always a matrix
+    sel <- sapply(sel, all)
+    x[sel]
 }
 
 isCleaved <- function(x, missedCleavages = 0) {
@@ -184,11 +202,12 @@ isCleaved <- function(x, missedCleavages = 0) {
 
 ### Caution: This is based purley on IRanges. No sequence based checks are
 ### involved! You have to make sure that you compare compareable sequences.
-proteinCoverage <- function(x) {
+proteinCoverage <- function(x, pcol, force = FALSE) {
     stopifnot(is(x, "Proteins"))
+    pcol <- .checkPcol(x, pcol)
     prtl <- width(aa(x))
-    pepl <- sapply(width(reduce(pranges(x))), sum)
-    addacol(x, "Coverage", pepl/prtl)
+    pepl <- sapply(width(reduce(pranges(x)[, pcol])), sum)
+    addacol(x, "Coverage", pepl/prtl, force = force)
 }
 
 
