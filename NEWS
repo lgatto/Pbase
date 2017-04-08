@@ -1,7 +1,8 @@
 CHANGES IN VERSION 0.15.2
 -------------------------
  o New Proteins class implementation - see issue #38. <2016-12-10 Sat>
-
+ o Fixed many errors from current rewrite <2017-04-08 Sat>
+ 
 CHANGES IN VERSION 0.15.1
 -------------------------
  o Proteins,EnsDb method allowing to fetch a Proteins object from an EnsDb
