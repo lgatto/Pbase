@@ -1,3 +1,7 @@
+.get_pranges_indices <-
+    function(x) sapply(mcols(x@aa), inherits, "IRangesList")
+
+
 .toBeImplemented <- function() {
   parentCall <- sys.call(-1L)
   stop(deparse(parentCall), " is not implemented yet!", call.=FALSE)
@@ -97,7 +101,8 @@
     x[! (duplicated(x) | duplicated(x, fromLast = TRUE))]
 }
 
-addacol <- function(x, column, content, force = FALSE) {
+
+addpcol <- addacol <- function(x, column, content, force = FALSE) {
     mcols(x@aa) <- .addColumn(mcols(x@aa),
                               column = column,
                               content = content,
@@ -105,14 +110,17 @@ addacol <- function(x, column, content, force = FALSE) {
     x
 }
 
-addpcol <- function(x, column, content, force = FALSE) {
-    x@pranges@unlistData@elementMetadata <-
-        .addColumn(x@pranges@unlistData@elementMetadata,
-                   column = column,
-                   content = content,
-                   force = force)
-    x
-}
+
+## addpcol <- function(x, column, content, force = FALSE) {
+##     x@pranges@unlistData@elementMetadata <-
+##         .addColumn(x@pranges@unlistData@elementMetadata,
+##                    column = column,
+##                    content = content,
+##                    force = force)
+##     x
+## }
+
+
 
 htcat <- function(x, n = 3) {
     nx <- length(x)
@@ -127,6 +135,8 @@ htcat <- function(x, n = 3) {
 }
 
 
+##' Checks if all ranges of a GRanges object are reverse.
+##' 
 ##' @title Are all the ranges on the same strand
 ##' @param gr A \code{GRanges} object.
 ##' @return A logical if \emph{all} the ranges in the \code{gr} object
@@ -158,4 +168,27 @@ plotRanges <- function(x, xlim = x, main = "",
     rect(start(x)-0.5, ybottom, end(x)+0.5, ybottom + height, col = col, ...)
     title(main)
     axis(1)
+}
+
+##' Checks if the provided pcol parameter is valid, i.e.:
+##' 1) if the Proteins object has Protein ranges,
+##' 2) if pcol is not empty it checks that pcol is available in pvarLabels.
+##' 3) if pcol is empty or NULL it returns the first pvarLabels.
+##' If any of the first two cases above is TRUE the function throws an error,
+##' otherwise it returns the \code{pcol} parameter.
+##'
+##' @title Evaluate pcol function parameter
+##' @param x A \code{Proteins} object.
+##' @param pcol character(1) with the \code{pcol} parameter to evaluate for
+##' validity.
+##' @return Returns a character(1) with the valid \code{pcol} parameter.
+##' @noRd
+.checkPcol <- function(x, pcol) {
+    if (length(pcols(x)) == 0)
+        stop("Protein ranges are empty!")
+    if (missing(pcol) || length(pcol) == 0)
+        pcol <- pvarLabels(x)[1]
+    if (!(pcol) %in% pvarLabels(x))
+        stop("No column '", pcol, "' containing protein ranges available in 'pcol'")
+    return(pcol)
 }

@@ -17,7 +17,7 @@ importFrom(GenomicRanges, GRanges, GRangesList)
 importFrom(rtracklayer, chrom)
 importMethodsFrom(GenomicRanges, "seqinfo<-")
 importClassesFrom(Biobase, Versioned)
-importFrom(Biobase, classVersion, isCurrent, validMsg)
+importFrom(Biobase, classVersion, isCurrent, validMsg, isVersioned)
 
 importFrom(cleaver, cleave, cleavageRanges)
 
@@ -29,11 +29,14 @@ importFrom(mzID, mzID, flatten)
 importFrom(MSnbase, addIdentificationData, get.amino.acids, get.atomic.mass)
 
 ## ensembldb
-importFrom(ensembldb, listProteinColumns, TxidFilter, ProteinidFilter,
-           UniprotidFilter)
+importFrom(ensembldb, listProteinColumns)
 importMethodsFrom(ensembldb, hasProteinData, listColumns, proteins,
                   ensemblVersion, cdsBy)
-importClassesFrom(ensembldb, EnsDb, TxidFilter, ProteinidFilter, UniprotidFilter)
+importClassesFrom(ensembldb, EnsDb)
+## AnnotationFilter
+importClassesFrom(AnnotationFilter, TxIdFilter, ProteinIdFilter, UniprotFilter)
+importFrom(AnnotationFilter, AnnotationFilter, AnnotationFilterList,
+           TxIdFilter, ProteinIdFilter, UniprotFilter)
 
 exportClasses(Proteins,
               Pparams)
@@ -43,17 +46,8 @@ exportMethods(
     Proteins,
     "[",
     "[[",
-    aa,
-    acols,
-    ametadata,
     length,
     metadata,
-    pcols,
-    pfeatures,
-    pmetadata,
-    pranges, "pranges<-",
-    pvarLabels,
-    avarLabels,
     seqnames,
     show,
     ## action methods
@@ -68,17 +62,27 @@ exportMethods(
     ## ranges
     proteinCoding)
 
-export(rmEmptyRanges,
-       Pparams,
-       etrid2grl,
-       isReverse,
-       isForward,
-       ## actions on Proteins
-       isCleaved,
-       proteinCoverage,
-       proteotypic,
-       calculateHeavyLabels,
-       ## plotting
-       plotAsGeneRegionTrack,
-       plotAsAnnotationTrack)
+export(
+    ## were methods
+    aa,
+    acols,
+    pcols,
+    pfeatures,
+    pranges, ## "pranges<-",
+    pvarLabels,
+    avarLabels,
+    ## 
+    rmEmptyRanges,
+    Pparams,
+    etrid2grl,
+    isReverse,
+    isForward,
+    ## actions on Proteins
+    isCleaved,
+    proteinCoverage,
+    proteotypic,
+    calculateHeavyLabels,
+    ## plotting
+    plotAsGeneRegionTrack,
+    plotAsAnnotationTrack)
 

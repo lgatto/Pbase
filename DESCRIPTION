@@ -8,23 +8,48 @@ Authors@R: c(person("Laurent", "Gatto", role = c("aut", "cre"),
                     email = "Johannes.Rainer@eurac.edu"),
              person("Sebastian", "Gibb", role = c("aut", "cre"),
                     email = "mail@sebastiangibb.de"))
-Depends: R (>= 2.10), methods, BiocGenerics, Rcpp, Gviz
-Imports: cleaver (>= 1.3.6), Biobase, Biostrings, IRanges, S4Vectors,
-	 mzID, mzR (>= 1.99.1), MSnbase (>= 1.15.5), Pviz, biomaRt,
-	 GenomicRanges, rtracklayer, ensembldb, BiocParallel
-Suggests: testthat (>= 0.8), ggplot2, BSgenome.Hsapiens.NCBI.GRCh38,
-	  TxDb.Hsapiens.UCSC.hg38.knownGene,
-	  AnnotationHub, knitr, rmarkdown, BiocStyle,
-	  EnsDb.Hsapiens.v86 (>= 2.0.0)
+Depends:
+    R (>= 2.10),
+    methods,
+    BiocGenerics,
+    Rcpp,
+    Gviz
+Imports:
+    cleaver (>= 1.3.6),
+    Biobase,
+    Biostrings,
+    IRanges,
+    S4Vectors,
+    mzID,
+    mzR (>= 1.99.1),
+    MSnbase (>= 1.15.5),
+    Pviz,
+    biomaRt,
+    GenomicRanges,
+    rtracklayer,
+    ensembldb (>= 1.99.13),
+    BiocParallel,
+    AnnotationFilter
+Suggests:
+    testthat (>= 0.8),
+    ggplot2,
+    BSgenome.Hsapiens.NCBI.GRCh38,
+    TxDb.Hsapiens.UCSC.hg38.knownGene,
+    AnnotationHub,
+    knitr,
+    rmarkdown,
+    BiocStyle,
+    EnsDb.Hsapiens.v86 (>= 2.0.0)
 Description: A set of classes and functions to investigate and
-             understand protein sequence data in the context of a
-             proteomics experiment.
+    understand protein sequence data in the context of a
+    proteomics experiment.
 License: GPL-3
 Author: Laurent Gatto [aut], Sebastian Gibb [aut, cre]
 Maintainer: Sebastian Gibb <mail@sebastiangibb.de>,
-	    Laurent Gatto <lg390@cam.ac.uk>
+    Laurent Gatto <lg390@cam.ac.uk>
 VignetteBuilder: knitr
 URL: https://github.com/ComputationalProteomicsUnit/Pbase
 BugReports: https://github.com/ComputationalProteomicsUnit/Pbase/issues
 biocViews: Infrastructure, Proteomics, MassSpectrometry,
-	   Visualization, DataImport, DataRepresentation
+    Visualization, DataImport, DataRepresentation
+RoxygenNote: 5.0.1

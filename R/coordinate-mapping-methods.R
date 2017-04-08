@@ -58,8 +58,8 @@ setGeneric("pmapToGenome",
 ##    coordinates on the genome.
 ##
 
-tryCatchMapToGenome <- function(pObj, grObj, ...)
-    tryCatch(.mapToGenome2(pObj, grObj, ...),
+tryCatchMapToGenome <- function(pObj, grObj, pcol, ...)
+    tryCatch(.mapToGenome2(pObj, grObj, pcol, ...),
              warning = function() NULL,
              error = function(e) {
                  warning("Mapping failed. Returning an empty range.",
@@ -143,14 +143,19 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 ##' be ordered by exon index, i.e. first exon is first element, last exon last
 ##' one. For + strand, exons should be ordered by start increasingly, for -
 ##' strand by end decreasingly (or start * strand increasingly).
+##' @param pcol character(1) defining the column of the \code{pranges}
+##' \code{DataFrame} in which the features to be aligned can be found. If
+##' missing \code{pvarLabels(pObj)[1]} will be used.
 ##' @return Returns a GRanges with positions of pranges(pObj)[[1]] mapped to
 ##' grObj
 ##' @noRd
-.mapToGenome2 <- function(pObj, grObj, ...) {
+.mapToGenome2 <- function(pObj, grObj, pcol, ...) {
     if (length(pObj) > 1) {
         warning("Only considering first protein in the Proteins object.")
         pObj <- pObj[1]
     }
+    ## Check Proteins object var presence of features.
+    pcol <- .checkPcol(pObj, pcol)
     ## DROP THAT TEST FOR NOW - eventually implement later.
     ## ## Check that the length of the CDS corresponds to the length of the AA:
     ## ## AA length should be (length(CDS) - 1) / 3, -1 because stop codon is not
@@ -180,7 +185,8 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
     prex <- IRanges(start = i, end = j)
 
     ## peptide position on protein
-    peprngProt <- pranges(pObj)[[1]]
+    ## peprngProt <- pranges(pObj)[[1]]
+    peprngProt <- pranges(pObj)[[pcol]][[1]]
     if (length(peprngProt) == 0)
         return(GRanges())
     ## peptide positions on cdna (2)
@@ -219,7 +225,7 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
                    "tx_biotype", "gene_name", "gene_id", "gene_biotype")
     got_cols <- colnames(mcols(grObj)) %in% want_cols
     ## Build the mcols:
-    mcol <- DataFrame(pepseq = as.character(pfeatures(pObj)[[1]]),
+    mcol <- DataFrame(pepseq = as.character(pfeatures(pObj, pcol = pcol)[[1]]),
                       accession = seqnames(pObj)[1],
                       exonJunctions = junc)
     if (any(got_cols)) {
@@ -256,14 +262,14 @@ tryCatchMapToGenome <- function(pObj, grObj, ...)
 ##           function(x, genome, ...) .mapToGenome(x, genome, ...))
 
 setMethod("pmapToGenome", c("Proteins", "GRangesList"),
-          function(x, genome, drop.empty.ranges = TRUE, ...) {
+          function(x, genome, pcol, drop.empty.ranges = TRUE, ...) {
               if (length(x) != length(genome))
                   stop("'x' and 'genome' must have the same length")
 
               l <- vector("list", length = length(x))
               names(l) <- seqnames(x)
               for (i in seq_len(length(x)))
-                  l[[i]] <- tryCatchMapToGenome(x[i], genome[[i]], ...)
+                  l[[i]] <- tryCatchMapToGenome(x[i], genome[[i]], pcol, ...)
               ans <- GRangesList(l)
               if (drop.empty.ranges)
                   ans <- ans[elementNROWS(ans) > 0]
@@ -278,7 +284,7 @@ setMethod("pmapToGenome", c("Proteins", "GRangesList"),
 setGeneric("pmapToGenome2",
            function(x, genome, ...) standardGeneric("pmapToGenome2"))
 setMethod("pmapToGenome2", c("Proteins", "GRangesList"),
-          function(x, genome, drop.empty.ranges = TRUE, ...) {
+          function(x, genome, pcol, drop.empty.ranges = TRUE, ...) {
               if (length(x) != length(genome))
                   stop("'x' and 'genome' must have the same length")
               l <- bpmapply(split(x, 1:length(x)), genome,
@@ -294,7 +300,7 @@ setMethod("pmapToGenome2", c("Proteins", "GRangesList"),
 
 
 setMethod("mapToGenome", c("Proteins", "GRangesList"),
-          function(x, genome, drop.empty.ranges = TRUE, ...) {
+          function(x, genome, pcol, drop.empty.ranges = TRUE, ...) {
               if (length(x) == 1 & length(genome) == 1) {
                   ans <- tryCatchMapToGenome(x, genome[[1]], ...)
                   if (drop.empty.ranges & length(ans) == 1)
@@ -325,7 +331,8 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
 
                   k <- match(names(genome), seqnames(x))
                   x <- x[k]
-                  ans <- pmapToGenome(x, genome, drop.empty.ranges, ...)
+                  ans <- pmapToGenome(x = x, genome = genome, pcol = pcol,
+                                      drop.empty.ranges = drop.empty.ranges, ...)
                   ## get original seqnames order
                   ans <- ans[order(match(names(ans), nmsx))]
               }
@@ -410,7 +417,7 @@ setMethod("mapToGenome", c("Proteins", "GRangesList"),
 ##' the database) for all proteins the mapping could be performed.
 ##' @noRd
 setMethod("mapToGenome", c("Proteins", "EnsDb"),
-          function(x, genome, id = "name", idType = "protein_id",
+          function(x, genome, pcol, id = "name", idType = "protein_id",
                    drop.empty.ranges = TRUE, ...) {
               if (!hasProteinData(genome))
                   stop("The submitted database does not provide protein",
@@ -472,8 +479,8 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
               cdss <- cdss[got_id]
 
               ## Use parallel processing instead?
-              ans <- pmapToGenome(x, cdss, drop.empty.ranges, ...)
-
+              ans <- pmapToGenome(x = x, genome = cdss, pcol = pcol,
+                                  drop.empty.ranges = drop.empty.ranges, ...)
               if (validObject(ans))
                   return(ans)
           })
@@ -482,10 +489,10 @@ setMethod("mapToGenome", c("Proteins", "EnsDb"),
 
 .featureToFilter <- function(x, ...) {
     if (x == "tx_id")
-        return(TxidFilter(...))
+        return(TxIdFilter(...))
     if (x == "protein_id")
-        return(ProteinidFilter(...))
+        return(ProteinIdFilter(...))
     if (x == "uniprot_id")
-        return(UniprotidFilter(...))
+        return(UniprotFilter(...))
     stop("No filter object for feature ", x)
 }

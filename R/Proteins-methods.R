@@ -4,16 +4,15 @@ setMethod("Proteins", c("missing", "missing"),
               aa@elementMetadata <- DataFrame()
               new("Proteins",
                   metadata = list(created = date()),
-                  aa = aa,
-                  pranges = IRangesList())
+                  aa = aa)
           })
 
 setMethod("Proteins",
           signature(file = "character", uniprotIds = "missing"),
           function(file, uniprotIds, ...) {
-              p <- .ProteinsFromFasta(filenames = file, ...)
-              names(p@aa) <- acols(p)$AccessionNumber
-              p
+              aa <- .readAAStringSet(file, ...)
+              metadata <- list(created = date())
+              new("Proteins", metadata = metadata, aa = aa)
           })
 
 setMethod("Proteins",
@@ -31,41 +30,48 @@ setMethod("Proteins",
 ############################################################
 ## Proteins, EnsDb, missing
 ##
-## o Fetch all proteins from the EnsDb database.
-## TODO @jo: don't know yet how to handle Uniprot IDs and uniprot table data.
+##' @title Fetch a Proteins object from an EnsDb database
 ##'
-##' @param file EnsDb database from which protein data should/can be retrieved.
+##' @description Fetch a \code{Proteins} object from an
+##'     \code{\linkS4class[ensembldb]{EnsDb}} database.
+##' 
+##' @param file EnsDb database from which protein data should/can be
+##'     retrieved.
 ##'
 ##' @param uniprotIds missing.
 ##'
-##' @param loadProteinDomains Logical of length 1 defining whether protein
-##' domains within the proteins' sequences should be loaded too. If \code{TRUE},
-##' protein domains are loaded and added into the \code{@pranges} slot of the
-##' object.
+##' @param loadProteinDomains \code{logical(1)} defining whether
+##'     protein domains within the proteins' sequences should be
+##'     loaded too. If \code{TRUE}, protein domains are loaded and
+##'     added a \code{pranges} named \textit{ProteinDomains}.
 ##'
-##' @param filter Single object extending
-##' \code{\linkS4Object[ensembldb]{BasicFilter}} or \code{list} of such objects
-##' to retrieve only specific proteins from the database. See
-##' \code{\link[ensembldb]{proteins}} for more information.
+##' @param filter An object extending
+##'     \code{\linkS4Object[AnnotationFilter]{AnnotationFilter}} an
+##'     \code{\link[AnnotationFilter]{AnnotationFilterList}} object combining
+##'     such objects or a \code{formula} representing a filter expression. See
+##'     documentation on \code{\link[ensembldb]{proteins}} for more details and
+##'     examples.
 ##'
 ##' @param columns Character vector specifying the columns that should be
-##' returned from the database. By default, all columns from the \emph{protein}
-##' database table are returned. Use the \code{\link[ensembldb]{listColumns}}
-##' function to get a list of all supported columns. Note that exon-related
-##' columns are not supported for the \code{Proteins} method.
+##'     returned from the database. By default, all columns from the
+##'     \emph{protein} database table are returned. Use the
+##'     \code{\link[ensembldb]{listColumns}} function to get a list of all
+##'     supported columns. Note that exon-related columns are not supported for
+##'     the \code{Proteins} method.
 ##'
 ##' @param fetchLRG Logical indicating whether proteins for Locus Reference
-##' Genes (LRG) should be retrieved too. By default LRG genes will not be
-##' fetched as they do have a 1:n mapping between transcripts and proteins.
+##'     Genes (LRG) should be retrieved too. By default LRG genes will not be
+##'     fetched as they do have a 1:n mapping between transcripts and proteins.
 ##'
 ##' @param ... Additional arguments to be passed to the
-##' \code{\link[ensembldb]{proteins}} method that is used to fetch the data.
+##'     \code{\link[ensembldb]{proteins}} method that is used to fetch the data.
 ##'
 ##' @noRd
 setMethod("Proteins",
           signature(file = "EnsDb", uniprotIds = "missing"),
           function(file, uniprotIds, loadProteinDomains = TRUE,
-                   filter = list(), columns = NULL, fetchLRG = FALSE, ...) {
+                   filter = AnnotationFilterList(), columns = NULL,
+                   fetchLRG = FALSE, ...) {
               ## Get the data from EnsDb.
               if (!hasProteinData(file))
                   stop("The provided 'EnsDb' does not contain protein annotations!")
@@ -88,9 +94,12 @@ setMethod("Proteins",
                                       listColumns(file, "protein_domain")))
               }
               if (!fetchLRG) {
+                  if (is(filter, "formula"))
+                      filter <- AnnotationFilter(filter)
                   ## Add a filter to fetch only transcripts starting with ENS
-                  filter <- c(list(TxidFilter("ENS%", condition = "like")),
-                              filter)
+                  filter <- AnnotationFilterList(
+                      TxIdFilter("ENS", condition = "startsWith"),
+                      filter)
               }
               ## Now fetch the data:
               res <- ensembldb::proteins(file, filter = filter,
@@ -114,6 +123,11 @@ setMethod("Proteins",
               mcols(aa) <- prt[, !colnames(prt) %in% c("protein_id",
                                                        "protein_sequence"),
                                drop = FALSE]
+              ## Create the Proteins object.
+              pr <- new("Proteins",
+                        aa = aa,
+                        metadata = list(created = date(),
+                                        ensembl_version = ensemblVersion(file)))
               ## Fetch protein domain data
               if (loadProteinDomains) {
                   prng <- IRangesList(list())
@@ -147,16 +161,12 @@ setMethod("Proteins",
                   ## if we have 1:n mapping for protein_id to uniprot_id.
                   ## issue #35
                   prng <- prng[names(aa)]
-              } else {
-                  prng <- IRangesList(replicate(length(aa), IRanges()))
-                  names(prng) <- names(aa)
+                  acols(pr)$ProteinDomains <- prng
               }
-              ## Create the Proteins object.
-              pr <- new("Proteins", aa = aa, pranges = prng,
-                        metadata = list(created = date(),
-                                        ensembl_version = ensemblVersion(file)))
-              return(pr)
+              if (validObject(pr))
+                  return(pr)
           })
+
 ## Simple helper function to create an IRanges with mcols.
 .emptyProtDomIRanges <- function(cols) {
     res <- IRanges()
@@ -165,7 +175,6 @@ setMethod("Proteins",
     mcols(res) <- tmp
     return(res)
 }
-
 
 setMethod("[", "Proteins",
           function(x, i, j = "missing", ..., drop) {
@@ -181,24 +190,31 @@ setMethod("[", "Proteins",
                   stop("invalid subsetting")
               if (any(i < 1) || any(i > length(x)))
                   stop("subscript out of bounds")
-
               x@aa <- x@aa[i]
-              x@pranges <- x@pranges[i]
               x
           })
 
 
 ## accessors
-setMethod("pfeatures", "Proteins",
-          function(x) extractAt(aa(x), unname(pranges(x))))
+## setMethod("pfeatures", "Proteins",
+##           function(x) extractAt(aa(x), unname(pranges(x))))
 
-setMethod("pranges", "Proteins",
-          function(x) x@pranges)
+pfeatures <- function(x, pcol) {
+    pcol <- .checkPcol(x, pcol)
+    ## stopifnot(pcol %in% pvarLabels(x))
+    extractAt(aa(x), unname(pranges(x)[[pcol]]))
+}
 
-setReplaceMethod("pranges",
-                 c("Proteins", "CompressedIRangesList"),
-                 function(object, value)
-                     replacePranges(object, value))
+## setMethod("pranges", "Proteins", function(x) x@pranges)
+pranges <- function(x) {
+    i <- .get_pranges_indices(x)
+    mcols(x@aa)[i]
+}
+
+## setReplaceMethod("pranges",
+##                  c("Proteins", "CompressedIRangesList"),
+##                  function(object, value)
+##                      replacePranges(object, value))
 
 setReplaceMethod("acols",
                  c("Proteins", "DataFrame"),
@@ -220,17 +236,17 @@ setReplaceMethod("metadata", "Proteins",
                    x
                })
 
-setMethod("pmetadata", "Proteins",
-          function(x) {
-              if (!is.null(x@pranges@unlistData@elementMetadata)) {
-                  SplitDataFrameList(lapply(x@pranges, mcols))
-              } else {
-                  NULL
-              }
-          })
+pcols <- function(x) {
+    i <- .get_pranges_indices(x)
+    mcols(x@aa)[i]
+}
 
-setMethod("ametadata", "Proteins",
-          function(x) mcols(x@aa))
+acols <- function(x) {
+    i <- .get_pranges_indices(x)
+    mcols(x@aa)[!i]
+}
+
+
 
 setMethod("seqnames","Proteins",
           function(x) names(aa(x)))
@@ -238,28 +254,29 @@ setMethod("seqnames","Proteins",
 setMethod("names","Proteins",
           function(x) seqnames(x))
 
-setMethod("avarLabels", "Proteins",
-          function(object) names(aa(object)@elementMetadata))
+avarLabels <- function(x) {
+    i <- .get_pranges_indices(x)
+    names(mcols(x@aa))[!i]
+}
 
-setMethod("pvarLabels", "Proteins",
-          function(object) {
-              if (!isEmpty(pranges(object))) {
-                names(pranges(object)@unlistData@elementMetadata@listData)
-              } else {
-                NULL
-              }
-          })
+pvarLabels <- function(x) {
+    i <- .get_pranges_indices(x)
+    names(mcols(x@aa))[i]
+}
 
 setMethod("[[", "Proteins",
           function(x, i, j = missing, ..., drop = TRUE) x@aa[[i]])
 
-setMethod("aa", "Proteins", function(x) x@aa)
-
+aa <- function(x) x@aa
 
 ## Methods
 setMethod("addIdentificationData",
           c("Proteins", "character"),
           function(object, id, rmEmptyRanges = TRUE, par = Pparams()) {
+              if ("Peptides" %in% names(object@aa@elementMetadata)) {
+                  warning("Peptides pranges already present. Keeping as is.")
+                  return(object)
+              }
               .addIdentificationDataProteins(object, filenames = id,
                                              rmEmptyRanges = rmEmptyRanges,
                                              par = par)
@@ -275,14 +292,19 @@ setMethod("addPeptideFragments",
 
 setMethod("cleave", "Proteins",
           function(x, enzym = "trypsin", missedCleavages = 0, ...) {
-              rng <- cleavageRanges(x = x@aa, enzym = enzym,
-                                          missedCleavages = missedCleavages,
-                                          ...)
-              x@pranges <- IRangesList(lapply(rng, function(r) {
-                  mc <- missedCleavages[cumsum(start(r) == 1L)]
-                  mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
-                  r
-              }))
+              nm <- paste0(enzym, "Cleaved")
+              if (nm %in% avarLabels(x)) {
+                  message(nm, " already exists. Leaving object as is.")
+              } else {
+                  rng <- cleavageRanges(x = x@aa, enzym = enzym,
+                                        missedCleavages = missedCleavages,
+                                        ...)                  
+                  mcols(x@aa)[, nm] <- IRangesList(lapply(rng, function(r) {
+                      mc <- missedCleavages[cumsum(start(r) == 1L)]
+                      mcols(r) <- DataFrame(MissedCleavages = Rle(mc))
+                      r
+                  }))
+              }
               x
           })
 
@@ -297,30 +319,26 @@ setMethod("pfilter",
           })
 
 setMethod("show", "Proteins",
-          function(object) {
-              topics <- c("S4 class type",
-                          "Class version",
-                          "Created",
+          function (object) {
+              topics <- c("S4 class type", "Class version", "Created",
                           "Number of Proteins")
               topics <- format(topics, justify = "left")
               n <- length(object)
               values <- c(class(object),
                           tail(as(classVersion(object), "character"), 1L),
-                          object@metadata$created,
-                          n)
-
-              cat(paste0(topics, ": ",  values, collapse = "\n"), sep = "\n")
+                          object@metadata$created, n)
+              cat(paste0(topics, ": ", values, collapse = "\n"), sep = "\n")
               if (length(object) > 0) {
                   sn <- seqnames(object)
                   ln <- length(object)
-                  cat("Sequences:\n  "); htcat(sn, n = 2)
-                  cat("Sequence features:\n  "); htcat(avarLabels(object), n = 2)
-                  cat("Peptide features:")
-                  if (isEmpty(pranges(object))) cat(" None\n")
-                  else {
+                  cat("Sequences:\n  ")
+                  htcat(seqnames(object), n = 2)
+                  cat("Protein ranges:")
+                  pvl <- pvarLabels(object)
+                  if (length(pvl)) {
                       cat("\n  ")
                       htcat(pvarLabels(object), n = 2)
-                  }
+                  } else cat(" None\n")
               }
           })
 

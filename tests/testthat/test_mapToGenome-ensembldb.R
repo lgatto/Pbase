@@ -8,13 +8,22 @@ test_that(".mapToGenome2 internal function", {
     ## Real life example.
     zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
     zbtb16_cds <- cdsBy(edb,
-                        filter = TxidFilter(acols(zbtb16)$tx_id))
+                        filter = TxIdFilter(acols(zbtb16)$tx_id))
     zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
+    ## Check errors
+    expect_error(Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]],
+                                       pcol = "dunno"))
+    ## different pcol settings:
     res <- Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]])
+    rs <- Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]], pcol = NULL)
+    expect_equal(res, rs)
+    rs <- Pbase:::.mapToGenome2(zbtb16[1], grObj = zbtb16_cds[[1]],
+                                pcol = "ProteinDomains")
+    expect_equal(res, rs)
     ## Check the mcols.
     expect_true(all(res$tx_id == acols(zbtb16)$tx_id[1]))
     ## Check that names are correct and match the sequence:
-    pfeat <- pfeatures(zbtb16)[[1]]
+    pfeat <- pfeatures(zbtb16, pcol = "ProteinDomains")[[1]]
     ## All sequences have to be present in res:
     expect_true(all(as.character(pfeat) %in% res$pepseq))
     ## The names have to match the peptide sequences.
@@ -68,7 +77,8 @@ test_that(".mapToGenome2 internal function", {
     prng <- IRangesList(IRanges(start = c(2, 15), end = c(8, 18)))
     names(prng[[1]]) <- c("pf_1", "pf_2")
     mcols(prng[[1]]) <- DataFrame(source = c("manual", "manual"))
-    prt <- new("Proteins", aa = aa, pranges = prng)
+    mcols(aa)$ProteinFeatures <- prng
+    prt <- new("Proteins", aa = aa)
     ## What do we expect:
     ## first peptide feature: 14-20, 25-38
     ## second peptide feature: 66-77
@@ -101,7 +111,8 @@ test_that(".mapToGenome2 internal function", {
     prng <- IRangesList(IRanges(start = c(3, 6, 7), end = c(5, 7, 10)))
     names(prng[[1]]) <- c("pf_1", "pf_2", "pf_3")
     mcols(prng[[1]]) <- DataFrame(source = rep("manual", 3))
-    prt <- new("Proteins", aa = aa, pranges = prng)
+    mcols(aa)$ProteinDomains <- prng
+    prt <- new("Proteins", aa = aa)
     ## The tricky thing with the negative strand is that we have to swith
     ## start and end coordinates of the exons to calculate from positions within
     ## the cDNA to DNA.
@@ -128,7 +139,7 @@ test_that("mapToGenome,Proteins,EnsDb", {
     ## Let's start with our famous ZBTB16 example:
     zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
     zbtb16_cds <- cdsBy(edb,
-                        filter = TxidFilter(acols(zbtb16)$tx_id),
+                        filter = TxIdFilter(acols(zbtb16)$tx_id),
                         columns = c("tx_id", "protein_id"))
     zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
 
@@ -152,7 +163,7 @@ test_that("mapToGenome,Proteins,EnsDb", {
     uniprts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
                         columns = "uniprot_id", return.type = "data.frame")
     uniprts <- unique(uniprts$uniprot_id)
-    prts <- Proteins(edb, filter = UniprotidFilter(uniprts))
+    prts <- Proteins(edb, filter = UniprotFilter(uniprts))
     res_3 <- mapToGenome(prts, edb, id = "tx_id", idType = "tx_id",
                          drop.empty.ranges = FALSE)
     expect_equal(names(res_3), seqnames(prts))
@@ -168,20 +179,22 @@ test_that("mapToGenome,Proteins,EnsDb with Uniprot IDs", {
     ## Use uniprot ID.
     ## First use the build-in Proteins object.
     data(p)
-    res_3 <- mapToGenome(p, edb, idType = "uniprot_id")
-    ## Compare with what was retrieved by Biomart.
-    ## NOTE: this does only work with Ensembl 86!!!
-    library("biomaRt")
-    ens <- useMart("ensembl", "hsapiens_gene_ensembl")
-    grl <- etrid2grl(acols(p)$ENST, ens)
-    all.equal(names(grl), acols(p)$ENST,
-              check.attributes=FALSE)
-    pcgrl <- proteinCoding(grl)
-    res <- mapToGenome(p[5], pcgrl[5])
-    expect_equal(start(res[[1]]), start(res_3[[5]]))
-    expect_equal(end(res[[1]]), end(res_3[[5]]))
+    if (ncol(pcols(p))) {
+        res_3 <- mapToGenome(p, edb, id = "AccessionNumber",
+                             idType = "uniprot_id")
+        ## Compare with what was retrieved by Biomart.
+        ## NOTE: this does only work with Ensembl 86!!!
+        library("biomaRt")
+        ens <- useMart("ensembl", "hsapiens_gene_ensembl")
+        grl <- etrid2grl(acols(p)$ENST, ens)
+        all.equal(names(grl), acols(p)$ENST,
+                  check.attributes=FALSE)
+        pcgrl <- proteinCoding(grl)
+        res <- mapToGenome(p[5], pcgrl[5])
+        expect_equal(start(res[[1]]), start(res_3[[5]]))
+        expect_equal(end(res[[1]]), end(res_3[[5]]))
+    }
 })
-
 
 benchmark_pmapToGenome <- function() {
     library(EnsDb.Hsapiens.v86)

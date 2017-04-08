@@ -25,8 +25,8 @@
 ##' Biochemical Education 13.1 (1985): 10-11.
 ##' http://dx.doi.org/10.1016/0307-4412(85)90114-1
 ##' @noRd
-## .calculateIsoelectricPoint <- function(x) {
-## }
+.calculateIsoelectricPoint <- function(x) {
+}
 
 ##' test peptides for some properties
 ##' @param x character, AAString, AAStringSet: sequence

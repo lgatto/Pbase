@@ -77,3 +77,19 @@ test_that(".singular", {
     expect_equal(Pbase:::.singular(x3), 1:5)
 })
 
+test_that(".checkPcol", {
+    ep <- new("Proteins")
+    expect_error(Pbase:::.checkPcol(ep, "any"))
+    ## Get a Proteins object from the database.
+    library(EnsDb.Hsapiens.v86)
+    library(ensembldb)
+    edb <- EnsDb.Hsapiens.v86
+    p_2 <- Proteins(edb, filter = TxidFilter("ENST00000335953"))
+    ## Check we gete ProteinDomains back
+    pc <- Pbase:::.checkPcol(p_2)
+    expect_equal(pc, "ProteinDomains")
+    pc <- Pbase:::.checkPcol(p_2, "ProteinDomains")
+    expect_equal(pc, "ProteinDomains")
+    ## Check exception
+    expect_error(Pbase:::.checkPcol(p_2, "other"))
+})
