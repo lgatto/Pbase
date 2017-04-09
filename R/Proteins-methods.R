@@ -347,10 +347,3 @@ setMethod("show", "Proteins",
 ## + width: return the width(x@aa)
 ## + names,Proteins: returns seqnames,Proteins
 
-## internal use only; not exported
-
-setMethod("aaranges",
-          "Proteins",
-          function(x, ...) {
-              .aarangesProteins(x, ...)
-          })

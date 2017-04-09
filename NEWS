@@ -1,3 +1,9 @@
+CHANGES IN VERSION 0.15.3
+-------------------------
+ o Working up new API (see issue #41) <2017-04-09 Sun>
+ o Temporarily remove some vignettes, until the API has
+   stabilised. <2017-04-09 Sun>
+ 
 CHANGES IN VERSION 0.15.2
 -------------------------
  o New Proteins class implementation - see issue #38. <2016-12-10 Sat>

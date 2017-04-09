@@ -132,7 +132,7 @@ test_that("addPeptideFragments", {
 
 ## Unit test for issue #27; thanks to Johannes Rainer (@jotsetung) for
 ## reporting and fixing
-test_that("pmetadata", {
+test_that("pcols", {
     ## Create the pranges: have a IRange for the 1st and 3rd.
     ir <- IRanges(start = c(3, 5), end = c(10, 15))
     mcols(ir) <- DataFrame(AccessionNumber = c("P1", "P3"), OtherMcol = c(1, 3))

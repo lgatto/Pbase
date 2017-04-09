@@ -4,7 +4,7 @@
 ##' each element is an \code{IRanges} object starting at 1 and ending
 ##' at \code{length(x@@aa[i])}.
 ##' @noRd
-.aarangesProteins <- function(x, unshift = FALSE) {
+aaranges <- function(x, unshift = FALSE) {
   r <- unname(as(aa(x)@ranges, "IRanges"))
   irl <- split(r, f = seq_along(r))
   names(irl) <- seqnames(x)
