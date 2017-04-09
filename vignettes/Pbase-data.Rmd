@@ -32,17 +32,18 @@ This vignette briefly introduces the central data object of the
 `Pbase` package, namely `Proteins` instances, as depicted below. They
 contain a set of protein sequences (10 in the figure below), composed
 of the protein sequences (grey boxes) and annotation data (table on
-the left). Each protein links to a set of experimentally observed
-peptides (also in grey) that are also decorated with their own
-annotation data. The figure also show the accessors for the different
-data slots, that are detailed in `?Proteins`.
+the left). Each protein links to a set of ranges of interest, such as
+protein domains of experimentally observed peptides (also in grey)
+that are also decorated with their own annotation data. The figure
+also show the accessors for the different data slots, that are
+detailed in `?Proteins`.
 
 ```{r pplot, echo=FALSE, fig.width=8.5, fig.height=8.5}
 Pbase:::pplot()
 ```
 
-`Proteins` objects are populated by protein sequences
-stemming from a fasta file and the peptides originate from an LC-MSMS
+`Proteins` objects are populated by protein sequences stemming from a
+fasta file and the peptides typically originate from an LC-MSMS
 experiment.
 
 The original data used below is a 10 fmol
@@ -86,23 +87,25 @@ A `Proteins` object is composed of a set of protein sequences
 accessible with the `aa` accessor as well as an optional set of
 peptides features that are mapped as coordinates along the proteins,
 available with `pranges`. The actual peptide sequences can be extraced
-with `pfeatures`.
+with `pfeatures`. The names of the protein sequences can be extraced
+with `seqnames`.
 
 ```{r paccess}
 aa(p)
+seqnames(p)
 pranges(p)
 pfeatures(p)
 ```
 
-A Proteins instance is further described by general
-`metadata`. Protein sequence and peptide features annotations can be
-accessed with `ametadata` and `pmetadata` (or `acols` and `pcols`)
-respectively.
+A Proteins instance is further described by general `metadata`
+list. Protein sequence and peptide features annotations can be
+accessed with `acols` and `pcols` respectively, which return
+`DataFrame` instances.
 
 ```{r metadata}
 metadata(p)
-head(acols(p))
-head(pcols(p))
+acols(p)
+pcols(p)
 ```
 
 Specific proteins can be extracted by index of name using

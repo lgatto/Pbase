@@ -16,16 +16,13 @@
 \alias{[[,Proteins,ANY,ANY-method}
 \alias{aa,Proteins-method}
 \alias{aa}
-\alias{ametadata,Proteins-method}
-\alias{ametadata}
 \alias{acols}
 \alias{metadata,Proteins-method}
 \alias{metadata<-,Proteins-method}
 \alias{pfeatures,Proteins-method}
 \alias{pfeatures}
 \alias{plot,Proteins,missing-method}
-\alias{pmetadata,Proteins-method}
-\alias{pmetadata}
+
 \alias{pcols}
 \alias{pranges,Proteins-method}
 \alias{pranges}
@@ -198,14 +195,10 @@
       identifiers (see constructors above), the UniProt version and
       \code{UnitProt.WS} version number. }
 
-    \item{ametadata}{\code{signature(x = "Proteins")}: Returns a
+    \item{acols}{\code{signature(x = "Proteins")}: Returns a
       \code{\linkS4class{DataFrame}} of protein metadata. }
-    \item{acols}{\code{signature(x = "Proteins")}: See
-      \code{ametadata}. }
-    \item{pmetadata}{\code{signature(x = "Proteins")}: Returns a
+    \item{pcols}{\code{signature(x = "Proteins")}: Returns a
       \code{list} of feature metadata. }
-    \item{pcols}{\code{signature(x = "Proteins")}: See
-      \code{pmetadata}. }
 
     \item{avarLabels}{\code{signature(x = "Proteins")}: Returns the
       names of the sequences metadata. }
