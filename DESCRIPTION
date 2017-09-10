@@ -40,9 +40,9 @@ Suggests:
     rmarkdown,
     BiocStyle,
     EnsDb.Hsapiens.v86 (>= 2.0.0)
-Description: A set of classes and functions to investigate and
-    understand protein sequence data in the context of a
-    proteomics experiment.
+Description: The Pbase package provides a set of classes and functions
+    to investigate and understand protein sequence data in the context
+    of a proteomics experiment.    
 License: GPL-3
 Author: Laurent Gatto [aut], Sebastian Gibb [aut, cre]
 Maintainer: Sebastian Gibb <mail@sebastiangibb.de>,
