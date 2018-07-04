@@ -6,9 +6,9 @@ test_that("Proteins,EnsDb,missing constructor", {
     library(ensembldb)
     library(RSQLite)
     ## Load Proteins with protein domains.
-    prots <- Proteins(edb, filter = ~ genename == "ZBTB16")
+    prots <- Proteins(edb, filter = ~ gene_name == "ZBTB16")
     ## Check that we've got all proteins.
-    txs <- transcripts(edb, filter = GenenameFilter("ZBTB16"))
+    txs <- transcripts(edb, filter = GeneNameFilter("ZBTB16"))
     res <- dbGetQuery(dbconn(edb),
                       paste0("select * from protein where tx_id in (",
                              paste0("'", txs$tx_id, "'", collapse = ", "),")"))
@@ -47,7 +47,7 @@ test_that("Proteins,EnsDb,missing constructor", {
         }
     }
     ## Without protein domains.
-    prots <- Proteins(file = edb, filter = GenenameFilter("ZBTB16"),
+    prots <- Proteins(file = edb, filter = GeneNameFilter("ZBTB16"),
                       loadProteinDomains = FALSE)
     expect_identical(sort(seqnames(prots)), sort(res$protein_id))
     expect_identical(length(prots), nrow(pranges(prots)))
@@ -56,9 +56,9 @@ test_that("Proteins,EnsDb,missing constructor", {
     expect_true(all(unlist(lengths(pranges(prots))) == 0))
 
     ## Other gene: BCL2L11
-    prots <- Proteins(edb, filter = GenenameFilter("BCL2L11"), fetchLRG = TRUE)
+    prots <- Proteins(edb, filter = GeneNameFilter("BCL2L11"), fetchLRG = TRUE)
     ## Check that we've got all proteins.
-    txs <- transcripts(edb, filter = GenenameFilter("BCL2L11"))
+    txs <- transcripts(edb, filter = GeneNameFilter("BCL2L11"))
     res <- dbGetQuery(dbconn(edb),
                       paste0("select * from protein where tx_id in (",
                              paste0("'", txs$tx_id, "'", collapse = ", "),")"))
@@ -81,14 +81,14 @@ test_that("Proteins,EnsDb,missing constructor", {
         expect_identical(mcols(tmp)$interpro_accession, z$interpro_accession)
     })
     ## Without protein domains.
-    prots <- Proteins(file = edb, filter = GenenameFilter("BCL2L11"),
+    prots <- Proteins(file = edb, filter = GeneNameFilter("BCL2L11"),
                       loadProteinDomains = FALSE, fetchLRG = TRUE)
     expect_identical(sort(seqnames(prots)), sort(res$protein_id))
     expect_identical(length(prots), nrow(pranges(prots)))
 })
 
 test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
-    dat <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+    dat <- proteins(edb, filter = GeneNameFilter("ZBTB16"),
                     columns = c("tx_id", "protein_id", "uniprot_id"),
                     return.type = "data.frame")
     uniprts <- unique(dat$uniprot_id)
@@ -114,7 +114,7 @@ test_that("Proteins,EnsDb,missing protein_id n:1 uniprot_id mapping", {
 
     ## We can use a UniprotmappingFilter to restrict to good quality maps.
     prts_2 <- Proteins(edb, filter = AnnotationFilterList(
-                                GenenameFilter("ZBTB16"),
+                                GeneNameFilter("ZBTB16"),
                                 UniprotMappingTypeFilter("DIRECT")),
                        columns = c("uniprot_id", "protein_id"))
     ## That way we reduce it to a n:1 mapping between Ensembl protein ID and
@@ -129,10 +129,10 @@ dontrun_test_multi_unitprot <- function() {
     library(EnsDb.Hsapiens.v86)
     edb <- EnsDb.Hsapiens.v86
     gn <- "XIRP2" ## that's the first gene from the data(p)
-    prts <- proteins(edb, filter = GenenameFilter(gn),
+    prts <- proteins(edb, filter = GeneNameFilter(gn),
                      columns = c("tx_id","uniprot_id"))
     ## OK, here I've got multiple proteins for one Uniprot.
-    res <- Proteins(edb, filter = GenenameFilter(gn),
+    res <- Proteins(edb, filter = GeneNameFilter(gn),
                     columns = c("tx_id", "gene_name", "uniprot_id"))
     res_2 <- Proteins(edb, filter = UniprotidFilter("A4UGR9"),
                       columns = c("tx_id", "gene_name"))
@@ -147,7 +147,7 @@ dontrun_test_all <- function() {
     ## OK, the LRG have multi-mappings! LRG_321p8:3, LRG_321p1:2
     ## Fetching all proteins EXCEPT LRG proteins from the database:
     system.time(
-        all_prots <- Proteins(edb, filter = TxidFilter("ENS%",
+        all_prots <- Proteins(edb, filter = TxIdFilter("ENS%",
                                                        condition = "like"),
                               loadProteinDomains = FALSE)
     ) ## 20 sec
@@ -156,11 +156,11 @@ dontrun_test_all <- function() {
                               loadProteinDomains = FALSE)
     )
     system.time(
-        all_prots <- Proteins(edb, filter = TxidFilter("ENS%",
+        all_prots <- Proteins(edb, filter = TxIdFilter("ENS%",
                                                        condition = "like"),
                               loadProteinDomains = TRUE)
     ) ## 93 sec
-    ## Seems like we have to use the TxidFilter by default to avoid fetching LRG
+    ## Seems like we have to use the TxIdFilter by default to avoid fetching LRG
     ## genes.
 }
 

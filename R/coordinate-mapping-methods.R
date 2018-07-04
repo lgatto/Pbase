@@ -230,6 +230,7 @@ tryCatchMapToGenome <- function(pObj, grObj, pcol, ...)
                       exonJunctions = junc)
     if (any(got_cols)) {
         to_add <- unique(mcols(grObj)[, got_cols, drop = FALSE])
+        rownames(to_add) <- NULL
         if (nrow(to_add) > 1)
             stop("Gene and transcript related mcols of GRanges 'grObj' are not",
                  " unique!")

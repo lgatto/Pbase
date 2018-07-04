@@ -182,7 +182,7 @@ test_that("pfeatures", {
     library(EnsDb.Hsapiens.v86)
     library(ensembldb)
     edb <- EnsDb.Hsapiens.v86
-    p_2 <- Proteins(edb, filter = TxidFilter("ENST00000335953"))
+    p_2 <- Proteins(edb, filter = TxIdFilter("ENST00000335953"))
     expect_equal(length(pfeatures(p_2, "ProteinDomains")), 1)
     ## If pcol is not provided we expect it to pick the first one.
     expect_equal(length(pfeatures(p_2)), 1)
