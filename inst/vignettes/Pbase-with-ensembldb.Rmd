@@ -54,7 +54,7 @@ hasProteinData(edb)
 `EnsDb` database (along eventual transcript or gene annotations) and, depending
 on the value of the `return.type` parameter, return the results as a
 `data.frame`, `DataFrame` or `AAStringSet`. Below we use the function to
-retrieve all proteins encoded by the gene _ZBTB16_. We use a `GenenameFilter` to
+retrieve all proteins encoded by the gene _ZBTB16_. We use a `GeneNameFilter` to
 select entries for that gene. In the simple example below only protein
 annotations were retrieved (i.e. the Ensembl protein ID, the amino acid
 sequence, the ID of the transcript encoding the protein and the gene name; the
@@ -64,7 +64,7 @@ protein domains within the protein sequence. For more information on available
 filters, methods and annotation columns see the `ensembldb` vignette.
 
 ```{r proteins_method}
-prts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+prts <- proteins(edb, filter = GeneNameFilter("ZBTB16"),
                  return.type = "AAStringSet")
 prts
 
@@ -81,7 +81,7 @@ filter expression in form of a `formula` instead of an `AnnotationFilter` class.
 
 ```{r Proteins_method, message = FALSE}
 library(Pbase)
-zbtb16 <- Proteins(edb, filter = ~ genename == "ZBTB16")
+zbtb16 <- Proteins(edb, filter = ~ gene_name == "ZBTB16")
 ```
 
 The proteins' sequences are stored in the `aa` slot and the protein domains in
@@ -106,7 +106,7 @@ Uniprot ID and each Uniprot ID can be assigned one or more Ensembl protein IDs.
 ## Loading in addition Uniprot ID annotations
 zbtb16_2 <- Proteins(edb, columns = c("uniprot_id", "uniprot_db",
                                       "uniprot_mapping_type"),
-                     filter = GenenameFilter("ZBTB16"))
+                     filter = GeneNameFilter("ZBTB16"))
 
 acols(zbtb16_2)
 ```
@@ -121,7 +121,7 @@ Ensembl protein IDs respectively transcript IDs.
 ```{r Proteins_uniprot_2}
 acols(Proteins(edb, columns = c("uniprot_id", "uniprot_db"),
                filter = AnnotationFilterList(
-                   GenenameFilter("ZBTB16"),
+                   GeneNameFilter("ZBTB16"),
                    UniprotMappingTypeFilter("DIRECT"))))
 ```
 

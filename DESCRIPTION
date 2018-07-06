@@ -1,7 +1,7 @@
 Package: Pbase
 Type: Package
 Title: Manipulating and exploring protein and proteomics data
-Version: 0.15.3
+Version: 0.21.1
 Authors@R: c(person("Laurent", "Gatto", role = c("aut", "cre"),
                     email = "lg390@cam.ac.uk"),
              person("Johannes", "Rainer", role = c("aut", "cre"),
@@ -17,16 +17,16 @@ Depends:
 Imports:
     cleaver (>= 1.3.6),
     Biobase,
-    Biostrings,
-    IRanges,
-    S4Vectors,
+    Biostrings (>= 2.47.5),
+    IRanges (>= 2.13.11),
+    S4Vectors (>= 0.17.24),
     mzID,
     mzR (>= 1.99.1),
     MSnbase (>= 1.15.5),
     Pviz,
     biomaRt,
-    GenomicRanges,
-    rtracklayer,
+    GenomicRanges (>= 1.31.7),
+    rtracklayer (>= 1.39.6),
     ensembldb (>= 1.99.13),
     BiocParallel,
     AnnotationFilter
@@ -40,9 +40,9 @@ Suggests:
     rmarkdown,
     BiocStyle,
     EnsDb.Hsapiens.v86 (>= 2.0.0)
-Description: The Pbase package provides a set of classes and functions
-    to investigate and understand protein sequence data in the context
-    of a proteomics experiment.    
+Description: A set of classes and functions to investigate and
+    understand protein sequence data in the context of a
+    proteomics experiment.
 License: GPL-3
 Author: Laurent Gatto [aut], Sebastian Gibb [aut, cre]
 Maintainer: Sebastian Gibb <mail@sebastiangibb.de>,

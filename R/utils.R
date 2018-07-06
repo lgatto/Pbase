@@ -159,7 +159,7 @@ plotRanges <- function(x, xlim = x, main = "",
     if (is(x, "GRanges"))
         x <- ranges(x)
     height <- 1
-    if (is(xlim, "Ranges"))
+    if (is(xlim, "IntegerRanges"))
         xlim <- c(min(start(xlim)), max(end(xlim)))
     bins <- disjointBins(IRanges(start(x), end(x) + 1))
     plot.new()

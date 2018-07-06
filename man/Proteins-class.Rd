@@ -357,7 +357,7 @@ listColumns(edb)
 
 ## Load all proteins from the gene ZBTB16 including all protein domains from
 ## the database. Here we pass the filter criteria as a formula to the method
-prts <- Proteins(edb, filter = ~ genename == "ZBTB16")
+prts <- Proteins(edb, filter = ~ gene_name == "ZBTB16")
 
 ## List available pranges
 pcols(prts)

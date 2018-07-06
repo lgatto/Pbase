@@ -6,7 +6,7 @@ test_that(".mapToGenome2 internal function", {
     library(ensembldb)
     library(Biostrings)
     ## Real life example.
-    zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+    zbtb16 <- Proteins(edb, filter = GeneNameFilter("ZBTB16"))
     zbtb16_cds <- cdsBy(edb,
                         filter = TxIdFilter(acols(zbtb16)$tx_id))
     zbtb16_cds <- zbtb16_cds[acols(zbtb16)$tx_id]
@@ -52,7 +52,8 @@ test_that(".mapToGenome2 internal function", {
     expect_equal(colnames(mcols(res)),
                  c("pepseq", "accession", "exonJunctions", "group"))
     ## Now add one columns "symbol"
-    tmp <- unlist(tmp)
+    tmp <- unlist(zbtb16_cds)
+    mcols(tmp) <- NULL
     mcols(tmp) <- DataFrame(symbol = rep("ZBTB16", length(tmp)))
     tmp <- split(tmp, unlist(zbtb16_cds)$tx_id)
     res <- Pbase:::.mapToGenome2(zbtb16[1], grObj = tmp[[1]])
@@ -137,7 +138,7 @@ test_that("mapToGenome,Proteins,EnsDb", {
     library(EnsDb.Hsapiens.v86)
     edb <- EnsDb.Hsapiens.v86
     ## Let's start with our famous ZBTB16 example:
-    zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+    zbtb16 <- Proteins(edb, filter = GeneNameFilter("ZBTB16"))
     zbtb16_cds <- cdsBy(edb,
                         filter = TxIdFilter(acols(zbtb16)$tx_id),
                         columns = c("tx_id", "protein_id"))
@@ -160,7 +161,7 @@ test_that("mapToGenome,Proteins,EnsDb", {
     expect_equal(res, res_2) ## fails at present due to different names!
 
     ##
-    uniprts <- proteins(edb, filter = GenenameFilter("ZBTB16"),
+    uniprts <- proteins(edb, filter = GeneNameFilter("ZBTB16"),
                         columns = "uniprot_id", return.type = "data.frame")
     uniprts <- unique(uniprts$uniprot_id)
     prts <- Proteins(edb, filter = UniprotFilter(uniprts))
@@ -206,7 +207,7 @@ benchmark_pmapToGenome <- function() {
     library(BiocParallel)
 
     ## Fetch a bunch of proteins.
-    gnf <- GenenameFilter(c("ZBTB16", "BCL2", "BCL2L11"))
+    gnf <- GeneNameFilter(c("ZBTB16", "BCL2", "BCL2L11"))
     snf <- SeqnameFilter(2)
     cdss <- cdsBy(edb, by = "tx", columns = c("tx_id", "protein_id"),
                   filter = gnf)
@@ -251,10 +252,10 @@ benchmark_dot_mapToGenome <- function() {
     ## Need an object that is compatible with both, .mapToGenoma and
     ## .mapToGenom2, i.e. has mcols 'gene', 'transcript' and 'symbol' in the
     ## GRanges
-    zbtb16 <- Proteins(edb, filter = GenenameFilter("ZBTB16"))
+    zbtb16 <- Proteins(edb, filter = GeneNameFilter("ZBTB16"))
     ## NOTE: the first query is much faster!
     zbtb16_cds <- cdsBy(edb,
-                        filter = TxidFilter(acols(zbtb16)$tx_id),
+                        filter = TxIdFilter(acols(zbtb16)$tx_id),
                         columns = c("tx_id", "protein_id"))
     prot <- zbtb16[1]
     gen <- zbtb16_cds[acols(prot)$tx_id]

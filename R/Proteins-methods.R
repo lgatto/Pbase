@@ -161,7 +161,7 @@ setMethod("Proteins",
                   ## if we have 1:n mapping for protein_id to uniprot_id.
                   ## issue #35
                   prng <- prng[names(aa)]
-                  acols(pr)$ProteinDomains <- prng
+                  mcols(pr@aa)$ProteinDomains <- prng
               }
               if (validObject(pr))
                   return(pr)

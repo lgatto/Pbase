@@ -84,7 +84,7 @@ test_that(".checkPcol", {
     library(EnsDb.Hsapiens.v86)
     library(ensembldb)
     edb <- EnsDb.Hsapiens.v86
-    p_2 <- Proteins(edb, filter = TxidFilter("ENST00000335953"))
+    p_2 <- Proteins(edb, filter = TxIdFilter("ENST00000335953"))
     ## Check we gete ProteinDomains back
     pc <- Pbase:::.checkPcol(p_2)
     expect_equal(pc, "ProteinDomains")
