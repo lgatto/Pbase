@@ -7,8 +7,8 @@ Manipulating and exploring protein and proteomics data.
 
 It is advised to install `Pbase` from Bioconductor:
 
-    library("BiocInstaller")
-	biocLite("Pbase")
+    library("BiocManager")
+	BiocManager::install("Pbase")
 
 Note however that you will need the *devel* version of Bioconductor
 for this. See `?useDevel` for details.
