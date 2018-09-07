@@ -11,7 +11,7 @@ It is advised to install `Pbase` from Bioconductor:
 	BiocManager::install("Pbase")
 
 Note however that you will need the *devel* version of Bioconductor
-for this. See `?useDevel` for details.
+for this. See `?BiocManager::install` for details.
 
 From github using `devtools::install_github`:
 
