@@ -1,7 +1,7 @@
 Package: Pbase
 Type: Package
 Title: Manipulating and exploring protein and proteomics data
-Version: 0.23.0
+Version: 0.23.1
 Authors@R: c(person("Laurent", "Gatto", role = c("aut", "cre"),
                     email = "lg390@cam.ac.uk"),
              person("Johannes", "Rainer", role = c("aut", "cre"),
@@ -50,6 +50,6 @@ Maintainer: Sebastian Gibb <mail@sebastiangibb.de>,
 VignetteBuilder: knitr
 URL: https://github.com/ComputationalProteomicsUnit/Pbase
 BugReports: https://github.com/ComputationalProteomicsUnit/Pbase/issues
-biocViews: Infrastructure, Proteomics, MassSpectrometry,
+biocViews: ImmunoOncology, Infrastructure, Proteomics, MassSpectrometry,
     Visualization, DataImport, DataRepresentation
 RoxygenNote: 5.0.1
