@@ -38,4 +38,3 @@ stopifnot(all.equal(id, names(grl)))
 \author{
 Laurent Gatto
 }
-

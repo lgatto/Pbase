@@ -1,13 +1,13 @@
 Package: Pbase
 Type: Package
 Title: Manipulating and exploring protein and proteomics data
-Version: 0.21.1
+Version: 0.25.1
 Authors@R: c(person("Laurent", "Gatto", role = c("aut", "cre"),
-                    email = "lg390@cam.ac.uk"),
-             person("Johannes", "Rainer", role = c("aut", "cre"),
-                    email = "Johannes.Rainer@eurac.edu"),
-             person("Sebastian", "Gibb", role = c("aut", "cre"),
-                    email = "mail@sebastiangibb.de"))
+		    email = "laurent.gatto@uclouvain.be"),
+	     person("Johannes", "Rainer", role = "aut",
+		    email = "Johannes.Rainer@eurac.edu"),
+	     person("Sebastian", "Gibb", role = "aut",
+		    email = "mail@sebastiangibb.de"))
 Depends:
     R (>= 2.10),
     methods,
@@ -44,12 +44,10 @@ Description: A set of classes and functions to investigate and
     understand protein sequence data in the context of a
     proteomics experiment.
 License: GPL-3
-Author: Laurent Gatto [aut], Sebastian Gibb [aut, cre]
-Maintainer: Sebastian Gibb <mail@sebastiangibb.de>,
-    Laurent Gatto <lg390@cam.ac.uk>
 VignetteBuilder: knitr
+PackageStatus: Deprecated
 URL: https://github.com/ComputationalProteomicsUnit/Pbase
 BugReports: https://github.com/ComputationalProteomicsUnit/Pbase/issues
-biocViews: Infrastructure, Proteomics, MassSpectrometry,
+biocViews: ImmunoOncology, Infrastructure, Proteomics, MassSpectrometry,
     Visualization, DataImport, DataRepresentation
-RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1

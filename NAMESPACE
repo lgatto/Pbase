@@ -56,9 +56,6 @@ exportMethods(
     addIdentificationData,
     addPeptideFragments,
     pfilter,
-    ## mapping
-    mapToGenome,
-    pmapToGenome,
     ## ranges
     proteinCoding)
 
@@ -71,7 +68,7 @@ export(
     pranges, ## "pranges<-",
     pvarLabels,
     avarLabels,
-    ## 
+    ##
     rmEmptyRanges,
     Pparams,
     etrid2grl,
@@ -85,4 +82,3 @@ export(
     ## plotting
     plotAsGeneRegionTrack,
     plotAsAnnotationTrack)
-

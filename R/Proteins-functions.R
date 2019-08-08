@@ -12,13 +12,13 @@ aaranges <- function(x, unshift = FALSE) {
 }
 
 ##' @title Simple function to
-##' 
+##'
 ##' @description Some description.
 ##'
 ##' @param x
-##' 
+##'
 ##' @param filenames mzIdentML filenames
-##' 
+##'
 ##' @return a modified Proteins object
 ##'
 ##' @noRd
@@ -83,11 +83,11 @@ aaranges <- function(x, unshift = FALSE) {
 }
 
 ##' @title Some fun
-##' 
+##'
 ##' @description Some desc
-##' 
+##'
 ##' @param x
-##' 
+##'
 ##' @param filenames fasta files
 ##'
 ##' @return a modified Proteins object
@@ -103,11 +103,11 @@ aaranges <- function(x, unshift = FALSE) {
     mcols(ir) <- cbind(mcols(fragments)[mcols(ir)$PeptideIndex, ],
                        mcols(ir))
     .fragments <- IRangesList(replicate(length(x), IRanges()))
-    names(.fragments) <- seqnames(x)   
+    names(.fragments) <- seqnames(x)
     .fragments[names(ir)] <- split(ir, names(ir))
     mcols(x@aa)$Fragments <- .fragments
     x@aa@elementMetadata$npeps <- lengths(.fragments)
-    
+
     if (rmEmptyRanges) {
         x <- rmEmptyRanges(x)
     }
@@ -140,7 +140,7 @@ aaranges <- function(x, unshift = FALSE) {
         isRng <- TRUE
         prngs <- pranges(object)[[1]] ## take first pranges FIXME: use pcol
     }
-    
+
     for (i in seq(along = object@aa)) {
         idx <- (i - 1L) * nTracks
         tracks[[idx + 1L]] <- ProteinAxisTrack(addNC = TRUE,
@@ -152,7 +152,7 @@ aaranges <- function(x, unshift = FALSE) {
         if (isRng && length(prngs[[i]])) {
             ## TODO: adding an ATrack results in an error if "[" is set:
             ## Error in callNextMethod(x, i) :
-            ##    bad object found as method (class “function”)
+            ##    bad object found as method (class "function")
             tracks[[idx + 3L]] <- ATrack(start = start(prngs[[i]]),
                                          end = end(prngs[[i]]),
                                          name = "peptides",
@@ -176,7 +176,7 @@ proteotypic <- function(x) {
                .peps <- as.character(xx)
                IRanges(Rle(.peps %in% .singular(.peps)))
            })
-    proteotypic <- IRangesList(proteotypic)    
+    proteotypic <- IRangesList(proteotypic)
     addpcol(x, "Proteotypic", proteotypic, force = TRUE)
 }
 
@@ -188,14 +188,14 @@ rmEmptyRanges <- function(x, pcol) {
         stopifnot(all(pcol %in% names(pr)))
         pr <- pr[, names(pr) %in% pcol]
     }
-    
+
     sel <- sapply(pr, function(x) lengths(x) > 0) ## always a matrix
     sel <- sapply(sel, all)
     x[sel]
 }
 
 isCleaved <- function(x, missedCleavages = 0, pcol = "trypsinCleaved") {
-    if (isEmpty(pranges(x))) return(FALSE)        
+    if (isEmpty(pranges(x))) return(FALSE)
     pcol <- .checkPcol(x, pcol)
     pr <- mcols(x@aa)[[pcol]]
     mcl <- mcols(unlist(pr))[, "MissedCleavages"]
@@ -241,4 +241,3 @@ replaceAcols <- function(object, value) {
     if (validObject(object))
         return(object)
 }
-

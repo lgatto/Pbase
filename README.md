@@ -1,21 +1,15 @@
 Pbase
 =====
 
-Manipulating and exploring protein and proteomics data. 
+Manipulating and exploring protein and proteomics data.
 
 ## Installation
 
-It is advised to install `Pbase` from Bioconductor:
-
-```
-install.packages("BiocManager")
-BiocManager::install("Pbase")
-```
 
 From github using `devtools::install_github`:
 
-    library("devtools")
-    install_github("ComputationalProteomicsUnit/Pbase")
+	library("devtools")
+	install_github("ComputationalProteomicsUnit/Pbase")
 
 ### Dependencies
 
@@ -36,7 +30,7 @@ can be filed as
 
 If you would like to contribute, please directly send pull requests
 for minor contributions and typos. For major contributions, we suggest
-to first get in touch with the package maintainers. 
+to first get in touch with the package maintainers.
 
 ## Ideas
 
@@ -134,4 +128,3 @@ The package allows to easily interact with `AAString` and
 possibly biomaRt in the future) using protein identifiers, protein
 identification results (`mzID` or (devel) `mzR` packages) and possibly
 also `MSnExp` and `MSnSet` instances.
-

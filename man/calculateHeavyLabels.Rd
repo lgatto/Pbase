@@ -4,8 +4,8 @@
 \alias{calculateHeavyLabels}
 \title{Calculate heavy labeled peptides}
 \usage{
-calculateHeavyLabels(proteins, peptides, maxN = 20L, nN = 4L, nC = 3L,
-  endsWith = c("K", "R", "G"), ...)
+calculateHeavyLabels(proteins, peptides, maxN = 20L, nN = 4L,
+  nC = 3L, endsWith = c("K", "R", "G"), ...)
 }
 \arguments{
 \item{proteins}{A \code{\linkS4class{Proteins}} object.}
@@ -74,9 +74,6 @@ calculateHeavyLabels(cleavedProteins,
                                    A4UGR9 = "QGNMYTLSK",
                                    A6H8Y1 = "GSTASNPQR"))
 }
-\author{
-Sebastian Gibb <mail@sebastiangibb.de> and Pavel Shliaha
-}
 \references{
 The complete description of the issue:
 \url{https://github.com/sgibb/cleaver/issues/5}
@@ -86,4 +83,6 @@ mass spectrometric quantification of component stoichiometry of
 multiprotein complexes. Journal of proteome research 6.2 (2007):
 792-800. \url{http://dx.doi.org/10.1021/pr060447s}
 }
-
+\author{
+Sebastian Gibb <mail@sebastiangibb.de> and Pavel Shliaha
+}
