@@ -13,8 +13,7 @@
 \description{
 
   Removed all the ranges that are not protein coding. Typically used on
-  the output of \code{\link{etrid2grl}} before
-  \code{\link{mapToGenome}}.
+  the output of \code{\link{etrid2grl}}.
 
 }
 
@@ -39,4 +38,3 @@
 }
 
 \keyword{methods}
-
